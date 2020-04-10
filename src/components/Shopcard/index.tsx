@@ -9,7 +9,7 @@ type Props = {
   className?: string;
 };
 
-export default function Shopcard({ children, className, ...rest }: Props) {
+export default function ShopCard({ children, className, ...rest }: Props) {
   const { t } = useTranslation();
 
   return (
@@ -27,10 +27,11 @@ export default function Shopcard({ children, className, ...rest }: Props) {
           <ListGroup.Item>ShopHours</ListGroup.Item>
         </ListGroup>
         <Card.Body>
-          <Button variant="primary" size="sm" block>{t('common:request-turn')}</Button>
+          <Button variant="primary" size="sm" block>
+            {t('common:request-turn')}
+          </Button>
         </Card.Body>
       </Card>
-
 
       <style jsx global>{`
         .root {

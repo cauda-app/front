@@ -2,7 +2,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Layout from '../src/components/Layout';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Shopcard from '../src/components/Shopcard';
+import Shopcard from '../src/components/ShopCard';
 
 const Shops = () => {
   const { t } = useTranslation();
