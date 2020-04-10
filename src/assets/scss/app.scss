@@ -22,8 +22,15 @@ $theme-colors: (
 );
 
 $font-family-sans-serif: 'Roboto', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-$font-family-base:       $font-family-sans-serif;
+$font-family-base: $font-family-sans-serif;
 
+$border-radius:               1rem !default;
+$border-radius-sm:            .6rem !default;
+$border-radius-lg:            .5rem !default;
+
+$btn-border-radius:           $border-radius !default;
+$btn-border-radius-sm:        $border-radius-sm !default;
+$btn-border-radius-lg:        $border-radius-lg !default;
 
 // BOOTSTRAP IMPORT
 @import "~bootstrap/scss/bootstrap";
@@ -66,8 +73,6 @@ main {
   background: none;
   background-color: rgba(255, 255, 255, 0.8) !important;
   border: none;
-  border-radius: 10px;
-  // box-shadow: 0px 0px 6px 5px rgba(0, 0, 0, 0.2);
   box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 
               0 2px 4px 0 rgba(0, 0, 0, 0.1), 
               inset 0 0 0 1px rgba(255, 255, 255, 0.5);
