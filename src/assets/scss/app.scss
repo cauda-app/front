@@ -1,0 +1,62 @@
+
+// ROOT VARIABLES
+:root {
+  --color_white: #fff;
+  --color_black: #000;
+  --mainback: #fff;
+  --color_primary: #007AFF;
+  --color_secondary: #FF2D55;
+  --color_tertiary: #FF9500;
+}
+
+// BOOTSTRAP OVERRIDES
+$theme-colors: (
+  "primary": #007AFF,
+  "secondary": #FF2D55,
+  "info": #FF9500
+);
+
+// BOOTSTRAP IMPORT
+@import "~bootstrap/scss/bootstrap";
+
+
+
+
+// BOOTSTRAP TWEAKS
+
+.btn-info {
+  color: var(--color_white);
+}
+
+
+
+
+// GLOBAL
+
+html, body {
+  height: 100%;
+}
+body {
+  background: #EEF5FB url("/cauda_back.jpg") no-repeat top center fixed;
+  background-size: cover !important;
+}
+#__next {
+  height: 100%;
+}
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-width: 768px;
+}
+main {
+  flex: 1;
+}
+
+.cauda_card--shadow {
+  background: var(--mainback);
+  border: none;
+  border-radius: 10px;
+  // box-shadow: 0px 0px 6px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
