@@ -10,20 +10,31 @@ const Home = () => {
   return (
     <Layout>
       <div className="content d-flex flex-column justify-content-between h-100">
-        <Card className="cauda_card--shadow mt-3 p-3 p-sm-4 p-md-5">
+        <Card className="cauda_card mt-3 p-3 p-sm-4 p-md-5">
           <Row>
             <Col xs="12" sm="6">
-              <Button variant="primary" size="lg" block className="mb-3 mb-sm-0">{t('common:nearby-shops')}</Button>
+              <Button
+                href="/shops"
+                variant="primary"
+                size="lg"
+                className="mb-3 mb-sm-0"
+                block
+              >{t('common:nearby-shops')}</Button>
             </Col>
             <Col xs="12" sm="6">
-              <Button variant="secondary" size="lg" block>{t('common:scan-qr-code')}</Button>
+              <Button
+                href="/scan"
+                variant="secondary"
+                size="lg"
+                block
+              >{t('common:scan-qr-code')}</Button>
             </Col>
           </Row>
         </Card>
 
         <Row>
-          <Col xs="12" sm="6" className="text-center">
-            <Button variant="info" className="tertiary" size="lg">{t('common:my-shop')}</Button>{' '}
+          <Col className="text-center">
+            <Button variant="info" className="tertiary px-4">{t('common:my-shop')}</Button>{' '}
             {/* <p>{t('common:my-active-turns')}</p> */}
           </Col>
         </Row>
