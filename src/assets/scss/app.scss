@@ -1,0 +1,30 @@
+
+// ROOT VARIABLES
+:root {
+  --color_white: #fff;
+  --color_black: #000;
+  --mainback: #fff;
+  --color_primary: #007AFF;
+  --color_secondary: #FF2D55;
+  --color_tertiary: #FF9500;
+}
+
+// BOOTSTRAP OVERRIDES
+$theme-colors: (
+  "primary": #007AFF,
+  "secondary": #FF2D55,
+  "info": #FF9500
+);
+
+// BOOTSTRAP IMPORT
+@import "~bootstrap/scss/bootstrap";
+
+
+
+
+// BOOTSTRAP TWEAKS
+
+.btn-info {
+  color: var(--color_white);
+}
+
