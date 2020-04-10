@@ -45,13 +45,14 @@ export default function Footer(props) {
         }
         ul {
           margin-bottom: 5px;
+          font-size: 0.8rem;
         }
         ul li {
           list-style: none;
         }
         .devlinks {
-          font-size: 0.8rem;
           opacity: 0.5;
+          font-size: 0.7rem;
         }
         .devlinks a {
           padding: 5px;
