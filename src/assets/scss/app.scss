@@ -9,12 +9,20 @@
   --color_tertiary: #FF9500;
 }
 
+// ADD FONTS
+@import "fonts.scss";
+
+
 // BOOTSTRAP OVERRIDES
 $theme-colors: (
   "primary": #007AFF,
   "secondary": #FF2D55,
   "info": #FF9500
 );
+
+$font-family-sans-serif: 'Roboto', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+$font-family-base:       $font-family-sans-serif;
+
 
 // BOOTSTRAP IMPORT
 @import "~bootstrap/scss/bootstrap";
