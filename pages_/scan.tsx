@@ -32,7 +32,6 @@ const Scan = () => {
           margin: 0 auto;
           width: 100%;
           max-width: 280px;
-          background: green;
         }
       `}</style>
     </Layout>
