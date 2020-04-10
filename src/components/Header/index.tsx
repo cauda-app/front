@@ -12,30 +12,12 @@ export default function Header(props) {
       <Row>
         <Col className="text-center py-4">
           <Link href="/">
-            <a><Image src="cauda_logo.svg" /></a>
+            <a>
+              <Image src="cauda_logo.svg" />
+            </a>
           </Link>
         </Col>
       </Row>
-
-      <style jsx>{`
-        footer {
-          text-align: center;
-        }
-        ul {
-          margin-bottom: 5px;
-        }
-        ul li {
-          list-style: none;
-        }
-        .devlinks {
-          font-size: 0.8rem;
-          opacity: 0.5;
-        }
-        .devlinks a {
-          padding: 5px;
-          color: #666;
-        }
-      `}</style>
     </header>
   );
 }
