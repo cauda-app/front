@@ -62,8 +62,9 @@ body {
 .app {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100%;
   max-width: 768px;
+  padding: 0 10px;
 }
 main {
   flex: 1;

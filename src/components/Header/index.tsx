@@ -9,7 +9,7 @@ export default function Header(props) {
 
   return (
     <header>
-      <Row>
+      <Row className="no-gutters">
         <Col className="text-center py-4">
           <Link href="/">
             <a>

@@ -21,5 +21,9 @@
   "enter-code": "Enter the validation code",
   "enter-code-desc": "Enter the validation code on your phone to validate your turn.",
   "enter-code-desc-line2": "This is only required once.",
-  "shop-details": "Shop Details"
+  "shop-details": "Shop Details",
+  "shop-name": "Shop Name",
+  "shop-address": "Address",
+  "shop-phone": "Shop Phone",
+  "shop-hours": "Opening Hours"
 }
