@@ -9,7 +9,6 @@ const Shops = () => {
   return (
     <Layout>
       <div className="content">
-
         <Row>
           <Col>
             <h1 className="cauda_title">{t('common:nearby-shops')}</h1>
@@ -19,10 +18,8 @@ const Shops = () => {
         <Shopcard />
         <Shopcard />
         <Shopcard />
-
       </div>
-      <style jsx global>{`
-      `}</style>
+      <style jsx global>{``}</style>
     </Layout>
   );
 };
