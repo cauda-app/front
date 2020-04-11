@@ -4,8 +4,6 @@ import Shopcard from '../src/components/ShopCard';
 import Card from 'react-bootstrap/Card';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
 
@@ -16,7 +14,7 @@ const RequestTurn = () => {
 
       <Shopcard />
 
-      <Card className="cauda_card mt-3 p-2 p-sm-4 mx-auto text-center">
+      <Card className="cauda_card mt-3 mx-auto text-center">
         <Card.Body>
 
           <InputGroup className="mb-3">
@@ -49,7 +47,7 @@ const RequestTurn = () => {
         </Card.Body>
       </Card>
 
-      <Card className="cauda_card mt-3 p-2 p-sm-4 mx-auto text-center">
+      <Card className="cauda_card mt-3 mx-auto text-center">
         <Card.Body>
 
           <InputGroup className="mb-3">

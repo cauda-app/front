@@ -13,11 +13,13 @@
   "confirm-turn": "Confirmar Turno",
   "save": "Guardar",
   "scan-qr-code": "Escanear Código QR",
-  "enter-cellphone": "Ingresa tu celular",
+  "enter-cellphone": "Ingresa tu número de celular",
   "enter-phone-desc": "Ingresa tu número de celular para que podamos notificarte cuando sea tu turno.",
+  "enter-phone-desc-shop": "Ingresa tu número de celular para que podamos validar tu comercio.",
   "terms-conditions": "Términos y Condiciones",
   "accept-by-continue": "Al continuar acepto los",
   "enter-code": "Ingresa el código",
   "enter-code-desc": "Ingresa el código que recibiste en tu celular para validar tu turno.",
-  "enter-code-desc-line2": "Solo tenés que hacer esto una vez."
+  "enter-code-desc-line2": "Solo tenés que hacer esto una vez.",
+  "shop-details": "Datos Comercio"
 }

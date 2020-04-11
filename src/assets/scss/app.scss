@@ -69,6 +69,9 @@ main {
   flex: 1;
 }
 
+
+// GLOBAL COMPONENTS
+
 .cauda_card {
   max-width: 420px;
   background: none;
@@ -78,6 +81,11 @@ main {
               0 2px 4px 0 rgba(0, 0, 0, 0.1), 
               inset 0 0 0 1px rgba(255, 255, 255, 0.5);
   backdrop-filter: saturate(50%) blur(20px);
+}
+.card-header {
+  background: none;
+  font-size: 1rem;
+  border-bottom: 1px solid var(--color_divider);
 }
 
 .cauda_title {
@@ -99,5 +107,22 @@ main {
 
 
 
+// SHOP CARD
 
-
+.cauda_shop {
+  margin: 0 auto;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 420px;
+}
+.shop_map {
+  border-bottom: 1px solid var(--color_divider);
+  min-height: 50px;
+}
+.list-group {
+  font-size: 0.8rem;
+}
+.list-group-item {
+  border: none;
+  padding: 0.35rem 1.25rem;
+}
