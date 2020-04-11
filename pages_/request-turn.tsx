@@ -16,7 +16,7 @@ const RequestTurn = () => {
 
       <Shopcard />
 
-      <Card className="cauda_card mt-3 p-3 p-sm-4 p-md-5 mx-auto text-center">
+      <Card className="cauda_card mt-3 p-2 p-sm-4 mx-auto text-center">
         <Card.Body>
 
           <InputGroup className="mb-3">
@@ -49,6 +49,39 @@ const RequestTurn = () => {
         </Card.Body>
       </Card>
 
+      <Card className="cauda_card mt-3 p-2 p-sm-4 mx-auto text-center">
+        <Card.Body>
+
+          <InputGroup className="mb-3">
+            <InputGroup.Prepend>
+              <InputGroup.Text id="user_code">#</InputGroup.Text>
+            </InputGroup.Prepend>
+            <FormControl
+              placeholder={t('common:enter-code')}
+              aria-label={t('common:enter-code')}
+              aria-describedby="user_code"
+            />
+          </InputGroup>
+
+          <Button
+            href=""
+            variant="success"
+            size="lg"
+            className="mb-3 mb-sm-0"
+            block
+          >{t('common:confirm-turn')}</Button>
+
+          <p className="mt-3 mb-1">
+            {t('common:enter-code-desc')}<br />
+          </p>
+
+          <small className="text-muted">
+            {t('common:enter-code-desc-line2')}
+          </small>
+
+        </Card.Body>
+      </Card>
+ 
     </Layout>
   );
 };

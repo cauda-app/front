@@ -10,10 +10,14 @@
   "nearby-shops": "Nearby Shops",
   "processing-qr": "Processing QR...",
   "request-turn": "Request Turn",
+  "confirm-turn": "Confirm Turn",
   "save": "Save",
   "scan-qr-code": "Scan QR Code",
   "enter-cellphone": "Enter your phone number",
   "enter-phone-desc": "Enter your phone number to get notified when your turn is ready.",
   "terms-conditions": "Terms & Conditions",
-  "accept-by-continue": "By continuing I accept the"
+  "accept-by-continue": "By continuing I accept the",
+  "enter-code": "Enter the validation code",
+  "enter-code-desc": "Enter the validation code on your phone to validate your turn.",
+  "enter-code-desc-line2": "This is only required once."
 }
