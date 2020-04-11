@@ -11,5 +11,9 @@
   "processing-qr": "Procesando QR...",
   "request-turn": "Solicitar Turno",
   "save": "Guardar",
-  "scan-qr-code": "Escanear Código QR"
+  "scan-qr-code": "Escanear Código QR",
+  "enter-cellphone": "Ingresa tu celular",
+  "enter-phone-desc": "Ingresa tu número de celular para que podamos notificarte cuando sea tu turno.",
+  "terms-conditions": "Términos y Condiciones",
+  "accept-by-continue": "Al continuar acepto los"
 }

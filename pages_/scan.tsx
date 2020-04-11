@@ -31,6 +31,8 @@ const Scan = () => {
         </Row>
       </div>
       <style jsx>{`
+        .cauda_scan {
+        }
       `}</style>
     </Layout>
   );

@@ -1,4 +1,19 @@
 {
+  "about": "About Cauda",
+  "add-shop": "Add your Shop",
+  "cancel-turn": "Cancel Turn",
+  "contact": "Contact us",
+  "continue": "Continue",
+  "loading": "Loading...",
+  "my-active-turns": "My Active Turns",
+  "my-shop": "Mi Comercio",
   "nearby-shops": "Nearby Shops",
-  "scan-qr-code": "Scan QR Code"
+  "processing-qr": "Processing QR...",
+  "request-turn": "Request Turn",
+  "save": "Save",
+  "scan-qr-code": "Scan QR Code",
+  "enter-cellphone": "Enter your phone number",
+  "enter-phone-desc": "Enter your phone number to get notified when your turn is ready.",
+  "terms-conditions": "Terms & Conditions",
+  "accept-by-continue": "By continuing I accept the"
 }

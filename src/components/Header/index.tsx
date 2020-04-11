@@ -13,7 +13,7 @@ export default function Header(props) {
         <Col className="text-center py-4">
           <Link href="/">
             <a>
-              <Image src="cauda_logo.svg" />
+              <Image src="/cauda_logo.svg" />
             </a>
           </Link>
         </Col>
