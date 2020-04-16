@@ -64,12 +64,17 @@ body {
   flex-direction: column;
   height: 100%;
   max-width: 768px;
+  padding: 0 10px;
 }
 main {
   flex: 1;
 }
 
+
+// GLOBAL COMPONENTS
+
 .cauda_card {
+  max-width: 420px;
   background: none;
   background-color: rgba(255, 255, 255, 0.8) !important;
   border: none;
@@ -78,9 +83,47 @@ main {
               inset 0 0 0 1px rgba(255, 255, 255, 0.5);
   backdrop-filter: saturate(50%) blur(20px);
 }
+.card-header {
+  background: none;
+  font-size: 1rem;
+  border-bottom: 1px solid var(--color_divider);
+}
 
 .cauda_title {
   margin-bottom: 1rem;
   font-size: 1.2rem;
   text-align: center;
+}
+
+
+
+
+// SCAN
+
+.cauda_scan {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 280px;
+}
+
+
+
+// SHOP CARD
+
+.cauda_shop {
+  margin: 0 auto;
+  margin-bottom: 2rem;
+  width: 100%;
+  max-width: 420px;
+}
+.shop_map {
+  border-bottom: 1px solid var(--color_divider);
+  min-height: 50px;
+}
+.list-group {
+  font-size: 0.8rem;
+}
+.list-group-item {
+  border: none;
+  padding: 0.35rem 1.25rem;
 }

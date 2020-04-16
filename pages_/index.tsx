@@ -34,8 +34,11 @@ const Home = () => {
 
         <Row>
           <Col className="text-center">
-            <Button variant="info" className="tertiary px-4">{t('common:my-shop')}</Button>{' '}
-            {/* <p>{t('common:my-active-turns')}</p> */}
+            <Button
+              href="/my-shop"
+              variant="info"
+              className="tertiary px-4"
+            >{t('common:my-shop')}</Button>
           </Col>
         </Row>
       </div>
