@@ -36,31 +36,6 @@ export default function ShopCard({ children, className, ...rest }: Props) {
       <style jsx global>{`
         .root {
         }
-        .cauda_shop {
-          margin: 0 auto;
-          margin-bottom: 2rem;
-          width: 100%;
-          max-width: 420px;
-        }
-        .shop_map {
-          border-bottom: 1px solid var(--color_divider);
-          min-height: 50px;
-        }
-        .card-header {
-          background: none;
-          font-size: 1rem;
-          border-bottom: 1px solid var(--color_divider);
-        }
-        .list-group {
-          font-size: 0.8rem;
-        }
-        .list-group-item {
-          border: none;
-          padding: 0.35rem 1.25rem;
-        }
-        .card-body {
-          padding: 0.5rem;
-        }
       `}</style>
     </div>
   );

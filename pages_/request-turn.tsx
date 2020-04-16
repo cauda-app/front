@@ -1,12 +1,94 @@
 import useTranslation from 'next-translate/useTranslation';
-import Button from 'react-bootstrap/Button';
 import Layout from '../src/components/Layout';
+import Shopcard from '../src/components/ShopCard';
+import Card from 'react-bootstrap/Card';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import FormControl from 'react-bootstrap/FormControl';
+import Button from 'react-bootstrap/Button';
+import Link from 'next/link';
 
 const RequestTurn = () => {
   const { t } = useTranslation();
   return (
     <Layout>
-      <Button>{t('common:request-turn')}</Button>{' '}
+
+      <Shopcard />
+
+      <Card className="cauda_card mt-3 mx-auto text-center">
+        <Card.Body>
+
+          <Form>
+
+            <Form.Group controlId="client-cellphone">
+              <Form.Label className="sr-only">{t('common:client-cellphone')}</Form.Label>
+              <InputGroup size="lg">
+                <InputGroup.Prepend>
+                  <InputGroup.Text>#</InputGroup.Text>
+                </InputGroup.Prepend>
+                <FormControl
+                  placeholder={t('common:enter-cellphone')}
+                />
+              </InputGroup>
+              <Form.Text className="text-muted">
+                {t('common:enter-phone-desc')}
+              </Form.Text>
+            </Form.Group>
+
+            <Button
+              href=""
+              variant="primary"
+              size="lg"
+              className="mb-3 mb-sm-0"
+              block
+            >{t('common:request-turn')}</Button>
+
+            <small className="text-muted">
+              {t('common:accept-by-continue')} <Link href="/terms"><a>{t('common:terms-conditions')}</a></Link>. 
+            </small>
+
+          </Form>
+
+        </Card.Body>
+      </Card>
+
+      <Card className="cauda_card mt-3 mx-auto text-center">
+        <Card.Body>
+
+          <Form>
+
+            <Form.Group controlId="client-code">
+              <Form.Label className="sr-only">{t('common:enter-code')}</Form.Label>
+              <InputGroup size="lg">
+                <InputGroup.Prepend>
+                  <InputGroup.Text>#</InputGroup.Text>
+                </InputGroup.Prepend>
+                <FormControl
+                  placeholder={t('common:enter-code')}
+                />
+              </InputGroup>
+              <Form.Text className="text-muted">
+                {t('common:enter-code-desc')}
+              </Form.Text>
+            </Form.Group>
+
+            <Button
+              href=""
+              variant="success"
+              size="lg"
+              className="mb-2"
+              block
+            >{t('common:confirm-turn')}</Button>
+
+            <small className="text-muted">
+              {t('common:enter-code-desc-line2')}
+            </small>
+
+          </Form>
+
+        </Card.Body>
+      </Card>
+ 
     </Layout>
   );
 };

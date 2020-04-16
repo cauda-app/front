@@ -9,11 +9,11 @@ export default function Header(props) {
 
   return (
     <header>
-      <Row>
+      <Row className="no-gutters">
         <Col className="text-center py-4">
           <Link href="/">
             <a>
-              <Image src="cauda_logo.svg" />
+              <Image src="/cauda_logo.svg" />
             </a>
           </Link>
         </Col>
