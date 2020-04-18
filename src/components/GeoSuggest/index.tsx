@@ -3,10 +3,15 @@ import Geosuggest from 'react-geosuggest';
 const types = ['address'];
 const fields = ['geometry.location'];
 
-export default function GeoSuggest({ onSuggestSelect, ...rest }) {
+export default function GeoSuggest({
+  isInvalid = false,
+  onSuggestSelect,
+  ...rest
+}) {
   return (
-    <div>
+    <div className={`root ${isInvalid ? 'is-invalid' : ''}`}>
       <Geosuggest
+        inputClassName={`form-control ${isInvalid ? 'is-invalid' : ''}`}
         country="ar"
         types={types}
         placeDetailFields={fields}
@@ -14,25 +19,22 @@ export default function GeoSuggest({ onSuggestSelect, ...rest }) {
         {...rest}
       />
       <style jsx global>{`
+        .root {
+          flex: 1;
+        }
+
         .geosuggest {
           font-size: 18px;
           font-size: 1rem;
           position: relative;
-          width: 50%;
-          margin: 1em auto;
+          width: 100%;
           text-align: left;
         }
         .geosuggest__input {
           width: 100%;
-          border: 2px solid transparent;
-          box-shadow: 0 0 1px #3d464d;
-          padding: 0.5em 1em;
-          -webkit-transition: border 0.2s, box-shadow 0.2s;
-          transition: border 0.2s, box-shadow 0.2s;
+          border-radius: 0;
         }
         .geosuggest__input:focus {
-          border-color: #267dc0;
-          box-shadow: 0 0 0 transparent;
         }
         .geosuggest__suggests {
           position: absolute;
@@ -43,7 +45,7 @@ export default function GeoSuggest({ onSuggestSelect, ...rest }) {
           padding: 0;
           margin-top: -1px;
           background: #fff;
-          border: 2px solid #267dc0;
+          border: 1px solid #000;
           border-top-width: 0;
           overflow-x: hidden;
           overflow-y: auto;

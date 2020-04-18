@@ -23,7 +23,10 @@
   "enter-code-desc-line2": "Solo tenés que hacer esto una vez.",
   "shop-details": "Datos Comercio",
   "shop-name": "Nombre del Comercio",
+  "shop-name-required": "Por favor ingrese el Nombre del Comercio",
   "shop-address": "Dirección",
+  "shop-address-required": "Por favor ingrese una Dirección válida. Asegúrese que el mapa muestre la dirección correcta",
   "shop-phone": "Teléfono del Comercio",
+  "shop-phone-required": "Por favor ingrese un Teléfono del Comercio válido",
   "shop-hours": "Horarios"
 }
