@@ -70,6 +70,11 @@ main {
   flex: 1;
 }
 
+// https://github.com/react-bootstrap/react-bootstrap/issues/5081
+.dropdown-menu {
+  margin: 0 !important
+}
+
 
 // GLOBAL COMPONENTS
 
