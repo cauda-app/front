@@ -1,5 +1,5 @@
 import { Context } from '../context'
-import { MutationSingUpArgs, MutationVerifyClientArgs } from '../graphql'
+import { MutationSingUpArgs, MutationVerifyClientArgs } from '../../graphql'
 
 const clientResolver = {
   Query: {

@@ -71,8 +71,8 @@ export type QueryClientArgs = {
 
 
 export type QueryNearShopsArgs = {
-  lat?: Maybe<Scalars['Float']>;
-  lng?: Maybe<Scalars['Float']>;
+  lat: Scalars['Float'];
+  lng: Scalars['Float'];
 };
 
 
@@ -276,7 +276,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryClientArgs, never>>,
-  nearShops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType, RequireFields<QueryNearShopsArgs, never>>,
+  nearShops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType, RequireFields<QueryNearShopsArgs, 'lat' | 'lng'>>,
   shop?: Resolver<Maybe<ResolversTypes['Shop']>, ParentType, ContextType, RequireFields<QueryShopArgs, 'id'>>,
   shops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType>,
 }>;
