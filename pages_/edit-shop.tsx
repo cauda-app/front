@@ -6,9 +6,10 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
+import Spinner from 'react-bootstrap/Spinner';
 import GoogleMapReact from 'google-map-react';
 import GeoSuggest from '../src/components/GeoSuggest';
-import { isEmptyObject, timeOptions } from '../src/utils';
+import { isEmptyObject, validatePhoneRequest } from '../src/utils';
 import DayHourDropDown from '../src/components/DayHourDropDown';
 
 type MarkerProps = {
@@ -100,9 +101,10 @@ const EditShop = () => {
   const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [submitAttempt, setSubmitAttempt] = React.useState(false);
+  const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errors, setErrors] = React.useState<ShopErrors>({});
 
-  const validate = (shop: Shop) => {
+  const validate = async (shop: Shop) => {
     const errors: ShopErrors = {};
 
     if (!shop.name) {
@@ -115,15 +117,24 @@ const EditShop = () => {
 
     if (!shop.phone) {
       errors.phone = t('common:shop-phone-required');
+    } else {
+      const isValid = await validatePhoneRequest(shop.phone);
+      if (!isValid) {
+        errors.phone = t('common:shop-phone-invalid');
+      }
     }
 
     return errors;
   };
 
   React.useEffect(() => {
-    if (submitAttempt) {
-      setErrors(validate(state));
+    async function setErrorsAsync() {
+      if (submitAttempt) {
+        setErrors(await validate(state));
+      }
     }
+
+    setErrorsAsync();
   }, [state]);
 
   const onChange = (e) => {
@@ -143,11 +154,13 @@ const EditShop = () => {
     dispatch({ field: name, value });
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     event.stopPropagation();
 
-    const errors = validate(state);
+    setIsSubmitting(true);
+
+    const errors = await validate(state);
 
     if (isEmptyObject(errors)) {
       console.log('Form OK');
@@ -155,6 +168,8 @@ const EditShop = () => {
       setErrors(errors);
       setSubmitAttempt(true);
     }
+
+    setIsSubmitting(false);
   };
 
   return (
@@ -181,6 +196,7 @@ const EditShop = () => {
                   onChange={onChange}
                   placeholder={t('common:shop-name')}
                   isInvalid={!!errors.name}
+                  disabled={isSubmitting}
                 />
                 <FormControl.Feedback type="invalid">
                   {errors.name}
@@ -199,6 +215,7 @@ const EditShop = () => {
                 <GeoSuggest
                   isInvalid={!!errors.address}
                   placeholder={t('common:shop-address')}
+                  disabled={isSubmitting}
                   onChange={() => onAddressChange('', null)}
                   onSuggestSelect={(suggestion) => {
                     if (suggestion) {
@@ -218,9 +235,10 @@ const EditShop = () => {
               <div style={{ height: '200px', width: '100%' }}>
                 <GoogleMapReact
                   bootstrapURLKeys={{ key: process.env.GOOGLE_PLACES_KEY }}
-                  defaultCenter={{ lat: -34.603722, lng: -58.381592 }}
+                  defaultCenter={{ lat: -34.603722, lng: -58.381592 }} // TODO: Fixed for Argentina
                   center={state.coord}
                   zoom={state.coord ? 18 : 2}
+                  disabled={isSubmitting}
                 >
                   <Marker {...state.coord} />
                 </GoogleMapReact>
@@ -239,9 +257,10 @@ const EditShop = () => {
                   type="text"
                   name="phone"
                   value={state.phone}
-                  onChange={onChange}
+                  onBlur={onChange}
                   placeholder={t('common:shop-phone')}
                   isInvalid={!!errors.phone}
+                  disabled={isSubmitting}
                 />
                 <FormControl.Feedback type="invalid">
                   {errors.phone}
@@ -258,6 +277,7 @@ const EditShop = () => {
               onActiveChange={onCheckboxChange}
               onOpenChange={(value) => onHourChange('mondayOpen', value)}
               onCloseChange={(value) => onHourChange('mondayClose', value)}
+              disabled={isSubmitting}
             />
 
             <DayHourDropDown
@@ -269,6 +289,7 @@ const EditShop = () => {
               onActiveChange={onCheckboxChange}
               onOpenChange={(value) => onHourChange('tuesdayOpen', value)}
               onCloseChange={(value) => onHourChange('tuesdayClose', value)}
+              disabled={isSubmitting}
             />
 
             <DayHourDropDown
@@ -280,6 +301,7 @@ const EditShop = () => {
               onActiveChange={onCheckboxChange}
               onOpenChange={(value) => onHourChange('wednesdayOpen', value)}
               onCloseChange={(value) => onHourChange('wednesdayClose', value)}
+              disabled={isSubmitting}
             />
 
             <DayHourDropDown
@@ -291,6 +313,7 @@ const EditShop = () => {
               onActiveChange={onCheckboxChange}
               onOpenChange={(value) => onHourChange('thursdayOpen', value)}
               onCloseChange={(value) => onHourChange('thursdayClose', value)}
+              disabled={isSubmitting}
             />
 
             <DayHourDropDown
@@ -302,6 +325,7 @@ const EditShop = () => {
               onActiveChange={onCheckboxChange}
               onOpenChange={(value) => onHourChange('fridayOpen', value)}
               onCloseChange={(value) => onHourChange('fridayClose', value)}
+              disabled={isSubmitting}
             />
 
             <DayHourDropDown
@@ -313,6 +337,7 @@ const EditShop = () => {
               onActiveChange={onCheckboxChange}
               onOpenChange={(value) => onHourChange('saturdayOpen', value)}
               onCloseChange={(value) => onHourChange('saturdayClose', value)}
+              disabled={isSubmitting}
             />
 
             <DayHourDropDown
@@ -324,6 +349,7 @@ const EditShop = () => {
               onActiveChange={onCheckboxChange}
               onOpenChange={(value) => onHourChange('sundayOpen', value)}
               onCloseChange={(value) => onHourChange('sundayClose', value)}
+              disabled={isSubmitting}
             />
 
             {JSON.stringify(state)}
@@ -334,7 +360,19 @@ const EditShop = () => {
               size="lg"
               className="mt-4"
               block
+              disabled={isSubmitting}
             >
+              {isSubmitting ? (
+                <Spinner
+                  as="span"
+                  animation="border"
+                  size="sm"
+                  role="status"
+                  aria-hidden="true"
+                >
+                  <span className="sr-only">{t('common:loading')}</span>
+                </Spinner>
+              ) : null}{' '}
               {t('common:save')}
             </Button>
           </Form>

@@ -15,6 +15,7 @@
     "bootstrap": "^4.4.1",
     "date-fns": "^2.11.1",
     "dotenv": "^8.2.0",
+    "google-libphonenumber": "^3.2.8",
     "google-map-react": "^1.1.7",
     "graphql": "^14.6.0",
     "next": "^9.3.4",

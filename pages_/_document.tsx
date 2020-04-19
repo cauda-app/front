@@ -11,7 +11,7 @@ class MyDocument extends Document {
       <Html>
         <Head>
           <script
-            src={`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_PLACES_KEY}&libraries=places&language=es&region=AR"`}
+            src={`https://maps.googleapis.com/maps/api/js?key=${process.env.GOOGLE_PLACES_KEY}&libraries=places&language=es&region=AR"`} // TODO: Fixed for Argentina
           ></script>
         </Head>
         <body>

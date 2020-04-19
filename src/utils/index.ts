@@ -50,3 +50,14 @@ export const timeOptions = [
   '23:00',
   '23:30',
 ];
+
+export const validatePhoneRequest = async (
+  number: string
+): Promise<boolean> => {
+  const url = new URL('/api/validate-phone', window.location.origin);
+  const params = { number };
+  url.search = new URLSearchParams(params).toString();
+  const response = await fetch(url.toString());
+  const body = await response.json();
+  return body.isValid;
+};

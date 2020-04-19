@@ -36,6 +36,7 @@
   "shop-address": "Dirección",
   "shop-address-required": "Por favor ingrese una Dirección válida. Asegúrese que el mapa muestre la dirección correcta",
   "shop-phone": "Teléfono del Comercio",
+  "shop-phone-invalid": "El número ingresado es inválido",
   "shop-phone-required": "Por favor ingrese un Teléfono del Comercio válido",
   "shop-hours": "Horarios"
 }

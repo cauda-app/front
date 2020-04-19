@@ -12,6 +12,7 @@ interface Props {
   closeValue: string;
   onOpenChange: (string) => void;
   onCloseChange: (string) => void;
+  disabled: boolean;
 }
 
 export default function DayHourDropDown({
@@ -23,6 +24,7 @@ export default function DayHourDropDown({
   closeValue,
   onOpenChange,
   onCloseChange,
+  disabled,
 }: Props) {
   return (
     <Form.Group controlId={`shop-${dayOfWeek}`}>
@@ -32,13 +34,14 @@ export default function DayHourDropDown({
         type="checkbox"
         checked={active}
         onChange={onActiveChange}
+        disabled={disabled}
       />
       <Form.Label>{label}</Form.Label>
       <DropdownButton
         id={`${dayOfWeek}-open`}
         name={`${dayOfWeek}Open`}
         title={openValue}
-        disabled={!active}
+        disabled={disabled || !active}
         className="d-inline"
       >
         {timeOptions.map((time, index) => (
@@ -55,7 +58,7 @@ export default function DayHourDropDown({
         id={`${dayOfWeek}-close`}
         name={`${dayOfWeek}IsClose`}
         title={closeValue}
-        disabled={!active}
+        disabled={disabled || !active}
         className="d-inline"
       >
         {timeOptions.map((time, index) => (
