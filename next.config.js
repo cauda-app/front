@@ -2,7 +2,7 @@ const result = require('dotenv').config();
 const withImages = require('next-images');
 
 module.exports = withImages({
-  env: result.parsed,
+  env: result.parsed || {},
   experimental: {
     modern: true,
     polyfillsOptimization: true,
