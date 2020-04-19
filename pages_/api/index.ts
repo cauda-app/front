@@ -20,8 +20,7 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 // export default apolloServer.createHandler({ path: '/api/graphql' });
 
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+  schema,
   context: ({ event, context }) => ({
     headers: event.headers,
     functionName: context.functionName,
