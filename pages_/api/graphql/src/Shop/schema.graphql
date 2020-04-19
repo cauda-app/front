@@ -1,0 +1,71 @@
+type Shop {
+  id: ID!
+  isClosed: Boolean!
+  lastNumber: Int!
+  nextNumber: Int!
+  createdAt: DateTime!
+
+  details: ShopDetails!
+
+  # issuedNumber: [IssuedNumber!]!
+}
+
+type ShopDetails {
+  address: String!
+  lat: Float!
+  lng: Float!
+  name: String!
+  ownerPhone: String!
+  isOwnerPhoneValidated: Boolean!
+  mondayTimeEnd: String
+  mondayTimeStart: String
+  tuesdayTimeEnd: String
+  tuesdayTimeStart: String
+  wednesdayTimeEnd: String
+  wednesdayTimeStart: String
+  thursdayTimeEnd: String
+  thursdayTimeStart: String
+  fridayTimeEnd: String
+  fridayTimeStart: String
+  saturdayTimeEnd: String
+  saturdayTimeStart: String
+  sundayTimeEnd: String
+  sundayTimeStart: String
+  createdAt: DateTime!
+}
+
+type Query {
+  shop(id: ID!): Shop
+  shops: [Shop!]!
+  nearShops(lat: Float!, lng: Float!): [Shop!]!
+}
+
+type Mutation {
+  registerShop(shop: ShopInput!): Shop!
+  updateShop(shop: ShopInput!): Shop!
+}
+
+input ShopInput {
+  id: ID
+  address: String!
+  lat: Float!
+  lng: Float!
+  name: String!
+  ownerPhone: String!
+  isClosed: Boolean
+  shopPhone: String
+  mondayTimeEnd: Time
+  mondayTimeStart: Time
+  tuesdayTimeEnd: Time
+  tuesdayTimeStart: Time
+  wednesdayTimeEnd: Time
+  wednesdayTimeStart: Time
+  thursdayTimeEnd: Time
+  thursdayTimeStart: Time
+  fridayTimeEnd: Time
+  fridayTimeStart: Time
+  saturdayTimeEnd: Time
+  saturdayTimeStart: Time
+  sundayTimeEnd: Time
+  sundayTimeStart: Time
+}
