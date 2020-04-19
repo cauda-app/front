@@ -4,6 +4,15 @@
   "cancel-turn": "Cancelar Turno",
   "contact": "Contacto",
   "continue": "Continuar",
+  "days": {
+    "monday": "Lunes",
+    "tuesday": "Martes",
+    "wednesday": "Miércoles",
+    "thursday": "Jueves",
+    "friday": "Viernes",
+    "saturday": "Sábado",
+    "sunday": "Domingo"
+  },
   "loading": "Loading...",
   "my-active-turns": "Mis Turnos Activos",
   "my-shop": "Mi Comercio",

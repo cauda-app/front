@@ -8,7 +8,8 @@ import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import GoogleMapReact from 'google-map-react';
 import GeoSuggest from '../src/components/GeoSuggest';
-import { isEmptyObject } from '../src/utils';
+import { isEmptyObject, timeOptions } from '../src/utils';
+import DayHourDropDown from '../src/components/DayHourDropDown';
 
 type MarkerProps = {
   lat: number;
@@ -22,6 +23,20 @@ interface Shop {
   address?: string;
   coord?: { lat: number; long: number };
   phone?: string;
+  mondayOpen?: string;
+  mondayClose?: string;
+  tuesdayOpen?: string;
+  tuesdayClose?: string;
+  wednesdayOpen?: string;
+  wednesdayClose?: string;
+  thursdayOpen?: string;
+  thursdayClose?: string;
+  fridayOpen?: string;
+  fridayClose?: string;
+  saturdayOpen?: string;
+  saturdayClose?: string;
+  sundayOpen?: string;
+  sundayClose?: string;
 }
 
 const createEmptyShop = () => ({
@@ -29,6 +44,20 @@ const createEmptyShop = () => ({
   address: '',
   coord: null,
   phone: '',
+  mondayOpen: '9:00',
+  mondayClose: '20:00',
+  tuesdayOpen: '9:00',
+  tuesdayClose: '20:00',
+  wednesdayOpen: '9:00',
+  wednesdayClose: '20:00',
+  thursdayOpen: '9:00',
+  thursdayClose: '20:00',
+  fridayOpen: '9:00',
+  fridayClose: '20:00',
+  saturdayOpen: '9:00',
+  saturdayClose: '20:00',
+  sundayOpen: '9:00',
+  sundayClose: '20:00',
 });
 
 const initialState = (shop: Shop = createEmptyShop()) => {
@@ -37,6 +66,20 @@ const initialState = (shop: Shop = createEmptyShop()) => {
     address: shop.address || '',
     coord: shop.coord,
     phone: shop.phone || '',
+    mondayOpen: shop.mondayOpen || '',
+    mondayClose: shop.mondayClose || '',
+    tuesdayOpen: shop.tuesdayOpen || '',
+    tuesdayClose: shop.tuesdayClose || '',
+    wednesdayOpen: shop.wednesdayOpen || '',
+    wednesdayClose: shop.wednesdayClose || '',
+    thursdayOpen: shop.thursdayOpen || '',
+    thursdayClose: shop.thursdayClose || '',
+    fridayOpen: shop.fridayOpen || '',
+    fridayClose: shop.fridayClose || '',
+    saturdayOpen: shop.saturdayOpen || '',
+    saturdayClose: shop.saturdayClose || '',
+    sundayOpen: shop.sundayOpen || '',
+    sundayClose: shop.sundayClose || '',
   };
 };
 
@@ -87,9 +130,17 @@ const EditShop = () => {
     dispatch({ field: e.target.name, value: e.target.value });
   };
 
+  const onCheckboxChange = (e) => {
+    dispatch({ field: e.target.name, value: e.target.checked });
+  };
+
   const onAddressChange = (address, coord) => {
     dispatch({ field: 'address', value: address });
     dispatch({ field: 'coord', value: coord });
+  };
+
+  const onHourChange = (name, value) => {
+    dispatch({ field: name, value });
   };
 
   const handleSubmit = (event) => {
@@ -198,19 +249,84 @@ const EditShop = () => {
               </InputGroup>
             </Form.Group>
 
-            {/* <Form.Group controlId="shop-hours">
-              <Form.Label className="sr-only">
-                {t('common:shop-hours')}
-              </Form.Label>
-              <InputGroup>
-                <InputGroup.Prepend>
-                  <InputGroup.Text>Icon</InputGroup.Text>
-                </InputGroup.Prepend>
-                <FormControl placeholder={t('common:shop-hours')} />
-              </InputGroup>
-            </Form.Group> */}
+            <DayHourDropDown
+              label={t('common:days.monday')}
+              active={state.mondayIsOpen}
+              dayOfWeek="monday"
+              openValue={state.mondayOpen}
+              closeValue={state.mondayClose}
+              onActiveChange={onCheckboxChange}
+              onOpenChange={(value) => onHourChange('mondayOpen', value)}
+              onCloseChange={(value) => onHourChange('mondayClose', value)}
+            />
 
-            {/* {JSON.stringify(state)} */}
+            <DayHourDropDown
+              label={t('common:days.tuesday')}
+              active={state.tuesdayIsOpen}
+              dayOfWeek="tuesday"
+              openValue={state.tuesdayOpen}
+              closeValue={state.tuesdayClose}
+              onActiveChange={onCheckboxChange}
+              onOpenChange={(value) => onHourChange('tuesdayOpen', value)}
+              onCloseChange={(value) => onHourChange('tuesdayClose', value)}
+            />
+
+            <DayHourDropDown
+              label={t('common:days.wednesday')}
+              active={state.wednesdayIsOpen}
+              dayOfWeek="wednesday"
+              openValue={state.wednesdayOpen}
+              closeValue={state.wednesdayClose}
+              onActiveChange={onCheckboxChange}
+              onOpenChange={(value) => onHourChange('wednesdayOpen', value)}
+              onCloseChange={(value) => onHourChange('wednesdayClose', value)}
+            />
+
+            <DayHourDropDown
+              label={t('common:days.thursday')}
+              active={state.thursdayIsOpen}
+              dayOfWeek="thursday"
+              openValue={state.thursdayOpen}
+              closeValue={state.thursdayClose}
+              onActiveChange={onCheckboxChange}
+              onOpenChange={(value) => onHourChange('thursdayOpen', value)}
+              onCloseChange={(value) => onHourChange('thursdayClose', value)}
+            />
+
+            <DayHourDropDown
+              label={t('common:days.friday')}
+              active={state.fridayIsOpen}
+              dayOfWeek="friday"
+              openValue={state.fridayOpen}
+              closeValue={state.fridayClose}
+              onActiveChange={onCheckboxChange}
+              onOpenChange={(value) => onHourChange('fridayOpen', value)}
+              onCloseChange={(value) => onHourChange('fridayClose', value)}
+            />
+
+            <DayHourDropDown
+              label={t('common:days.saturday')}
+              active={state.saturdayIsOpen}
+              dayOfWeek="saturday"
+              openValue={state.saturdayOpen}
+              closeValue={state.saturdayClose}
+              onActiveChange={onCheckboxChange}
+              onOpenChange={(value) => onHourChange('saturdayOpen', value)}
+              onCloseChange={(value) => onHourChange('saturdayClose', value)}
+            />
+
+            <DayHourDropDown
+              label={t('common:days.sunday')}
+              active={state.sundayIsOpen}
+              dayOfWeek="sunday"
+              openValue={state.sundayOpen}
+              closeValue={state.sundayClose}
+              onActiveChange={onCheckboxChange}
+              onOpenChange={(value) => onHourChange('sundayOpen', value)}
+              onCloseChange={(value) => onHourChange('sundayClose', value)}
+            />
+
+            {JSON.stringify(state)}
 
             <Button
               type="submit"
