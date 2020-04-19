@@ -1,6 +1,8 @@
 import Form from 'react-bootstrap/Form';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import { timeOptions } from '../../utils';
 
 interface Props {
@@ -28,49 +30,57 @@ export default function DayHourDropDown({
 }: Props) {
   return (
     <Form.Group controlId={`shop-${dayOfWeek}`}>
-      <Form.Check
-        inline
-        name={`${dayOfWeek}IsOpen`}
-        type="checkbox"
-        checked={active}
-        onChange={onActiveChange}
-        disabled={disabled}
-      />
-      <Form.Label>{label}</Form.Label>
-      <DropdownButton
-        id={`${dayOfWeek}-open`}
-        name={`${dayOfWeek}Open`}
-        title={openValue}
-        disabled={disabled || !active}
-        className="d-inline"
-      >
-        {timeOptions.map((time, index) => (
-          <Dropdown.Item
-            key={index}
-            active={time === openValue}
-            onClick={(e) => onOpenChange(e.target.text)}
+      <Row className="align-items-baseline">
+        <Col>
+          <Form.Check
+            inline
+            name={`${dayOfWeek}IsOpen`}
+            type="checkbox"
+            checked={active}
+            onChange={onActiveChange}
+            disabled={disabled}
+          />
+          <Form.Label>{label}</Form.Label>
+        </Col>
+        <Col>
+          <DropdownButton
+            id={`${dayOfWeek}-open`}
+            name={`${dayOfWeek}Open`}
+            title={openValue}
+            disabled={disabled || !active}
+            className="d-inline"
           >
-            {time}
-          </Dropdown.Item>
-        ))}
-      </DropdownButton>
-      <DropdownButton
-        id={`${dayOfWeek}-close`}
-        name={`${dayOfWeek}IsClose`}
-        title={closeValue}
-        disabled={disabled || !active}
-        className="d-inline"
-      >
-        {timeOptions.map((time, index) => (
-          <Dropdown.Item
-            key={index}
-            active={time === closeValue}
-            onClick={(e) => onCloseChange(e.target.text)}
+            {timeOptions.map((time, index) => (
+              <Dropdown.Item
+                key={index}
+                active={time === openValue}
+                onClick={(e) => onOpenChange(e.target.text)}
+              >
+                {time}
+              </Dropdown.Item>
+            ))}
+          </DropdownButton>
+        </Col>
+        <Col>
+          <DropdownButton
+            id={`${dayOfWeek}-close`}
+            name={`${dayOfWeek}IsClose`}
+            title={closeValue}
+            disabled={disabled || !active}
+            className="d-inline"
           >
-            {time}
-          </Dropdown.Item>
-        ))}
-      </DropdownButton>
+            {timeOptions.map((time, index) => (
+              <Dropdown.Item
+                key={index}
+                active={time === closeValue}
+                onClick={(e) => onCloseChange(e.target.text)}
+              >
+                {time}
+              </Dropdown.Item>
+            ))}
+          </DropdownButton>
+        </Col>
+      </Row>
     </Form.Group>
   );
 }
