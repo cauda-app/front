@@ -43,42 +43,46 @@ export default function DayHourDropDown({
           <Form.Label>{label}</Form.Label>
         </Col>
         <Col>
-          <DropdownButton
-            id={`${dayOfWeek}-open`}
-            name={`${dayOfWeek}Open`}
-            title={openValue}
+          <Form.Control
+            as="select"
+            size="sm"
+            custom
+            value={openValue}
+            controlId={`${dayOfWeek}-open`}
+            name={`${dayOfWeek}IsOpen`}
             disabled={disabled || !active}
             className="d-inline"
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              onOpenChange(e.target.value)
+            }
           >
             {timeOptions.map((time, index) => (
-              <Dropdown.Item
-                key={index}
-                active={time === openValue}
-                onClick={(e) => onOpenChange(e.target.text)}
-              >
+              <option key={index} value={time}>
                 {time}
-              </Dropdown.Item>
+              </option>
             ))}
-          </DropdownButton>
+          </Form.Control>
         </Col>
         <Col>
-          <DropdownButton
-            id={`${dayOfWeek}-close`}
+          <Form.Control
+            as="select"
+            size="sm"
+            custom
+            value={closeValue}
+            controlId={`${dayOfWeek}-close`}
             name={`${dayOfWeek}IsClose`}
-            title={closeValue}
             disabled={disabled || !active}
             className="d-inline"
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+              onCloseChange(e.target.value)
+            }
           >
             {timeOptions.map((time, index) => (
-              <Dropdown.Item
-                key={index}
-                active={time === closeValue}
-                onClick={(e) => onCloseChange(e.target.text)}
-              >
+              <option key={index} value={time}>
                 {time}
-              </Dropdown.Item>
+              </option>
             ))}
-          </DropdownButton>
+          </Form.Control>
         </Col>
       </Row>
     </Form.Group>

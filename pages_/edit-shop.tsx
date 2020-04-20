@@ -16,13 +16,14 @@ import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 
-
 type MarkerProps = {
   lat: number;
   lng: number;
 };
 
-const Marker = (props: MarkerProps) => <div>*</div>;
+const Marker = (props: MarkerProps) => (
+  <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth size="lg" />
+);
 
 interface FormValues {
   name?: string;
@@ -51,24 +52,24 @@ const resetFormValues = () => ({
   coord: null,
   phone: '',
   mondayIsOpen: true,
-  mondayOpen: '9:00',
+  mondayOpen: '09:00',
   mondayClose: '20:00',
   tuesdayIsOpen: true,
-  tuesdayOpen: '9:00',
+  tuesdayOpen: '09:00',
   tuesdayClose: '20:00',
   wednesdayIsOpen: true,
-  wednesdayOpen: '9:00',
+  wednesdayOpen: '09:00',
   wednesdayClose: '20:00',
   thursdayIsOpen: true,
-  thursdayOpen: '9:00',
+  thursdayOpen: '09:00',
   thursdayClose: '20:00',
   fridayIsOpen: true,
-  fridayOpen: '9:00',
+  fridayOpen: '09:00',
   fridayClose: '20:00',
   saturdayIsOpen: true,
-  saturdayOpen: '9:00',
+  saturdayOpen: '09:00',
   saturdayClose: '20:00',
-  sundayOpen: '9:00',
+  sundayOpen: '09:00',
   sundayClose: '20:00',
 });
 
@@ -174,7 +175,9 @@ const EditShop = () => {
               </Form.Label>
               <InputGroup>
                 <InputGroup.Prepend>
-                  <InputGroup.Text><FontAwesomeIcon icon={faStoreAlt} fixedWidth /></InputGroup.Text>
+                  <InputGroup.Text>
+                    <FontAwesomeIcon icon={faStoreAlt} fixedWidth />
+                  </InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl
                   autoFocus
@@ -198,7 +201,9 @@ const EditShop = () => {
               </Form.Label>
               <InputGroup>
                 <InputGroup.Prepend>
-                  <InputGroup.Text><FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth /></InputGroup.Text>
+                  <InputGroup.Text>
+                    <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth />
+                  </InputGroup.Text>
                 </InputGroup.Prepend>
                 <GeoSuggest
                   isInvalid={!!errors.address}
@@ -228,7 +233,7 @@ const EditShop = () => {
                   zoom={state.coord ? 18 : 2}
                   disabled={isSubmitting}
                 >
-                  <Marker {...state.coord} />
+                  {state.coord ? <Marker {...state.coord} /> : null}
                 </GoogleMapReact>
               </div>
             </Form.Group>
@@ -239,7 +244,9 @@ const EditShop = () => {
               </Form.Label>
               <InputGroup>
                 <InputGroup.Prepend>
-                  <InputGroup.Text><FontAwesomeIcon icon={faPhone} fixedWidth /></InputGroup.Text>
+                  <InputGroup.Text>
+                    <FontAwesomeIcon icon={faPhone} fixedWidth />
+                  </InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl
                   type="text"

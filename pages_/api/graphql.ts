@@ -9,11 +9,14 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 const server = new ApolloServer({
   schema,
-  context: ({ event, context }) => ({
-    // headers: event.headers,    
-    // event,    
-    ...createContext(),
-  }),
+  context: ({ event, context }) => (
+    console.log({ event, context }),
+    {
+      // headers: event.headers,
+      // event,
+      ...createContext(),
+    }
+  ),
 });
 
 export const config = {
