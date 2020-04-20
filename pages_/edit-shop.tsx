@@ -11,6 +11,11 @@ import GeoSuggest from '../src/components/GeoSuggest';
 import { isEmptyObject, validatePhoneRequest } from '../src/utils';
 import DayHourDropDown from '../src/components/DayHourDropDown';
 import LoadingButton from '../src/components/LoadingButton';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
+import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPhone } from '@fortawesome/free-solid-svg-icons';
+
 
 type MarkerProps = {
   lat: number;
@@ -169,7 +174,7 @@ const EditShop = () => {
               </Form.Label>
               <InputGroup>
                 <InputGroup.Prepend>
-                  <InputGroup.Text>Icon</InputGroup.Text>
+                  <InputGroup.Text><FontAwesomeIcon icon={faStoreAlt} fixedWidth /></InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl
                   autoFocus
@@ -193,7 +198,7 @@ const EditShop = () => {
               </Form.Label>
               <InputGroup>
                 <InputGroup.Prepend>
-                  <InputGroup.Text>Icon</InputGroup.Text>
+                  <InputGroup.Text><FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth /></InputGroup.Text>
                 </InputGroup.Prepend>
                 <GeoSuggest
                   isInvalid={!!errors.address}
@@ -234,7 +239,7 @@ const EditShop = () => {
               </Form.Label>
               <InputGroup>
                 <InputGroup.Prepend>
-                  <InputGroup.Text>Icon</InputGroup.Text>
+                  <InputGroup.Text><FontAwesomeIcon icon={faPhone} fixedWidth /></InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl
                   type="text"
