@@ -7,7 +7,7 @@ import {
   QueryNearShopsArgs,
   MutationRegisterShopArgs,
   MutationUpdateShopArgs,
-} from '../graphql'
+} from '../../graphql'
 
 const shopResolver = {
   Query: {
