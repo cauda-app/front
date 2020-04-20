@@ -1,4 +1,3 @@
-import { fileLoader, mergeTypes } from 'merge-graphql-schemas'
-import path from 'path';
+import schema from './schema.graphql';
 
-export default mergeTypes(fileLoader(path.join(__dirname, "./**/*.graphql")), {all: true})
+export default schema;

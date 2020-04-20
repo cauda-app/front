@@ -1,3 +1,15 @@
+scalar Date
+scalar DateTime
+scalar Time
+
+type Client {
+  id: ID!
+  phone: String!
+  isPhoneValidated: Boolean!
+  createdAt: DateTime!
+  # issuedNumber: [IssuedNumber!]!
+}
+
 type Shop {
   id: ID!
   isClosed: Boolean!
@@ -34,15 +46,8 @@ type ShopDetails {
   createdAt: DateTime!
 }
 
-type Query {
-  shop(id: ID!): Shop
-  shops: [Shop!]!
-  nearShops(lat: Float!, lng: Float!): [Shop!]!
-}
-
-type Mutation {
-  registerShop(shop: ShopInput!): Shop!
-  updateShop(shop: ShopInput!): Shop!
+input ClientSingupInput {
+  phone: String!
 }
 
 input ShopInput {
@@ -68,4 +73,18 @@ input ShopInput {
   saturdayTimeStart: Time
   sundayTimeEnd: Time
   sundayTimeStart: Time
+}
+
+type Query {
+  client(id: ID): Client
+  nearShops(lat: Float!, lng: Float!): [Shop!]!
+  shop(id: ID!): Shop
+  shops: [Shop!]!
+}
+
+type Mutation {
+  registerShop(shop: ShopInput!): Shop!
+  singUp(client: ClientSingupInput!): Client!
+  updateShop(shop: ShopInput!): Shop!
+  verifyClient(id: ID!, verificationCode: String!): Client!
 }
