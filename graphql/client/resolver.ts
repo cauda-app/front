@@ -1,5 +1,5 @@
 import { Context } from '../context'
-import { MutationSingUpArgs, MutationVerifyClientArgs } from '../../graphql'
+import { MutationSignUpArgs, MutationVerifyClientArgs } from '../../graphql'
 
 const clientResolver = {
   Query: {
@@ -10,7 +10,7 @@ const clientResolver = {
     },
   },
   Mutation: {
-    singUp: (parent, args: MutationSingUpArgs, ctx: Context) => {
+    signUp: (parent, args: MutationSignUpArgs, ctx: Context) => {
       return ctx.prisma.client.create({
         data: {
           phone: args.client.phone,

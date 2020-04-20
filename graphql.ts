@@ -21,7 +21,7 @@ export type Client = {
   createdAt: Scalars['DateTime'];
 };
 
-export type ClientSingupInput = {
+export type ClientSignupInput = {
   phone: Scalars['String'];
 };
 
@@ -30,7 +30,7 @@ export type ClientSingupInput = {
 export type Mutation = {
    __typename?: 'Mutation';
   registerShop: Shop;
-  singUp: Client;
+  signUp: Client;
   updateShop: Shop;
   verifyClient: Client;
 };
@@ -41,8 +41,8 @@ export type MutationRegisterShopArgs = {
 };
 
 
-export type MutationSingUpArgs = {
-  client: ClientSingupInput;
+export type MutationSignUpArgs = {
+  client: ClientSignupInput;
 };
 
 
@@ -228,7 +228,7 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>,
   ShopInput: ShopInput,
   Time: ResolverTypeWrapper<Scalars['Time']>,
-  ClientSingupInput: ClientSingupInput,
+  ClientSignupInput: ClientSignupInput,
   Date: ResolverTypeWrapper<Scalars['Date']>,
 }>;
 
@@ -247,7 +247,7 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {},
   ShopInput: ShopInput,
   Time: Scalars['Time'],
-  ClientSingupInput: ClientSingupInput,
+  ClientSignupInput: ClientSignupInput,
   Date: Scalars['Date'],
 }>;
 
@@ -269,7 +269,7 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   registerShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationRegisterShopArgs, 'shop'>>,
-  singUp?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationSingUpArgs, 'client'>>,
+  signUp?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'client'>>,
   updateShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationUpdateShopArgs, 'shop'>>,
   verifyClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationVerifyClientArgs, 'id' | 'verificationCode'>>,
 }>;

@@ -11,10 +11,10 @@ type Query {
 }
 
 type Mutation {
-  singUp(client: ClientSingupInput!): Client!
+  signUp(client: ClientSignupInput!): Client!
   verifyClient(id: ID!, verificationCode: String!): Client!
 }
 
-input ClientSingupInput {
+input ClientSignupInput {
   phone: String!    
 }
