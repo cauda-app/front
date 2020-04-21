@@ -1,4 +1,4 @@
-import { ApolloServer, gql } from 'apollo-server-micro';
+import { ApolloServer } from 'apollo-server-micro';
 import { createContext } from '../../graphql/context';
 import { makeExecutableSchema } from 'graphql-tools';
 
@@ -9,8 +9,7 @@ const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 const server = new ApolloServer({
   schema,
-  context: ({ event, context }) => (
-    console.log({ event, context }),
+  context: (/* { event, context } */) => (    
     {
       // headers: event.headers,
       // event,

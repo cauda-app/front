@@ -4,6 +4,7 @@ type Shop {
   lastNumber: Int!
   nextNumber: Int!
   createdAt: DateTime!
+  updatedAt: DateTime!
 
   details: ShopDetails!
 
@@ -32,6 +33,7 @@ type ShopDetails {
   sundayTimeEnd: String
   sundayTimeStart: String
   createdAt: DateTime!
+  updatedAt: DateTime!
 }
 
 type Query {

@@ -19,6 +19,7 @@ export type Client = {
   phone: Scalars['String'];
   isPhoneValidated: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type ClientSignupInput = {
@@ -87,6 +88,7 @@ export type Shop = {
   lastNumber: Scalars['Int'];
   nextNumber: Scalars['Int'];
   createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
   details: ShopDetails;
 };
 
@@ -113,6 +115,7 @@ export type ShopDetails = {
   sundayTimeEnd?: Maybe<Scalars['String']>;
   sundayTimeStart?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
 };
 
 export type ShopInput = {
@@ -256,6 +259,7 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
   phone?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   isPhoneValidated?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
@@ -287,6 +291,7 @@ export type ShopResolvers<ContextType = any, ParentType extends ResolversParentT
   lastNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   nextNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   details?: Resolver<ResolversTypes['ShopDetails'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
@@ -313,6 +318,7 @@ export type ShopDetailsResolvers<ContextType = any, ParentType extends Resolvers
   sundayTimeEnd?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   sundayTimeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 

@@ -13,6 +13,7 @@ model Client {
   phone            String         @unique
   issuedNumber     IssuedNumber[]
   createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt 
 }
 
 model IssuedNumber {
@@ -24,6 +25,7 @@ model IssuedNumber {
   client       Client @relation(fields: [clientId], references: [id])
   shop         Shop   @relation(fields: [shopId], references: [id])
   createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
   @@index([clientId], name: "fk_issuedNumbers_clienId_idx")
   @@index([shopId], name: "fk_issuedNumbers_shopId_idx")
@@ -37,6 +39,7 @@ model Shop {
   issuedNumber IssuedNumber[]
   shopDetails  ShopDetails
   createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 }
 
 model ShopDetails {
@@ -65,6 +68,7 @@ model ShopDetails {
   sundayTimeStart       DateTime?
 
   createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
   shop                  Shop      @relation(fields: [shopId], references: [id])
 
   @@index([shopId], name: "fk_shopDetails_shop_idx")
