@@ -5,10 +5,8 @@ type Shop {
   nextNumber: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
-
   details: ShopDetails!
-
-  # issuedNumber: [IssuedNumber!]!
+  issuedNumber: [IssuedNumber!]!
 }
 
 type ShopDetails {

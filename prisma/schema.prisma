@@ -17,29 +17,30 @@ model Client {
 }
 
 model IssuedNumber {
-  clientId     Int
-  id           Int    @default(autoincrement()) @id
-  issuedNumber Int
+  id           Int        @default(autoincrement()) @id
+  clientId     Int        @default(autoincrement())
   shopId       String
+  issuedNumber Int
   status       Int
-  client       Client @relation(fields: [clientId], references: [id])
-  shop         Shop   @relation(fields: [shopId], references: [id])
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  client       Client     @relation(fields: [clientId], references: [id])
+  shop         Shop       @relation(fields: [shopId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 
   @@index([clientId], name: "fk_issuedNumbers_clienId_idx")
   @@index([shopId], name: "fk_issuedNumbers_shopId_idx")
 }
 
 model Shop {
-  id           String         @id
-  isClosed     Boolean
-  lastNumber   Int
-  nextNumber   Int
-  issuedNumber IssuedNumber[]
-  shopDetails  ShopDetails
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id            String         @id
+  isClosed      Boolean
+  numberCounter Int            @default(0) 
+  lastNumber    Int
+  nextNumber    Int
+  issuedNumber  IssuedNumber[]
+  shopDetails   ShopDetails
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
 }
 
 model ShopDetails {

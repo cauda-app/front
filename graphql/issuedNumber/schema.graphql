@@ -1,0 +1,27 @@
+enum IssuedNumberStatus {
+  PENDING
+  ATTENDED
+  SKIPPED
+  CANCELLED
+}
+
+type IssuedNumber {
+  id: ID!
+  issuedNumber: Int
+  status: IssuedNumberStatus!
+  clientId: Int!
+  shopId: String!
+  client: Client!
+  shop: Shop!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type Query {
+  getAppointments(clientId: Int!, shopId: String): [IssuedNumber!]!
+}
+
+type Mutation {
+  requestAppointment(shopId: String!, clientId: Int!): IssuedNumber!
+  cancelAppointment(shopId: String!, clientId: Int!): Boolean!
+}

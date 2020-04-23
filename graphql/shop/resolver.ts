@@ -6,7 +6,7 @@ import {
   QueryShopArgs,
   QueryNearShopsArgs,
   MutationRegisterShopArgs,
-  MutationUpdateShopArgs,
+  MutationUpdateShopArgs
 } from '../../graphql';
 
 const shopResolver = {
@@ -44,7 +44,7 @@ const shopResolver = {
       });
     },
   },
-  Mutation: {
+  Mutation: {    
     registerShop: (parent, args: MutationRegisterShopArgs, ctx: Context) => {
       return ctx.prisma.shop.create({
         data: {

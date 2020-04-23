@@ -28,17 +28,51 @@ export type ClientSignupInput = {
 
 
 
+export type IssuedNumber = {
+   __typename?: 'IssuedNumber';
+  id: Scalars['ID'];
+  issuedNumber?: Maybe<Scalars['Int']>;
+  status: IssuedNumberStatus;
+  clientId: Scalars['Int'];
+  shopId: Scalars['String'];
+  client: Client;
+  shop: Shop;
+  createdAt: Scalars['DateTime'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export enum IssuedNumberStatus {
+  Pending = 'PENDING',
+  Attended = 'ATTENDED',
+  Skipped = 'SKIPPED',
+  Cancelled = 'CANCELLED'
+}
+
 export type Mutation = {
    __typename?: 'Mutation';
+  cancelAppointment: Scalars['Boolean'];
   registerShop: Shop;
+  requestAppointment: IssuedNumber;
   signUp: Client;
   updateShop: Shop;
   verifyClient: Client;
 };
 
 
+export type MutationCancelAppointmentArgs = {
+  shopId: Scalars['String'];
+  clientId: Scalars['Int'];
+};
+
+
 export type MutationRegisterShopArgs = {
   shop: ShopInput;
+};
+
+
+export type MutationRequestAppointmentArgs = {
+  shopId: Scalars['String'];
+  clientId: Scalars['Int'];
 };
 
 
@@ -60,6 +94,7 @@ export type MutationVerifyClientArgs = {
 export type Query = {
    __typename?: 'Query';
   client?: Maybe<Client>;
+  getAppointments: Array<IssuedNumber>;
   nearShops: Array<Shop>;
   shop?: Maybe<Shop>;
   shops: Array<Shop>;
@@ -68,6 +103,12 @@ export type Query = {
 
 export type QueryClientArgs = {
   id?: Maybe<Scalars['ID']>;
+};
+
+
+export type QueryGetAppointmentsArgs = {
+  clientId?: Maybe<Scalars['Int']>;
+  shopId?: Maybe<Scalars['String']>;
 };
 
 
@@ -90,6 +131,7 @@ export type Shop = {
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   details: ShopDetails;
+  issuedNumber: Array<IssuedNumber>;
 };
 
 export type ShopDetails = {
@@ -224,10 +266,12 @@ export type ResolversTypes = ResolversObject<{
   String: ResolverTypeWrapper<Scalars['String']>,
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>,
-  Float: ResolverTypeWrapper<Scalars['Float']>,
-  Shop: ResolverTypeWrapper<Shop>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
+  IssuedNumber: ResolverTypeWrapper<IssuedNumber>,
+  IssuedNumberStatus: IssuedNumberStatus,
+  Shop: ResolverTypeWrapper<Shop>,
   ShopDetails: ResolverTypeWrapper<ShopDetails>,
+  Float: ResolverTypeWrapper<Scalars['Float']>,
   Mutation: ResolverTypeWrapper<{}>,
   ShopInput: ShopInput,
   Time: ResolverTypeWrapper<Scalars['Time']>,
@@ -243,10 +287,12 @@ export type ResolversParentTypes = ResolversObject<{
   String: Scalars['String'],
   Boolean: Scalars['Boolean'],
   DateTime: Scalars['DateTime'],
-  Float: Scalars['Float'],
-  Shop: Shop,
   Int: Scalars['Int'],
+  IssuedNumber: IssuedNumber,
+  IssuedNumberStatus: IssuedNumberStatus,
+  Shop: Shop,
   ShopDetails: ShopDetails,
+  Float: Scalars['Float'],
   Mutation: {},
   ShopInput: ShopInput,
   Time: Scalars['Time'],
@@ -271,8 +317,23 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
   name: 'DateTime'
 }
 
+export type IssuedNumberResolvers<ContextType = any, ParentType extends ResolversParentTypes['IssuedNumber'] = ResolversParentTypes['IssuedNumber']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  issuedNumber?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  status?: Resolver<ResolversTypes['IssuedNumberStatus'], ParentType, ContextType>,
+  clientId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  shopId?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  client?: Resolver<ResolversTypes['Client'], ParentType, ContextType>,
+  shop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
+}>;
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  cancelAppointment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCancelAppointmentArgs, 'shopId' | 'clientId'>>,
   registerShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationRegisterShopArgs, 'shop'>>,
+  requestAppointment?: Resolver<ResolversTypes['IssuedNumber'], ParentType, ContextType, RequireFields<MutationRequestAppointmentArgs, 'shopId' | 'clientId'>>,
   signUp?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'client'>>,
   updateShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationUpdateShopArgs, 'shop'>>,
   verifyClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationVerifyClientArgs, 'id' | 'verificationCode'>>,
@@ -280,6 +341,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryClientArgs, never>>,
+  getAppointments?: Resolver<Array<ResolversTypes['IssuedNumber']>, ParentType, ContextType, RequireFields<QueryGetAppointmentsArgs, never>>,
   nearShops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType, RequireFields<QueryNearShopsArgs, 'lat' | 'lng'>>,
   shop?: Resolver<Maybe<ResolversTypes['Shop']>, ParentType, ContextType, RequireFields<QueryShopArgs, 'id'>>,
   shops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType>,
@@ -293,6 +355,7 @@ export type ShopResolvers<ContextType = any, ParentType extends ResolversParentT
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   details?: Resolver<ResolversTypes['ShopDetails'], ParentType, ContextType>,
+  issuedNumber?: Resolver<Array<ResolversTypes['IssuedNumber']>, ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
@@ -330,6 +393,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Client?: ClientResolvers<ContextType>,
   Date?: GraphQLScalarType,
   DateTime?: GraphQLScalarType,
+  IssuedNumber?: IssuedNumberResolvers<ContextType>,
   Mutation?: MutationResolvers<ContextType>,
   Query?: QueryResolvers<ContextType>,
   Shop?: ShopResolvers<ContextType>,
