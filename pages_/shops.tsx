@@ -3,8 +3,14 @@ import Layout from '../src/components/Layout';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Shopcard from '../src/components/ShopCard';
+import Location, { Coords } from '../src/components/Location';
 
-const Shops = () => {
+type Props = {
+  coords: Coords;
+};
+
+const Shops = (props: Props) => {
+  console.log(props);
   const { t } = useTranslation();
   return (
     <Layout>
@@ -24,4 +30,6 @@ const Shops = () => {
   );
 };
 
-export default Shops;
+export default () => (
+  <Location render={(coords: Coords) => <Shops coords={coords} />} />
+);
