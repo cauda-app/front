@@ -12,7 +12,7 @@ const Shops = () => {
 
   const [shops, setShops] = useState([]);
   useEffect(() => {
-    graphqlClient.request(`{shops { id}}`).then((data) => {
+    graphqlClient.request(`{shops { id }}`).then((data) => {
       setShops(data.shops);
     });
   }, []);

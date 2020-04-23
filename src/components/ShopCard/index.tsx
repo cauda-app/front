@@ -8,8 +8,9 @@ import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
 import { faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
-
 import graphqlClient from 'src/graphql-config';
+
+import { Shop, ShopDetails } from '../../../graphql';
 
 type Props = {
   id: string;
@@ -19,7 +20,7 @@ type Props = {
 export default function ShopCard({ id, className, ...rest }: Props) {
   const { t } = useTranslation();
 
-  const [shop, setShop] = useState();
+  const [shop, setShop] = useState<Shop & ShopDetails>();
   const [error, setError] = useState(false);
   useEffect(() => {
     const query = `
@@ -38,24 +39,23 @@ export default function ShopCard({ id, className, ...rest }: Props) {
     }
     `;
 
-    debugger
     graphqlClient
       .request(query, { id })
-      .then((data) => (data ? setShop(data) : setError(true)));
+      .then((data) => (data ? setShop(data.shop) : setError(true)));
   }, []);
 
   if (!shop && !error) {
     return <div>Loading...</div>;
   }
 
-  if (!shop && error) {
+  if (error) {
     return <div>Some Error</div>;
   }
 
   return (
     <div className={`root ${className}`} {...rest}>
       <Card className="cauda_card cauda_shop">
-        <Card.Header>asd</Card.Header>
+        <Card.Header>{shop?.details?.name}</Card.Header>
         <div className="shop_map">
           <Card.Img variant="top" src="map.png" alt="ShopMap" />
         </div>
