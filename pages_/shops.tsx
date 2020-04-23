@@ -1,11 +1,26 @@
+import React, { useState, useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import Layout from '../src/components/Layout';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Shopcard from '../src/components/ShopCard';
+
+import ShopCard from 'src/components/ShopCard';
+import graphqlClient from 'src/graphql-config';
 
 const Shops = () => {
   const { t } = useTranslation();
+
+  const [shops, setShops] = useState([]);
+  useEffect(() => {
+    graphqlClient.request(`{shops { id}}`).then((data) => {
+      setShops(data.shops);
+    });
+  }, []);
+
+  if(!shops.length) {
+    return <div>Loading...</div>
+  }
+
   return (
     <Layout>
       <div className="content">
@@ -15,9 +30,9 @@ const Shops = () => {
           </Col>
         </Row>
 
-        <Shopcard />
-        <Shopcard />
-        <Shopcard />
+        {shops.map((s) => (
+          <ShopCard key={s} id={s} />
+        ))}
       </div>
       <style jsx global>{``}</style>
     </Layout>
