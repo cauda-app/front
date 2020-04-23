@@ -32,7 +32,7 @@
     "dotenv": "^8.2.0",
     "google-libphonenumber": "^3.2.8",
     "google-map-react": "^1.1.7",
-    "graphql": "14.6.0",
+    "graphql": "^15.0.0",
     "graphql-import": "^1.0.2",
     "graphql-request": "^1.8.2",
     "graphql-tools": "^4.0.7",

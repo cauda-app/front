@@ -119,7 +119,7 @@ export type QueryNearShopsArgs = {
 
 
 export type QueryShopArgs = {
-  id: Scalars['ID'];
+  id: Scalars['String'];
 };
 
 export type Shop = {
