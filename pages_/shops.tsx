@@ -7,10 +7,13 @@ import Col from 'react-bootstrap/Col';
 import ShopCard from 'src/components/ShopCard';
 import graphqlClient from 'src/graphql-config';
 
+import { Shop } from '../graphql';
+
+
 const Shops = () => {
   const { t } = useTranslation();
 
-  const [shops, setShops] = useState([]);
+  const [shops, setShops] = useState<Shop[]>([]);
   useEffect(() => {
     graphqlClient.request(`{shops { id }}`).then((data) => {
       setShops(data.shops);
@@ -31,7 +34,7 @@ const Shops = () => {
         </Row>
 
         {shops.map((s) => (
-          <ShopCard key={s} id={s} />
+          <ShopCard key={s.id} id={s.id} />
         ))}
       </div>
       <style jsx global>{``}</style>
