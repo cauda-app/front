@@ -21,6 +21,11 @@ function Location({
   coords,
   render,
 }: Props) {
+  const deleteGPSStorageAndRefresh = () => {
+    window.localStorage.removeItem(GPS_STATUS_KEY);
+    location.reload();
+  };
+
   if (!isGeolocationAvailable) {
     return <div>Tu dispositivo no soporta uso de GPS</div>;
   }
@@ -30,14 +35,7 @@ function Location({
     return (
       <div>
         Permita el uso de GPS
-        <button
-          onClick={() => {
-            window.localStorage.removeItem(GPS_STATUS_KEY);
-            location.reload();
-          }}
-        >
-          Refrescar
-        </button>
+        <button onClick={deleteGPSStorageAndRefresh}>Refrescar</button>
       </div>
     );
   }
@@ -65,6 +63,11 @@ const RequestGPSNotification = ({ render }: RequestGPSNotificationType) => {
   const [gpsStatus, setGpsStatus] = useState(LOADING);
   const [requestAccess, setRequestAccess] = useState(false);
 
+  const deleteGPSStorageAndRefresh = () => {
+    window.localStorage.removeItem(GPS_STATUS_KEY);
+    location.reload();
+  };
+
   useEffect(() => {
     setGpsStatus(window.localStorage.getItem(GPS_STATUS_KEY));
   });
@@ -87,14 +90,7 @@ const RequestGPSNotification = ({ render }: RequestGPSNotificationType) => {
     return (
       <div>
         Has denegado el acceso al GPS, tenés que habilitarlo antes de continuar
-        <button
-          onClick={() => {
-            window.localStorage.removeItem(GPS_STATUS_KEY);
-            location.reload();
-          }}
-        >
-          Refrescar
-        </button>
+        <button onClick={deleteGPSStorageAndRefresh}>Refrescar</button>
       </div>
     );
   }
