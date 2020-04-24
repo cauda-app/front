@@ -9,19 +9,28 @@ import graphqlClient from 'src/graphql-config';
 
 import { Shop } from '../graphql';
 
-
 const Shops = () => {
   const { t } = useTranslation();
 
   const [shops, setShops] = useState<Shop[]>([]);
   useEffect(() => {
-    graphqlClient.request(`{shops { id }}`).then((data) => {
-      setShops(data.shops);
-    });
+    graphqlClient
+      .request(
+        /* GraphQL */ `
+          {
+            shops {
+              id
+            }
+          }
+        `
+      )
+      .then((data) => {
+        setShops(data.shops);
+      });
   }, []);
 
-  if(!shops.length) {
-    return <div>Loading...</div>
+  if (!shops.length) {
+    return <div>Loading...</div>;
   }
 
   return (
