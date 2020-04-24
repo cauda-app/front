@@ -15,7 +15,7 @@ const Home = () => {
     <Layout>
       <div className="content d-flex flex-column justify-content-between align-items-center h-100">
         <div></div>
-        <Card className="cauda_card mt-3 px-3 py-4 p-sm-5 mb-5">
+        <Card className="cauda_card mt-3 p-3 p-sm-4 p-md-5 mb-5">
           <Row>
             <Col xs="12">
               <Button
@@ -25,9 +25,8 @@ const Home = () => {
                 className="mb-4 d-flex justify-content-between align-items-center p-sm-3"
                 block
               >
-                <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth />
+                <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth />{' '}
                 {t('common:nearby-shops')}
-                <div></div>
               </Button>
             </Col>
             <Col xs="12">
@@ -38,9 +37,8 @@ const Home = () => {
                 className="d-flex justify-content-between align-items-center p-sm-3"
                 block
               >
-                <FontAwesomeIcon icon={faQrcode} fixedWidth />
+                <FontAwesomeIcon icon={faQrcode} fixedWidth />{' '}
                 {t('common:scan-qr-code')}
-                <div></div>
               </Button>
             </Col>
           </Row>
@@ -48,18 +46,15 @@ const Home = () => {
 
         <Row>
           <Col className="text-center">
-            <Button
-              href="/my-shop"
-              variant="info"
-              className="tertiary px-4"
-            ><FontAwesomeIcon icon={faStoreAlt} fixedWidth /> {t('common:my-shop')}</Button>
+            <Button href="/my-shop" variant="info" className="tertiary px-4">
+              <FontAwesomeIcon icon={faStoreAlt} fixedWidth />{' '}
+              {t('common:my-shop')}
+            </Button>
           </Col>
         </Row>
       </div>
 
-      <style jsx>{`
-
-      `}</style>
+      <style jsx>{``}</style>
     </Layout>
   );
 };

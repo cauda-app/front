@@ -6,7 +6,8 @@ import Card from 'react-bootstrap/Card';
 import Spinner from 'react-bootstrap/Spinner';
 import Layout from '../src/components/Layout';
 import { ReaderProps } from '../src/types/react-qr-reader';
-import templateUrl from '../public/qr-template.png';
+import img_templateUrl from '../public/cauda_qrcode@3x.png';
+import img_scanningUrl from '../public/cauda_scanqr@3x.png';
 
 const QrReader: ComponentType<ReaderProps> = dynamic(
   () => import('react-qr-reader'),
@@ -18,16 +19,19 @@ const QrReader: ComponentType<ReaderProps> = dynamic(
 const Error = ({ error }) => <div>ERROR: {error}</div>;
 const QrTemplate = () => (
   <div>
-    <img src={templateUrl}></img>
+    <img className="img-fluid" src={img_templateUrl}></img>
   </div>
 );
 const Loading = () => {
   const { t } = useTranslation();
 
   return (
-    <Spinner animation="border" variant="primary" role="status">
-      <span className="sr-only">{t('common:loading')}</span>
-    </Spinner>
+    <div className="mt-1 d-flex align-content-center justify-content-center">
+      <Spinner animation="border" variant="primary" role="status">
+        <span className="sr-only">{t('common:loading')}</span>
+      </Spinner>
+      <p className="ml-2 mt-1 mb-0">{t('common:processing-qr')}</p>
+    </div>
   );
 };
 
@@ -52,12 +56,16 @@ const Scan = () => {
   return (
     <Layout>
       <div className="content d-flex flex-column justify-content-between h-100">
-        <Card className="cauda_card cauda_scan mt-3 p-3 p-sm-4 p-md-5 text-center">
-          <Card.Body>
+        <Card className="cauda_card cauda_scan p-4 text-center">
+          <Card.Body className="p-0">
             {error ? (
               <Error error={error} />
             ) : (
               <>
+                <div className="scanning_bar">
+                  <img className="img-fluid" src={img_scanningUrl}></img>
+                </div>
+
                 {processing ? (
                   <QrTemplate />
                 ) : (
@@ -66,14 +74,15 @@ const Scan = () => {
                     onError={handleError}
                     onScan={handleScan}
                     onLoad={handleLoad}
+                    showViewFinder={false}
                   />
                 )}
                 {loaded ? null : <Loading />}
 
                 {processing ? (
                   <>
-                    <Loading />
-                    <p className="mb-0">{t('common:processing-qr')}</p>
+                    {/* <Loading /> */}
+                    {/* <p className="mb-0">{t('common:processing-qr')}</p> */}
                   </>
                 ) : null}
               </>
