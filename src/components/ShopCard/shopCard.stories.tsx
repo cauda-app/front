@@ -3,5 +3,5 @@ import { storiesOf } from '@storybook/react';
 import ShopCard from '.';
 
 storiesOf('ShopCard', module).add('default', () => {
-  return <ShopCard />;
+  return <div></div>; //<ShopCard />;
 });

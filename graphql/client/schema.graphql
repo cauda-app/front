@@ -1,0 +1,21 @@
+type Client {
+  id: ID!
+  phone: String!
+  isPhoneValidated: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  # issuedNumber: [IssuedNumber!]!
+}
+
+type Query {
+  client(id: ID): Client
+}
+
+type Mutation {
+  signUp(client: ClientSignupInput!): Client!
+  verifyClient(id: ID!, verificationCode: String!): Client!
+}
+
+input ClientSignupInput {
+  phone: String!
+}

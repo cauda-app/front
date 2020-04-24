@@ -18,7 +18,7 @@ const RequestTurn = () => {
   return (
     <Layout>
 
-      <Shopcard />
+      {/* <Shopcard /> */}
 
       <Card className="cauda_card mt-3 mx-auto text-center">
         <Card.Body>
