@@ -15,24 +15,33 @@ const Home = () => {
     <Layout>
       <div className="content d-flex flex-column justify-content-between align-items-center h-100">
         <div></div>
-        <Card className="cauda_card mt-3 p-3 p-sm-4 p-md-5 mb-5">
+        <Card className="cauda_card mt-3 px-3 py-4 p-sm-5 mb-5">
           <Row>
-            <Col xs="12" sm="6">
+            <Col xs="12">
               <Button
                 href="/shops"
                 variant="primary"
                 size="lg"
-                className="mb-3 mb-sm-0"
+                className="mb-4 d-flex justify-content-between align-items-center p-sm-3"
                 block
-              ><FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth /> {t('common:nearby-shops')}</Button>
+              >
+                <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth />
+                {t('common:nearby-shops')}
+                <div></div>
+              </Button>
             </Col>
-            <Col xs="12" sm="6">
+            <Col xs="12">
               <Button
                 href="/scan"
                 variant="secondary"
                 size="lg"
+                className="d-flex justify-content-between align-items-center p-sm-3"
                 block
-              ><FontAwesomeIcon icon={faQrcode} fixedWidth /> {t('common:scan-qr-code')}</Button>
+              >
+                <FontAwesomeIcon icon={faQrcode} fixedWidth />
+                {t('common:scan-qr-code')}
+                <div></div>
+              </Button>
             </Col>
           </Row>
         </Card>
