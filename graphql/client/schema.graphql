@@ -1,7 +1,7 @@
 type Client {
   id: ID!
   phone: String!
-  isPhoneValidated: Boolean!
+  phoneValidated: DateTime!
   createdAt: DateTime!
   updatedAt: DateTime!
   # issuedNumber: [IssuedNumber!]!

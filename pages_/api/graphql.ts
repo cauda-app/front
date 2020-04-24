@@ -1,21 +1,24 @@
 import { ApolloServer } from 'apollo-server-micro';
-import { createContext } from '../../graphql/context';
 import { makeExecutableSchema } from 'graphql-tools';
 
+import { createContext } from '../../graphql/context';
 import typeDefs from '../../graphql/typeDefs';
 import resolvers from '../../graphql/resolvers';
+
+//import { verifyToken } from '../../graphql/utils/jwt';
+// const res = verifyToken(token);
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 const server = new ApolloServer({
   schema,
-  context: (/* { event, context } */) => (    
-    {
-      // headers: event.headers,
-      // event,
+  context: ({ req, res }) => {
+    return {
+      req,
+      res,
       ...createContext(),
-    }
-  ),
+    };
+  },
 });
 
 export const config = {
