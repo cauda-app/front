@@ -25,13 +25,13 @@ $theme-colors: (
 $font-family-sans-serif: 'Roboto', -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 $font-family-base: $font-family-sans-serif;
 
-$border-radius:               1rem !default;
-$border-radius-sm:            .6rem !default;
-$border-radius-lg:            .5rem !default;
+$border-radius:               1rem;
+$border-radius-sm:            .6rem;
+$border-radius-lg:            .5rem;
 
-$btn-border-radius:           $border-radius !default;
-$btn-border-radius-sm:        $border-radius-sm !default;
-$btn-border-radius-lg:        $border-radius-lg !default;
+$btn-border-radius:           0.8rem;
+$btn-border-radius-sm:        $border-radius-sm;
+$btn-border-radius-lg:        $border-radius-lg;
 
 // BOOTSTRAP IMPORT
 @import "~bootstrap/scss/bootstrap";
@@ -71,10 +71,16 @@ main {
   flex: 1;
 }
 
+// https://github.com/react-bootstrap/react-bootstrap/issues/5081
+.dropdown-menu {
+  margin: 0 !important
+}
+
 
 // GLOBAL COMPONENTS
 
 .cauda_card {
+  width: 100%;
   max-width: var(--app_maxwidth);
   background: none;
   background-color: rgba(255, 255, 255, 0.8) !important;
@@ -83,13 +89,18 @@ main {
               0 2px 4px 0 rgba(0, 0, 0, 0.1), 
               inset 0 0 0 1px rgba(255, 255, 255, 0.5);
   backdrop-filter: saturate(50%) blur(20px);
+  svg {
+    max-width: 16px;
+  }
+}
+.cauda_card .card-body {
+  padding: 0.9rem;
 }
 .card-header {
   background: none;
   font-size: 1rem;
   border-bottom: 1px solid var(--color_divider);
 }
-
 .cauda_title {
   margin-bottom: 1rem;
   font-size: 1.2rem;
@@ -143,6 +154,9 @@ main {
   width: 100%;
   max-width: 420px;
 }
+.cauda_shop .card-body {
+  padding: 1rem 0.5rem 0.5rem;
+}
 .shop_map {
   border-bottom: 1px solid var(--color_divider);
   min-height: 50px;
@@ -153,4 +167,7 @@ main {
 .list-group-item {
   border: none;
   padding: 0.35rem 1.25rem;
+  svg {
+    opacity: 0.5;
+  }
 }

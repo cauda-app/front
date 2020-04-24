@@ -3,6 +3,11 @@ import useTranslation from 'next-translate/useTranslation';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Button from 'react-bootstrap/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faClock } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   children?: React.ReactNode;
@@ -22,13 +27,19 @@ export default function ShopCard({ children, className, ...rest }: Props) {
           <Card.Img variant="top" src="map.png" alt="ShopMap" />
         </div>
         <ListGroup variant="flush">
-          <ListGroup.Item>ShopAddress</ListGroup.Item>
-          <ListGroup.Item>ShopPhone</ListGroup.Item>
-          <ListGroup.Item>ShopHours</ListGroup.Item>
+          <ListGroup.Item>
+            <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth /> ShopAddress
+          </ListGroup.Item>
+          <ListGroup.Item>
+            <FontAwesomeIcon icon={faPhone} fixedWidth /> ShopPhone
+          </ListGroup.Item>
+          <ListGroup.Item>
+            <FontAwesomeIcon icon={faClock} fixedWidth /> ShopHours
+          </ListGroup.Item>
         </ListGroup>
         <Card.Body>
-          <Button variant="primary" size="sm" block>
-            {t('common:request-turn')}
+          <Button variant="primary" block>
+            <FontAwesomeIcon icon={faCalendarCheck} fixedWidth /> {t('common:request-turn')}
           </Button>
         </Card.Body>
       </Card>

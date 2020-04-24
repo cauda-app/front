@@ -7,6 +7,11 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faHashtag } from '@fortawesome/free-solid-svg-icons';
+import { faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
 
 const RequestTurn = () => {
   const { t } = useTranslation();
@@ -24,7 +29,9 @@ const RequestTurn = () => {
               <Form.Label className="sr-only">{t('common:client-cellphone')}</Form.Label>
               <InputGroup size="lg">
                 <InputGroup.Prepend>
-                  <InputGroup.Text>#</InputGroup.Text>
+                  <InputGroup.Text>
+                    <FontAwesomeIcon icon={faPhone} />
+                  </InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl
                   placeholder={t('common:enter-cellphone')}
@@ -39,9 +46,13 @@ const RequestTurn = () => {
               href=""
               variant="primary"
               size="lg"
-              className="mb-3 mb-sm-0"
+              className="mb-3 mb-sm-0 d-flex justify-content-between align-items-center"
               block
-            >{t('common:request-turn')}</Button>
+            >
+              <div></div>
+              {t('common:continue')}
+              <FontAwesomeIcon icon={faChevronRight} />
+            </Button>
 
             <small className="text-muted">
               {t('common:accept-by-continue')} <Link href="/terms"><a>{t('common:terms-conditions')}</a></Link>. 
@@ -61,7 +72,9 @@ const RequestTurn = () => {
               <Form.Label className="sr-only">{t('common:enter-code')}</Form.Label>
               <InputGroup size="lg">
                 <InputGroup.Prepend>
-                  <InputGroup.Text>#</InputGroup.Text>
+                  <InputGroup.Text>
+                    <FontAwesomeIcon icon={faHashtag} />
+                  </InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl
                   placeholder={t('common:enter-code')}
@@ -76,9 +89,13 @@ const RequestTurn = () => {
               href=""
               variant="success"
               size="lg"
-              className="mb-2"
+              className="mb-2 d-flex justify-content-between align-items-center"
               block
-            >{t('common:confirm-turn')}</Button>
+            >
+              <FontAwesomeIcon icon={faCalendarCheck} />
+              {t('common:confirm-turn')}
+              <div></div>
+            </Button>
 
             <small className="text-muted">
               {t('common:enter-code-desc-line2')}
