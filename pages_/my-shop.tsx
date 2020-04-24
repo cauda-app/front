@@ -6,6 +6,9 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 const MyShop = () => {
   const { t } = useTranslation();
@@ -24,7 +27,9 @@ const MyShop = () => {
               <Form.Label className="sr-only">{t('common:shop-cellphone')}</Form.Label>
               <InputGroup size="lg">
                 <InputGroup.Prepend>
-                  <InputGroup.Text>Icon</InputGroup.Text>
+                  <InputGroup.Text>
+                    <FontAwesomeIcon icon={faPhone} fixedWidth />
+                  </InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl
                   placeholder={t('common:enter-cellphone')}
@@ -32,13 +37,18 @@ const MyShop = () => {
               </InputGroup>
             </Form.Group>
 
+
             <Button
               href="/edit-shop"
               variant="primary"
               size="lg"
-              className="mb-3"
+              className="mb-3 mb-sm-0 d-flex justify-content-between align-items-center"
               block
-            >{t('common:continue')}</Button>
+            >
+              <div></div>
+              {t('common:continue')}
+              <FontAwesomeIcon icon={faChevronRight} />
+            </Button>
 
             <small className="text-muted">
               {t('common:accept-by-continue')} <Link href="/terms"><a>{t('common:terms-conditions')}</a></Link>. 

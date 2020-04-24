@@ -29,3 +29,5 @@ yarn-error.log*
 
 # https://github.com/vinissimus/next-translate#add-pages-to-gitignore
 /pages
+
+.now
