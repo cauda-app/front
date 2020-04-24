@@ -15,6 +15,7 @@ type ShopDetails {
   lng: Float!
   name: String!
   ownerPhone: String!
+  shopPhone: String
   isOwnerPhoneValidated: Boolean!
   mondayTimeEnd: String
   mondayTimeStart: String
@@ -35,7 +36,7 @@ type ShopDetails {
 }
 
 type Query {
-  shop(id: ID!): Shop
+  shop(id: String!): Shop
   shops: [Shop!]!
   nearShops(lat: Float!, lng: Float!): [Shop!]!
 }

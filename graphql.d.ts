@@ -107,7 +107,7 @@ export type QueryClientArgs = {
 
 
 export type QueryGetAppointmentsArgs = {
-  clientId?: Maybe<Scalars['Int']>;
+  clientId: Scalars['Int'];
   shopId?: Maybe<Scalars['String']>;
 };
 
@@ -119,7 +119,7 @@ export type QueryNearShopsArgs = {
 
 
 export type QueryShopArgs = {
-  id: Scalars['ID'];
+  id: Scalars['String'];
 };
 
 export type Shop = {
@@ -141,6 +141,7 @@ export type ShopDetails = {
   lng: Scalars['Float'];
   name: Scalars['String'];
   ownerPhone: Scalars['String'];
+  shopPhone?: Maybe<Scalars['String']>;
   isOwnerPhoneValidated: Scalars['Boolean'];
   mondayTimeEnd?: Maybe<Scalars['String']>;
   mondayTimeStart?: Maybe<Scalars['String']>;
@@ -341,7 +342,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryClientArgs, never>>,
-  getAppointments?: Resolver<Array<ResolversTypes['IssuedNumber']>, ParentType, ContextType, RequireFields<QueryGetAppointmentsArgs, never>>,
+  getAppointments?: Resolver<Array<ResolversTypes['IssuedNumber']>, ParentType, ContextType, RequireFields<QueryGetAppointmentsArgs, 'clientId'>>,
   nearShops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType, RequireFields<QueryNearShopsArgs, 'lat' | 'lng'>>,
   shop?: Resolver<Maybe<ResolversTypes['Shop']>, ParentType, ContextType, RequireFields<QueryShopArgs, 'id'>>,
   shops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType>,
@@ -365,6 +366,7 @@ export type ShopDetailsResolvers<ContextType = any, ParentType extends Resolvers
   lng?: Resolver<ResolversTypes['Float'], ParentType, ContextType>,
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   ownerPhone?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  shopPhone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   isOwnerPhoneValidated?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
   mondayTimeEnd?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   mondayTimeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
@@ -407,3 +409,4 @@ export type Resolvers<ContextType = any> = ResolversObject<{
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
 */
 export type IResolvers<ContextType = any> = Resolvers<ContextType>;
+

@@ -48,7 +48,7 @@ export default function DayHourDropDown({
             size="sm"
             custom
             value={openValue}
-            controlId={`${dayOfWeek}-open`}
+            id={`${dayOfWeek}-open`}
             name={`${dayOfWeek}IsOpen`}
             disabled={disabled || !active}
             className="d-inline"
@@ -69,7 +69,7 @@ export default function DayHourDropDown({
             size="sm"
             custom
             value={closeValue}
-            controlId={`${dayOfWeek}-close`}
+            id={`${dayOfWeek}-close`}
             name={`${dayOfWeek}IsClose`}
             disabled={disabled || !active}
             className="d-inline"
