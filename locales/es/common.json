@@ -2,8 +2,11 @@
   "about": "Sobre Cauda",
   "add-shop": "Sumá tu Comercio",
   "cancel-turn": "Cancelar Turno",
+  "cancel": "Cancelar",
+  "my-turn": "Mi Turno",
   "contact": "Contacto",
   "continue": "Continuar",
+  "minutes": "minutos",
   "days": {
     "monday": "Lunes",
     "tuesday": "Martes",

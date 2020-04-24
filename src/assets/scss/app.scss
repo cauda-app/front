@@ -171,3 +171,22 @@ main {
     opacity: 0.5;
   }
 }
+
+
+
+// MY TURN
+
+.myturn__number {
+  margin-bottom: 5px;
+  line-height: 1;
+  font-weight: 900;
+  overflow: hidden;
+  color: var(--color_primary);
+}
+.myturn__qrcode {
+  border: 2px solid var(--color_primary);
+  max-width: 200px;
+  text-align: center;
+}
+
+
