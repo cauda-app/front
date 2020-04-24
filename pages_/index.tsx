@@ -6,7 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Layout from '../src/components/Layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import { faQrcode } from '@fortawesome/free-solid-svg-icons';
+import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 
 const Home = () => {
@@ -22,7 +22,7 @@ const Home = () => {
                 href="/shops"
                 variant="primary"
                 size="lg"
-                className="mb-4 d-flex justify-content-between align-items-center p-sm-3"
+                className="mb-4 d-flex justify-content-between align-items-center py-4 p-sm-3"
                 block
               >
                 <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth />
@@ -35,10 +35,10 @@ const Home = () => {
                 href="/scan"
                 variant="secondary"
                 size="lg"
-                className="d-flex justify-content-between align-items-center p-sm-3"
+                className="d-flex justify-content-between align-items-center py-4 p-sm-3"
                 block
               >
-                <FontAwesomeIcon icon={faQrcode} fixedWidth />
+                <FontAwesomeIcon icon={faCamera} fixedWidth />
                 {t('common:scan-qr-code')}
                 <div></div>
               </Button>
@@ -46,19 +46,27 @@ const Home = () => {
           </Row>
         </Card>
 
-        <Row>
-          <Col className="text-center">
+        <Row className="w-100">
+          <Col className="d-flex justify-content-center align-items-center mx-auto">
             <Button
               href="/my-shop"
               variant="info"
-              className="tertiary px-4"
-            ><FontAwesomeIcon icon={faStoreAlt} fixedWidth /> {t('common:my-shop')}</Button>
+              size="lg"
+              className="btn_myshop tertiary d-flex justify-content-between align-items-center py-2"
+            >
+              <FontAwesomeIcon icon={faStoreAlt} fixedWidth />
+              {t('common:my-shop')}
+              <div></div>
+            </Button>
           </Col>
         </Row>
       </div>
 
-      <style jsx>{`
-
+      <style jsx global>{`
+        .btn_myshop {
+          width: 100%;
+          max-width: 220px;
+        }
       `}</style>
     </Layout>
   );
