@@ -8,7 +8,7 @@ export default function Layout({ children }) {
     <>
       <Head>
         <title>Cauda</title>
-        <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+        <meta name="viewport" content="initial-scale=1.0, width=device-width, user-scalable=no" />
       </Head>
       <Container className="app" fluid>
         <Header />

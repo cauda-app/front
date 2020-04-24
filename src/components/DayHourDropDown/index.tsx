@@ -29,20 +29,21 @@ export default function DayHourDropDown({
   disabled,
 }: Props) {
   return (
-    <Form.Group controlId={`shop-${dayOfWeek}`}>
-      <Row className="align-items-baseline">
-        <Col>
+    <Form.Group controlId={`shop-${dayOfWeek}`} className="mb-2">
+      <Row className="align-items-baseline" noGutters>
+        <Col xs={5}>
           <Form.Check
             inline
             name={`${dayOfWeek}IsOpen`}
-            type="checkbox"
+            type="switch"
             checked={active}
             onChange={onActiveChange}
             disabled={disabled}
-          />
-          <Form.Label>{label}</Form.Label>
+            className="mr-0 d-block"
+            label={label}
+            />
         </Col>
-        <Col>
+        <Col className="pr-1">
           <Form.Control
             as="select"
             size="sm"
@@ -63,7 +64,7 @@ export default function DayHourDropDown({
             ))}
           </Form.Control>
         </Col>
-        <Col>
+        <Col className="pl-1">
           <Form.Control
             as="select"
             size="sm"
