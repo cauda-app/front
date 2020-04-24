@@ -30,7 +30,7 @@ const Loading = () => {
       <Spinner animation="border" variant="primary" role="status">
         <span className="sr-only">{t('common:loading')}</span>
       </Spinner>
-      <p className="ml-2 mt-1 mb-0">{t('common:processing-qr')}</p>
+      <p className="ml-2 mt-1 mb-0">{t('common:loading')}</p>
     </div>
   );
 };
@@ -40,12 +40,14 @@ const Scan = () => {
   const [error, setError] = React.useState(false);
   const [processing, setProcessing] = React.useState(false);
   const [loaded, setLoaded] = React.useState(false);
+  const [result, setResult] = React.useState(false);
 
   const handleError = (error) => setError(error);
   const handleLoad = () => setLoaded(true);
   const handleScan = (result) => {
     if (result) {
       setProcessing(true);
+      setResult(result);
       fetch('/api/qr').then(async (response) => {
         const { url } = await response.json();
         Router.push(url);
@@ -81,8 +83,7 @@ const Scan = () => {
 
                 {processing ? (
                   <>
-                    {/* <Loading /> */}
-                    {/* <p className="mb-0">{t('common:processing-qr')}</p> */}
+                    <p className="mb-0">{result}</p>
                   </>
                 ) : null}
               </>
