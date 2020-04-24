@@ -13,11 +13,10 @@
     "saturday": "Sábado",
     "sunday": "Domingo"
   },
-  "loading": "Loading...",
+  "loading": "Cargando...",
   "my-active-turns": "Mis Turnos Activos",
   "my-shop": "Mi Comercio",
   "nearby-shops": "Comercios Cercanos",
-  "processing-qr": "Procesando QR...",
   "request-turn": "Solicitar Turno",
   "confirm-turn": "Confirmar Turno",
   "save": "Guardar",

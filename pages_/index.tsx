@@ -48,18 +48,15 @@ const Home = () => {
 
         <Row>
           <Col className="text-center">
-            <Button
-              href="/my-shop"
-              variant="info"
-              className="tertiary px-4"
-            ><FontAwesomeIcon icon={faStoreAlt} fixedWidth /> {t('common:my-shop')}</Button>
+            <Button href="/my-shop" variant="info" className="tertiary px-4">
+              <FontAwesomeIcon icon={faStoreAlt} fixedWidth />{' '}
+              {t('common:my-shop')}
+            </Button>
           </Col>
         </Row>
       </div>
 
-      <style jsx>{`
-
-      `}</style>
+      <style jsx>{``}</style>
     </Layout>
   );
 };
