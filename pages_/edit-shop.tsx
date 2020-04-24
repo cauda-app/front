@@ -263,6 +263,10 @@ const EditShop = () => {
               </InputGroup>
             </Form.Group>
 
+            <hr />
+
+            <h6 className="mb-3">{t('common:shop-hours')}</h6>
+
             <Container className="p-0">
               <DayHourDropDown
                 label={t('common:days.monday')}
