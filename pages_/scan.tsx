@@ -38,7 +38,7 @@ const Loading = () => {
 const Scan = () => {
   const { t } = useTranslation();
   const [error, setError] = React.useState(false);
-  const [processing, setProcessing] = React.useState(true);
+  const [processing, setProcessing] = React.useState(false);
   const [loaded, setLoaded] = React.useState(false);
 
   const handleError = (error) => setError(error);
