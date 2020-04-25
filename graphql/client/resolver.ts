@@ -1,8 +1,11 @@
-import { serialize } from 'cookie';
+import { ApolloError } from 'apollo-server-core';
 
-import { createToken } from '../../graphql/utils/jwt';
+// import { serialize } from 'cookie';
+// import { createToken } from '../../graphql/utils/jwt';
+
 import { Context } from '../context';
-import { MutationSignUpArgs, MutationVerifyClientArgs } from '../../graphql';
+import { MutationSignUpArgs } from '../../graphql';
+import { registerPhone } from '../utils/registerPhone';
 
 const clientResolver = {
   Query: {
@@ -13,34 +16,45 @@ const clientResolver = {
     },
   },
   Mutation: {
-    signUp: (parent, args: MutationSignUpArgs, ctx: Context) => {
-      // create code
-      // save it to DB
-      // send sms with code
-      return ctx.prisma.client.create({
+    signUp: async (parent, args: MutationSignUpArgs, ctx: Context) => {
+      const client = await ctx.prisma.client.findOne({
+        where: { phone: args.client.phone },
+      });
+
+      if (client) {
+        return new ApolloError(
+          'Phone entered is already registered',
+          'PHONE_ALREADY_EXISTS'
+        );
+      }
+
+      const newClient = await ctx.prisma.client.create({
         data: {
           phone: args.client.phone,
-          phoneValidated: undefined,
         },
       });
-    },
-    verifyClient: (parent, args: MutationVerifyClientArgs, ctx: Context) => {
-      const token = createToken('1111');
 
-      ctx.res.setHeader(
-        'Set-Cookie',
-        serialize('token', token, {
-          expires: new Date(Date.now() + 1209600000), //14days
-          secure: process.env.NODE_ENV === 'production',
-          httpOnly: true,
-        })
-      );
+      await registerPhone(args.client.phone, ctx);
 
-      return ctx.prisma.client.update({
-        where: { id: Number(args.id) },
-        data: { phoneValidated: new Date().toISOString() },
-      });
+      return newClient;
     },
+    // verifyClient: (parent, args: MutationVerifyClientArgs, ctx: Context) => {
+    //   const token = createToken('1111');
+
+    //   ctx.res.setHeader(
+    //     'Set-Cookie',
+    //     serialize('token', token, {
+    //       expires: new Date(Date.now() + 1209600000), //14days
+    //       secure: process.env.NODE_ENV === 'production',
+    //       httpOnly: true,
+    //     })
+    //   );
+
+    //   // return ctx.prisma.client.update({
+    //   //   where: { id: Number(args.id) },
+    //   //   data: { phoneValidated: new Date().toISOString() },
+    //   // });
+    // },
   },
 };
 

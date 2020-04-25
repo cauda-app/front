@@ -16,7 +16,6 @@ type ShopDetails {
   name: String!
   ownerPhone: String!
   shopPhone: String
-  isOwnerPhoneValidated: Boolean!
   mondayTimeEnd: String
   mondayTimeStart: String
   tuesdayTimeEnd: String

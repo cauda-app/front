@@ -1,0 +1,1 @@
+export const PHONE_CODE_EXPIRY = 5
