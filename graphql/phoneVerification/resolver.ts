@@ -54,6 +54,13 @@ const phoneVerificationResolver = {
         where: { phone: args.phone },
       });
 
+      if (phoneVerification && phoneVerification.verified) {
+        return new ApolloError(
+          'Phone already verified',
+          'PHONE_ALREADY_VERIFIED'
+        );
+      }
+
       // Do not send before 5 mim
       if (
         phoneVerification &&
@@ -68,17 +75,18 @@ const phoneVerificationResolver = {
         );
       }
 
+      const code = randomCode();
       const res = await ctx.prisma.phoneVerification.upsert({
         where: {
           phone: args.phone,
         },
         create: {
-          code: randomCode(),
+          code,
           phone: args.phone,
           expiry: addMinutes(new Date(), PHONE_CODE_EXPIRY).toISOString(),
         },
         update: {
-          code: randomCode(),
+          code,
           expiry: addMinutes(new Date(), PHONE_CODE_EXPIRY).toISOString(),
         },
       });
