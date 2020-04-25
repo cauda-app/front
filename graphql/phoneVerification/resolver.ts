@@ -1,13 +1,17 @@
 import { ApolloError } from 'apollo-server-core';
 import addMinutes from 'date-fns/addMinutes';
+import addDays from 'date-fns/addDays';
 import compareAsc from 'date-fns/compareAsc';
+import { serialize } from 'cookie';
 
+import { createToken } from '../../graphql/utils/jwt';
 import {
   MutationReSendVerificationCodeArgs,
   MutationVerifyCodeArgs,
 } from '../../graphql';
 import { Context } from '../context';
 import randomCode from '../utils/randomCode';
+import { TOKEN_EXPIRY } from '../utils/constants';
 
 import { PHONE_CODE_EXPIRY } from '../utils/constants';
 
@@ -43,6 +47,32 @@ const phoneVerificationResolver = {
         },
       });
 
+      const shopDetails = await ctx.prisma.shopDetails.findOne({
+        where: {
+          ownerPhone: args.phone,
+        },
+      });
+
+      const client = await ctx.prisma.client.findOne({
+        where: {
+          phone: args.phone,
+        },
+      });
+
+      const token = createToken({
+        clientId: client?.id,
+        shopId: shopDetails?.shopId,
+      });
+
+      ctx.res.setHeader(
+        'Set-Cookie',
+        serialize('token', token, {
+          expires: addDays(new Date(), TOKEN_EXPIRY),
+          secure: process.env.NODE_ENV === 'production',
+          httpOnly: true,
+        })
+      );
+
       return !!updated;
     },
     reSendVerificationCode: async (
@@ -75,7 +105,7 @@ const phoneVerificationResolver = {
         );
       }
 
-      const code = randomCode();
+      const code = 1234; //randomCode();
       const res = await ctx.prisma.phoneVerification.upsert({
         where: {
           phone: args.phone,

@@ -1,6 +1,5 @@
 import { ApolloError } from 'apollo-server-core';
 import crypto from 'crypto';
-import nextCookie from 'next-cookies';
 
 import { Context } from '../context';
 import {
@@ -18,10 +17,7 @@ const shopResolver = {
         where: { id: args.id },
       });
     },
-    shops: (parent, args, ctx: Context) => {
-      const { token } = nextCookie(ctx);
-      console.log(token);
-
+    shops: (parent, args, ctx: Context) => {     
       return ctx.prisma.shop.findMany();
     },
     nearShops: async (parent, args: QueryNearShopsArgs, ctx: Context) => {
