@@ -46,6 +46,7 @@
     "react": "github:preact-compat/react#1.0.0",
     "react-bootstrap": "^1.0.0",
     "react-dom": "github:preact-compat/react-dom#1.0.0",
+    "react-qr-reader": "^2.2.1",
     "react-geosuggest": "^2.12.1",
     "react-ssr-prepass": "npm:preact-ssr-prepass@^1.0.1",
     "react-virtualized-auto-sizer": "^1.0.2",
