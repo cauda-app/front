@@ -34,9 +34,9 @@ const phoneVerificationResolver = {
         return new ApolloError('Incorrect code', 'INCORRECT_CODE');
       }
 
-      if (phoneVerification.verified) {
-        return true;
-      }
+      // if (phoneVerification.verified) {
+      //   return true;
+      // }
 
       const updated = await ctx.prisma.phoneVerification.update({
         where: {
@@ -85,12 +85,12 @@ const phoneVerificationResolver = {
         where: { phone: args.phone },
       });
 
-      if (phoneVerification && phoneVerification.verified) {
-        return new ApolloError(
-          'Phone already verified',
-          'PHONE_ALREADY_VERIFIED'
-        );
-      }
+      // if (phoneVerification && phoneVerification.verified) {
+      //   return new ApolloError(
+      //     'Phone already verified',
+      //     'PHONE_ALREADY_VERIFIED'
+      //   );
+      // }
 
       // Do not send before 5 mim
       if (
