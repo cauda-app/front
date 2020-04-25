@@ -1,5 +1,5 @@
 import { ApolloError } from 'apollo-server-core';
-import { Context } from '../context';
+import { Context } from '../../pages_/api/graphql';
 import {
   MutationRequestAppointmentArgs,
   MutationCancelAppointmentArgs,

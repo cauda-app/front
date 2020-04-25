@@ -1,7 +1,7 @@
 import { ApolloError } from 'apollo-server-core';
 import crypto from 'crypto';
 
-import { Context } from '../context';
+import { Context } from '../../pages_/api/graphql';
 import {
   Shop,
   QueryShopArgs,

@@ -9,7 +9,7 @@ import {
   MutationReSendVerificationCodeArgs,
   MutationVerifyCodeArgs,
 } from '../../graphql';
-import { Context } from '../context';
+import { Context } from '../../pages_/api/graphql';
 import randomCode from '../utils/randomCode';
 import { TOKEN_EXPIRY } from '../utils/constants';
 
@@ -62,6 +62,7 @@ const phoneVerificationResolver = {
       const token = createToken({
         clientId: client?.id,
         shopId: shopDetails?.shopId,
+        phone: args.phone,
       });
 
       ctx.res.setHeader(
