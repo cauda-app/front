@@ -9,6 +9,7 @@ import {
   MutationRegisterShopArgs,
   MutationUpdateShopArgs,
 } from '../../graphql';
+import { registerPhone } from '../utils/registerPhone';
 
 const shopResolver = {
   Query: {
@@ -46,8 +47,8 @@ const shopResolver = {
     },
   },
   Mutation: {
-    registerShop: (parent, args: MutationRegisterShopArgs, ctx: Context) => {
-      return ctx.prisma.shop.create({
+    registerShop: async (parent, args: MutationRegisterShopArgs, ctx: Context) => {
+      const newShop = ctx.prisma.shop.create({
         data: {
           id: crypto.randomBytes(20).toString('hex').substring(0, 19),
           isClosed: true,
@@ -60,6 +61,10 @@ const shopResolver = {
           },
         },
       });
+
+      await registerPhone(args.shop.ownerPhone, ctx);
+
+      return newShop;
     },
     updateShop: (parent, args: MutationUpdateShopArgs, ctx: Context) => {
       if (!args.shop.id) {
