@@ -18,7 +18,7 @@ const shopResolver = {
         where: { id: args.id },
       });
     },
-    shops: (parent, args, ctx: Context) => {     
+    shops: (parent, args, ctx: Context) => {
       return ctx.prisma.shop.findMany();
     },
     nearShops: async (parent, args: QueryNearShopsArgs, ctx: Context) => {
@@ -45,9 +45,26 @@ const shopResolver = {
         },
       });
     },
+    myShop: (parent, args: QueryShopArgs, ctx: Context) => {
+      if (!ctx.tokenInfo.isValid) {
+        return new ApolloError('Shop not verified', 'INVALID_TOKEN');
+      }
+
+      if (!ctx.tokenInfo.shopId) {
+        return new ApolloError('Shop Id not provided', 'INVALID_SHOP_ID');
+      }
+
+      return ctx.prisma.shop.findOne({
+        where: { id: ctx.tokenInfo.shopId },
+      });
+    },
   },
   Mutation: {
-    registerShop: async (parent, args: MutationRegisterShopArgs, ctx: Context) => {
+    registerShop: async (
+      parent,
+      args: MutationRegisterShopArgs,
+      ctx: Context
+    ) => {
       const newShop = ctx.prisma.shop.create({
         data: {
           id: crypto.randomBytes(20).toString('hex').substring(0, 19),
@@ -61,6 +78,8 @@ const shopResolver = {
           },
         },
       });
+
+      // TODO: create also as client
 
       await registerPhone(args.shop.ownerPhone, ctx);
 

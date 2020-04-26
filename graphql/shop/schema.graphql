@@ -38,6 +38,7 @@ type Query {
   shop(id: String!): Shop
   shops: [Shop!]!
   nearShops(lat: Float!, lng: Float!): [Shop!]!
+  myShop: Shop!
 }
 
 type Mutation {

@@ -5,49 +5,47 @@ import nextCookie from 'next-cookies';
 import prismaInstance from '../../graphql/context';
 import typeDefs from '../../graphql/typeDefs';
 import resolvers from '../../graphql/resolvers';
-import { verifyToken } from '../../graphql/utils/jwt';
+import { verifyToken, TokenInfo } from '../../graphql/utils/jwt';
 
 export type Context = {
-  res: any,
-  req: any,
-  prisma: typeof prismaInstance
-}
+  res: any;
+  req: any;
+  tokenInfo: TokenInfo;
+  prisma: typeof prismaInstance;
+};
 
-const processCookie = async (req: any) => {
+const processCookie = (req: any): TokenInfo => {
   const { token } = nextCookie({ req });
   if (!token) {
-    return undefined;
+    return { isValid: false };
   }
 
-  const res = verifyToken(token);
-  if (res.isValid) {
-    return res;
-  }
+  return verifyToken(token);
 
-  if (res.phone) {
-    try {
-      await prismaInstance.phoneVerification.update({
-        where: {
-          phone: res.phone,
-        },
-        data: {
-          verified: null,
-        },
-      });
-      return undefined;
-    } catch (error) {
-      return undefined;
-    }
-  }
+  // if (res.phone) {
+  //   try {
+  //     await prismaInstance.phoneVerification.update({
+  //       where: {
+  //         phone: res.phone,
+  //       },
+  //       data: {
+  //         verified: null,
+  //       },
+  //     });
+  //     return undefined;
+  //   } catch (error) {
+  //     return undefined;
+  //   }
+  // }
 };
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
 const server = new ApolloServer({
   schema,
-  context: async ({ req, res }) => {
+  context: ({ req, res }): Context => {
     return {
-      userInfo: await processCookie(req),
+      tokenInfo: processCookie(req),
       req,
       res,
       prisma: prismaInstance,

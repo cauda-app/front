@@ -23,7 +23,7 @@ const phoneVerificationResolver = {
       });
 
       if (!phoneVerification) {
-        return false;
+        return new ApolloError('Phone not registered', 'PHONE_NOT_REGISTERED');
       }
 
       if (compareAsc(new Date(), phoneVerification.expiry) === 1) {
@@ -85,12 +85,23 @@ const phoneVerificationResolver = {
         where: { phone: args.phone },
       });
 
-      // if (phoneVerification && phoneVerification.verified) {
-      //   return new ApolloError(
-      //     'Phone already verified',
-      //     'PHONE_ALREADY_VERIFIED'
-      //   );
-      // }
+      // search for user
+      const shop = await ctx.prisma.shopDetails.findOne({
+        where: { ownerPhone: args.phone },
+      });
+      let client;
+      if (!shop) {
+        client = await ctx.prisma.client.findOne({
+          where: { phone: args.phone },
+        });
+      }
+
+      if (!shop && !client) {
+        return new ApolloError(
+          'No shop or client registered with this phone',
+          'PHONE_NO_REGISTERED'
+        );
+      }
 
       // Do not send before 5 mim
       if (
@@ -106,7 +117,7 @@ const phoneVerificationResolver = {
         );
       }
 
-      const code = 1234; //randomCode();
+      const code = randomCode();
       const res = await ctx.prisma.phoneVerification.upsert({
         where: {
           phone: args.phone,
