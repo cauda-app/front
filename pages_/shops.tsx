@@ -1,36 +1,42 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import Layout from '../src/components/Layout';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import useQuery from '../src/hooks/useQuery';
 
 import ShopCard from 'src/components/ShopCard';
-import graphqlClient from 'src/graphql-config';
 
-import { Shop } from '../graphql';
+import { ShopDetails } from '../graphql';
+
+const SHOPS = /* GraphQL */ `
+  {
+    shopsDetail {
+      shopId
+      name
+      address
+      lat
+      lng
+      shopPhone
+      isOpen
+      status {
+        opens
+        closes
+      }
+    }
+  }
+`;
 
 const Shops = () => {
   const { t } = useTranslation();
+  const { data, loading, error } = useQuery(SHOPS);
 
-  const [shops, setShops] = useState<Shop[]>([]);
-  useEffect(() => {
-    graphqlClient
-      .request(
-        /* GraphQL */ `
-          {
-            shops {
-              id
-            }
-          }
-        `
-      )
-      .then((data) => {
-        setShops(data.shops);
-      });
-  }, []);
-
-  if (!shops.length) {
+  if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>{String(error)}</div>;
   }
 
   return (
@@ -42,8 +48,8 @@ const Shops = () => {
           </Col>
         </Row>
 
-        {shops.map((s) => (
-          <ShopCard key={s.id} id={s.id} />
+        {data.shopsDetail?.map((shop) => (
+          <ShopCard key={shop.id} shop={shop} />
         ))}
       </div>
       <style jsx global>{``}</style>

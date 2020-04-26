@@ -8,66 +8,49 @@ import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
 import { faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
-import graphqlClient from 'src/graphql-config';
-
-import { Shop, ShopDetails } from '../../../graphql';
+import Map from '../Map';
+import { formats, parseUTCTime } from 'src/utils/dates';
 
 type Props = {
-  id: string;
-  className?: string;
+  shop: any;
 };
 
-export default function ShopCard({ id, className, ...rest }: Props) {
+export default function ShopCard({ shop, ...rest }: Props) {
   const { t } = useTranslation();
 
-  const [shop, setShop] = useState<Shop & ShopDetails>();
-  const [error, setError] = useState(false);
-  useEffect(() => {
-    const query = `
-    query getShop($id: String!) {
-      shop(id: $id) {
-        id
-        isClosed    
-        details {
-          name      
-          address
-          lat
-          lng
-          shopPhone    
-        }
-      }
-    }
-    `;
-
-    graphqlClient
-      .request(query, { id })
-      .then((data) => (data ? setShop(data.shop) : setError(true)));
-  }, []);
-
-  if (!shop && !error) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Some Error</div>;
-  }
-
   return (
-    <div className={`root ${className}`} {...rest}>
+    <div {...rest}>
       <Card className="cauda_card cauda_shop">
-        <Card.Header>{shop?.details?.name}</Card.Header>
+        <Card.Header>{shop.name}</Card.Header>
         <div className="shop_map">
-          <Card.Img variant="top" src="map.png" alt="ShopMap" />
+          <Map lat={shop.lat} lng={shop.lng} />
         </div>
         <ListGroup variant="flush">
           <ListGroup.Item>
-            <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth /> ShopAddress
+            <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth /> {shop.address}
           </ListGroup.Item>
+          {shop.shopPhone ? (
+            <ListGroup.Item>
+              <FontAwesomeIcon icon={faPhone} fixedWidth />{' '}
+              <a href={'tel:' + shop.shopPhone}>{shop.shopPhone}</a>
+            </ListGroup.Item>
+          ) : null}
           <ListGroup.Item>
-            <FontAwesomeIcon icon={faPhone} fixedWidth /> ShopPhone
-          </ListGroup.Item>
-          <ListGroup.Item>
-            <FontAwesomeIcon icon={faClock} fixedWidth /> ShopHours
+            <FontAwesomeIcon icon={faClock} fixedWidth />{' '}
+            {shop.isOpen ? (
+              <>
+                {t('common:open-now')}:{' '}
+                {formats.hourMinute(
+                  parseUTCTime(shop.status.opens, new Date())
+                )}
+                -
+                {formats.hourMinute(
+                  parseUTCTime(shop.status.closes, new Date())
+                )}
+              </>
+            ) : (
+              t('common:close-now')
+            )}
           </ListGroup.Item>
         </ListGroup>
         <Card.Body>
@@ -77,11 +60,6 @@ export default function ShopCard({ id, className, ...rest }: Props) {
           </Button>
         </Card.Body>
       </Card>
-
-      <style jsx global>{`
-        .root {
-        }
-      `}</style>
     </div>
   );
 }

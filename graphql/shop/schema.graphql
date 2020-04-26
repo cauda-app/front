@@ -9,28 +9,35 @@ type Shop {
   issuedNumber: [IssuedNumber!]!
 }
 
+type ShopStatus {
+  opens: Time!
+  closes: Time!
+}
+
 type ShopDetails {
+  shopId: String!
   address: String!
   lat: Float!
   lng: Float!
   name: String!
   ownerPhone: String!
   shopPhone: String
-  isOwnerPhoneValidated: Boolean!
-  mondayTimeEnd: String
-  mondayTimeStart: String
-  tuesdayTimeEnd: String
-  tuesdayTimeStart: String
-  wednesdayTimeEnd: String
-  wednesdayTimeStart: String
-  thursdayTimeEnd: String
-  thursdayTimeStart: String
-  fridayTimeEnd: String
-  fridayTimeStart: String
-  saturdayTimeEnd: String
-  saturdayTimeStart: String
-  sundayTimeEnd: String
-  sundayTimeStart: String
+  isOpen: Boolean!
+  status: ShopStatus
+  mondayTimeEnd: Time
+  mondayTimeStart: Time
+  tuesdayTimeEnd: Time
+  tuesdayTimeStart: Time
+  wednesdayTimeEnd: Time
+  wednesdayTimeStart: Time
+  thursdayTimeEnd: Time
+  thursdayTimeStart: Time
+  fridayTimeEnd: Time
+  fridayTimeStart: Time
+  saturdayTimeEnd: Time
+  saturdayTimeStart: Time
+  sundayTimeEnd: Time
+  sundayTimeStart: Time
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -38,6 +45,7 @@ type ShopDetails {
 type Query {
   shop(id: String!): Shop
   shops: [Shop!]!
+  shopsDetail: [ShopDetails!]!
   nearShops(lat: Float!, lng: Float!): [Shop!]!
 }
 

@@ -9,7 +9,6 @@ datasource db {
 
 model Client {
   id               Int            @default(autoincrement()) @id
-  phoneValidated   DateTime?        
   phone            String         @unique
   issuedNumber     IssuedNumber[]
   createdAt        DateTime       @default(now())
@@ -46,31 +45,40 @@ model Shop {
 model ShopDetails {
   shopId                String  @id
   address               String  
-  ownerPhoneValidated   DateTime?
   lat                   Float
   lng                   Float
   name                  String
   shopPhone             String?
   ownerPhone            String  @unique
 
-  mondayTimeEnd         DateTime?
-  mondayTimeStart       DateTime?  
-  tuesdayTimeEnd        DateTime?
-  tuesdayTimeStart      DateTime?
-  wednesdayTimeEnd      DateTime?
-  wednesdayTimeStart    DateTime?
-  thursdayTimeEnd       DateTime?
-  thursdayTimeStart     DateTime?
-  fridayTimeEnd         DateTime?
-  fridayTimeStart       DateTime?
-  saturdayTimeEnd       DateTime?
-  saturdayTimeStart     DateTime?  
-  sundayTimeEnd         DateTime?
-  sundayTimeStart       DateTime?
+  mondayTimeEnd         String?
+  mondayTimeStart       String?  
+  tuesdayTimeEnd        String?
+  tuesdayTimeStart      String?
+  wednesdayTimeEnd      String?
+  wednesdayTimeStart    String?
+  thursdayTimeEnd       String?
+  thursdayTimeStart     String?
+  fridayTimeEnd         String?
+  fridayTimeStart       String?
+  saturdayTimeEnd       String?
+  saturdayTimeStart     String?  
+  sundayTimeEnd         String?
+  sundayTimeStart       String?
 
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
   shop                  Shop      @relation(fields: [shopId], references: [id])
 
   @@index([shopId], name: "fk_shopDetails_shop_idx")
+}
+
+model PhoneVerification {
+  id          Int        @default(autoincrement()) @id
+  phone       String     @unique
+  code        Int  
+  expiry      DateTime
+  verified    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
