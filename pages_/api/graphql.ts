@@ -10,33 +10,17 @@ import { verifyToken, TokenInfo } from '../../graphql/utils/jwt';
 export type Context = {
   res: any;
   req: any;
-  tokenInfo: TokenInfo;
+  tokenInfo?: TokenInfo;
   prisma: typeof prismaInstance;
 };
 
-const processCookie = (req: any): TokenInfo => {
+const processCookie = (req: any): TokenInfo | undefined => {
   const { token } = nextCookie({ req });
   if (!token) {
-    return { isValid: false };
+    return undefined;
   }
 
   return verifyToken(token);
-
-  // if (res.phone) {
-  //   try {
-  //     await prismaInstance.phoneVerification.update({
-  //       where: {
-  //         phone: res.phone,
-  //       },
-  //       data: {
-  //         verified: null,
-  //       },
-  //     });
-  //     return undefined;
-  //   } catch (error) {
-  //     return undefined;
-  //   }
-  // }
 };
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });

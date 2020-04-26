@@ -7,6 +7,7 @@ export type TokenInfo = {
   clientId?: number;
   shopId?: string;
   phone?: string;
+  error?: any;
 };
 
 export const createToken = ({
@@ -24,20 +25,19 @@ export const createToken = ({
       shopId,
       phone,
     },
-    process.env.JWT_SECRET,
+    process.env.JWT_SECRET as string,
     { expiresIn: `${TOKEN_EXPIRY}d` }
   );
 };
 
 export const verifyToken = (token: any): TokenInfo => {
   try {
-    var decoded = jwt.verify(token, process.env.JWT_SECRET);
+    var decoded = jwt.verify(token, process.env.JWT_SECRET as string);
     return {
       isValid: true,
-      ...decoded,
+      ...decoded as any,
     };
   } catch (error) {
-    console.log(error);
-    return { isValid: false };
+    return { isValid: false, error };
   }
 };

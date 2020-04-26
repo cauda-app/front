@@ -46,6 +46,17 @@ const shopResolver = {
       });
     },
     myShop: (parent, args: QueryShopArgs, ctx: Context) => {
+      if (!ctx.tokenInfo) {
+        return new ApolloError('No Token provided', 'NO_TOKEN_PROVIDED');
+      }
+
+      if (
+        !ctx.tokenInfo.isValid &&
+        ctx.tokenInfo.error.name === 'TokenExpiredError'
+      ) {
+        return new ApolloError('Expired Token', 'EXPIRED_TOKEN');
+      }
+
       if (!ctx.tokenInfo.isValid) {
         return new ApolloError('Shop not verified', 'INVALID_TOKEN');
       }
@@ -65,7 +76,7 @@ const shopResolver = {
       args: MutationRegisterShopArgs,
       ctx: Context
     ) => {
-      const newShop = ctx.prisma.shop.create({
+      const newShop = await ctx.prisma.shop.create({
         data: {
           id: crypto.randomBytes(20).toString('hex').substring(0, 19),
           isClosed: true,
@@ -79,7 +90,11 @@ const shopResolver = {
         },
       });
 
-      // TODO: create also as client
+      await ctx.prisma.client.upsert({
+        where: { phone: args.shop.ownerPhone },
+        create: { phone: args.shop.ownerPhone },
+        update: {},
+      });
 
       await registerPhone(args.shop.ownerPhone, ctx);
 
