@@ -1,7 +1,7 @@
 import addMinutes from 'date-fns/addMinutes';
 
 import randomCode from '../../graphql/utils/randomCode';
-import { Context } from '../context';
+import { Context } from '../../pages_/api/graphql';
 import { PHONE_CODE_EXPIRY } from '../utils/constants';
 
 export function registerPhone(phone: string, ctx: Context) {
