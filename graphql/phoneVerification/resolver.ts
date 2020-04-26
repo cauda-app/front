@@ -12,8 +12,8 @@ import {
 import { Context } from '../../pages_/api/graphql';
 import randomCode from '../utils/randomCode';
 import { TOKEN_EXPIRY } from '../utils/constants';
-
 import { PHONE_CODE_EXPIRY } from '../utils/constants';
+import sendSms from '../utils/smsApi';
 
 const phoneVerificationResolver = {
   Mutation: {
@@ -76,7 +76,7 @@ const phoneVerificationResolver = {
 
       return !!updated;
     },
-    reSendVerificationCode: async (
+    sendVerificationCode: async (
       parent,
       args: MutationReSendVerificationCodeArgs,
       ctx: Context
@@ -132,6 +132,8 @@ const phoneVerificationResolver = {
           expiry: addMinutes(new Date(), PHONE_CODE_EXPIRY).toISOString(),
         },
       });
+
+      await sendSms(args.phone, code.toString());
 
       return !!res;
     },
