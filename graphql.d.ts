@@ -26,7 +26,7 @@ export type Query = {
   client?: Maybe<Client>;
   getAppointments: Array<IssuedNumber>;
   myShop: Shop;
-  nearShops: Array<ShopDetails>;
+  nearByShops: Array<ShopDetails>;
   shop?: Maybe<Shop>;
   shops: Array<Shop>;
   shopsDetail: Array<ShopDetails>;
@@ -44,9 +44,10 @@ export type QueryGetAppointmentsArgs = {
 };
 
 
-export type QueryNearShopsArgs = {
+export type QueryNearByShopsArgs = {
   lat: Scalars['Float'];
   lng: Scalars['Float'];
+  after?: Maybe<Scalars['String']>;
 };
 
 
@@ -335,7 +336,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryClientArgs, never>>,
   getAppointments?: Resolver<Array<ResolversTypes['IssuedNumber']>, ParentType, ContextType, RequireFields<QueryGetAppointmentsArgs, 'clientId'>>,
   myShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
-  nearShops?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType, RequireFields<QueryNearShopsArgs, 'lat' | 'lng'>>,
+  nearByShops?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType, RequireFields<QueryNearByShopsArgs, 'lat' | 'lng'>>,
   shop?: Resolver<Maybe<ResolversTypes['Shop']>, ParentType, ContextType, RequireFields<QueryShopArgs, 'id'>>,
   shops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType>,
   shopsDetail?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType, RequireFields<QueryShopsDetailArgs, never>>,

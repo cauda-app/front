@@ -9,11 +9,9 @@ import useQuery from '../src/hooks/useQuery';
 
 import ShopCard from 'src/components/ShopCard';
 
-import { ShopDetails } from '../graphql';
-
 const SHOPS = /* GraphQL */ `
   query Shops($after: String) {
-    shopsDetail(after: $after) {
+    nearByShops(lat: -36.789655, lng: -59.862112, after: $after) {
       shopId
       name
       address
@@ -21,6 +19,7 @@ const SHOPS = /* GraphQL */ `
       lng
       shopPhone
       isOpen
+      createdAt
       status {
         opens
         closes
@@ -32,6 +31,7 @@ const SHOPS = /* GraphQL */ `
 const Shops = () => {
   const { t } = useTranslation();
   const { data, loading, error, fetchMore } = useQuery(SHOPS);
+  const [hasNextPage, setHasNextPage] = React.useState(true);
 
   if (error) {
     return <div>{String(error)}</div>;
@@ -46,13 +46,13 @@ const Shops = () => {
           </Col>
         </Row>
 
-        {data.shopsDetail?.map((shop) => (
+        {data.nearByShops?.map((shop) => (
           <ShopCard key={shop.id} shop={shop} />
         ))}
 
         {loading ? <Spinner /> : null}
 
-        {data.shopsDetail ? (
+        {data.nearByShops && hasNextPage ? (
           <Button
             variant="primary"
             className="mt-3"
@@ -61,15 +61,19 @@ const Shops = () => {
             onClick={() =>
               fetchMore({
                 variables: {
-                  after: data.shopsDetail[data.shopsDetail.length - 1].shopId,
+                  after:
+                    data.nearByShops[data.nearByShops.length - 1].createdAt,
                 },
                 updateQuery: (prev, fetchMoreResult) => {
-                  if (!fetchMoreResult) return prev;
+                  if (!fetchMoreResult || !fetchMoreResult.nearByShops.length) {
+                    setHasNextPage(false);
+                    return prev;
+                  }
                   return {
                     ...prev,
-                    shopsDetail: [
-                      ...prev.shopsDetail,
-                      ...fetchMoreResult.shopsDetail,
+                    nearByShops: [
+                      ...prev.nearByShops,
+                      ...fetchMoreResult.nearByShops,
                     ],
                   };
                 },

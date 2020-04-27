@@ -47,7 +47,7 @@ type Query {
   shops: [Shop!]!  
   myShop: Shop!
   shopsDetail(after: String): [ShopDetails!]!
-  nearShops(lat: Float!, lng: Float!): [ShopDetails!]!
+  nearByShops(lat: Float!, lng: Float!, after: String): [ShopDetails!]!
 }
 
 type Mutation {

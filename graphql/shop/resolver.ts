@@ -7,7 +7,7 @@ import {
   ShopDetails,
   QueryShopArgs,
   QueryShopsDetailArgs,
-  QueryNearShopsArgs,
+  QueryNearByShopsArgs,
   MutationRegisterShopArgs,
   MutationUpdateShopArgs,
 } from '../../graphql';
@@ -46,22 +46,27 @@ const shopResolver = {
         ...after,
       });
     },
-    nearShops: async (parent, args: QueryNearShopsArgs, ctx: Context) => {
+    nearByShops: async (parent, args: QueryNearByShopsArgs, ctx: Context) => {
       const MAX_DISTANCE_KM = 1;
-      return await ctx.prisma.raw`
+      return await ctx.prisma.raw(`
         SELECT
           * ,
           (
             (3959 * acos(
               cos( radians(${args.lat}) ) * cos( radians( lat ) ) 
-                * cos( radians(lng) - radians(${args.lng})) + sin(radians(${args.lat})) 
+                * cos( radians(lng) - radians(${args.lng})) + sin(radians(${
+        args.lat
+      }))
                 * sin( radians(lat))
             ))
           ) AS distance
         FROM ShopDetails
-        HAVING distance < ${MAX_DISTANCE_KM}
+        HAVING distance < ${MAX_DISTANCE_KM} ${
+        args.after ? `AND createdAt > '${args.after}'` : ''
+      }
         ORDER BY distance
-      `;
+        LIMIT 10
+      `);
     },
     myShop: (parent, args: QueryShopArgs, ctx: Context) => {
       if (!ctx.tokenInfo) {

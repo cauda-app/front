@@ -5,8 +5,15 @@ import issuedNumberSchema from './issuedNumber/schema.graphql';
 import shopSchema from './shop/schema.graphql';
 import phoneVerification from './phoneVerification/schema.graphql';
 
-
 export default mergeTypes(
-  [clientSchema, commonSchema, issuedNumberSchema, shopSchema, phoneVerification],
-  { all: true }
+  [
+    clientSchema,
+    commonSchema,
+    issuedNumberSchema,
+    shopSchema,
+    phoneVerification,
+  ],
+  {
+    all: true,
+  }
 );
