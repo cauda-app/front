@@ -1,28 +1,45 @@
 import React from 'react';
 import graphqlClient from '../graphqlClient';
 
-interface Data {
+interface State {
   loading: boolean;
   data: any;
   error?: any;
+  fetchMore: (variables: any) => void;
 }
 
 export default function useQuery(query: string, variables?: any) {
-  const [data, setData] = React.useState<Data>({ loading: true, data: {} });
+  const fetchMore = ({ variables: newVariables, updateQuery }) => {
+    runQuery({ ...variables, ...newVariables }, updateQuery);
+  };
+
+  const [state, setState] = React.useState<State>({
+    loading: false,
+    data: {},
+    fetchMore,
+  });
+
+  const runQuery = async (variables, updateQuery?) => {
+    try {
+      setState((state) => ({ ...state, loading: true }));
+      const response = await graphqlClient.request(query, variables);
+      setState((state) => ({
+        loading: false,
+        data: updateQuery ? updateQuery(state.data, response) : response,
+        fetchMore,
+      }));
+    } catch (error) {
+      setState((state) => ({
+        ...state,
+        error,
+        loading: false,
+      }));
+    }
+  };
 
   React.useEffect(() => {
-    async function runQuery() {
-      try {
-        setData({ ...data, loading: true });
-        const response = await graphqlClient.request(query, variables);
-        setData({ loading: false, data: response });
-      } catch (error) {
-        setData({ error, loading: false, data: {} });
-      }
-    }
-
-    runQuery();
+    runQuery(variables);
   }, [query, variables]);
 
-  return data;
+  return state;
 }

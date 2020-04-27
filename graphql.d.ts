@@ -26,7 +26,7 @@ export type Query = {
    __typename?: 'Query';
   client?: Maybe<Client>;
   getAppointments: Array<IssuedNumber>;
-  nearShops: Array<Shop>;
+  nearShops: Array<ShopDetails>;
   shop?: Maybe<Shop>;
   shops: Array<Shop>;
   shopsDetail: Array<ShopDetails>;
@@ -52,6 +52,11 @@ export type QueryNearShopsArgs = {
 
 export type QueryShopArgs = {
   id: Scalars['String'];
+};
+
+
+export type QueryShopsDetailArgs = {
+  after?: Maybe<Scalars['String']>;
 };
 
 export type Mutation = {
@@ -324,10 +329,10 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryClientArgs, never>>,
   getAppointments?: Resolver<Array<ResolversTypes['IssuedNumber']>, ParentType, ContextType, RequireFields<QueryGetAppointmentsArgs, 'clientId'>>,
-  nearShops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType, RequireFields<QueryNearShopsArgs, 'lat' | 'lng'>>,
+  nearShops?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType, RequireFields<QueryNearShopsArgs, 'lat' | 'lng'>>,
   shop?: Resolver<Maybe<ResolversTypes['Shop']>, ParentType, ContextType, RequireFields<QueryShopArgs, 'id'>>,
   shops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType>,
-  shopsDetail?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType>,
+  shopsDetail?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType, RequireFields<QueryShopsDetailArgs, never>>,
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{

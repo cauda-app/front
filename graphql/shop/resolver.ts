@@ -4,6 +4,7 @@ import { Context } from '../context';
 import {
   Shop,
   QueryShopArgs,
+  QueryShopsDetailArgs,
   QueryNearShopsArgs,
   MutationRegisterShopArgs,
   MutationUpdateShopArgs,
@@ -35,32 +36,29 @@ const shopResolver = {
     shops: (parent, args, ctx: Context) => {
       return ctx.prisma.shop.findMany();
     },
-    shopsDetail: (parent, args, ctx: Context) => {
-      return ctx.prisma.shopDetails.findMany();
+    shopsDetail: (parent, args: QueryShopsDetailArgs, ctx: Context) => {
+      const after = args.after ? { after: { shopId: args.after } } : undefined;
+      return ctx.prisma.shopDetails.findMany({
+        first: 10,
+        ...after,
+      });
     },
     nearShops: async (parent, args: QueryNearShopsArgs, ctx: Context) => {
       const MAX_DISTANCE_KM = 1;
-      const shopIds = await ctx.prisma.raw`
-        SELECT 
-          shopId , 
-          ( 
-            (3959 * acos( 			
+      return await ctx.prisma.raw`
+        SELECT
+          * ,
+          (
+            (3959 * acos(
               cos( radians(${args.lat}) ) * cos( radians( lat ) ) 
                 * cos( radians(lng) - radians(${args.lng})) + sin(radians(${args.lat})) 
                 * sin( radians(lat))
             ))
-          ) AS distance 
-        FROM ShopDetails 
+          ) AS distance
+        FROM ShopDetails
         HAVING distance < ${MAX_DISTANCE_KM}
         ORDER BY distance
       `;
-      return ctx.prisma.shop.findMany({
-        where: {
-          id: {
-            in: shopIds.map((s) => s.shopId),
-          },
-        },
-      });
     },
   },
   Mutation: {
