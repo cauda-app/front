@@ -14,15 +14,14 @@ const clientResolver = {
       return ctx.prisma.client.create({
         data: {
           phone: args.client.phone,
-          phoneValidated: undefined,
         },
       });
     },
     verifyClient: (parent, args: MutationVerifyClientArgs, ctx: Context) => {
-      return ctx.prisma.client.update({
-        where: { id: Number(args.id) },
-        data: { phoneValidated: new Date().toISOString() },
-      });
+      // return ctx.prisma.client.update({
+      //   where: { id: Number(args.id) },
+      //   data: { phoneValidated: new Date().toISOString() },
+      // });
     },
   },
 };
