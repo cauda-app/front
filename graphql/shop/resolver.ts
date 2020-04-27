@@ -4,10 +4,27 @@ import { Context } from '../context';
 import {
   Shop,
   QueryShopArgs,
+  QueryShopsDetailArgs,
   QueryNearShopsArgs,
   MutationRegisterShopArgs,
-  MutationUpdateShopArgs
+  MutationUpdateShopArgs,
+  ShopDetails,
 } from '../../graphql';
+import { nowFromCoordinates, todayIs, isOpen } from 'src/utils/dates';
+import { parseUTCTime } from '../../src/utils/dates';
+import { parsePhone } from '../../src/utils/phone-utils';
+
+const todaysStatus = (shopDetails: ShopDetails) => {
+  const now = nowFromCoordinates(shopDetails.lat, shopDetails.lng);
+  const today = todayIs(now).toLowerCase();
+  const timeStart = shopDetails[today + 'TimeStart'];
+  const timeEnd = shopDetails[today + 'TimeEnd'];
+  if (!timeStart || !timeEnd) {
+    return null;
+  }
+
+  return { start: timeStart, end: timeEnd, now };
+};
 
 const shopResolver = {
   Query: {
@@ -19,32 +36,32 @@ const shopResolver = {
     shops: (parent, args, ctx: Context) => {
       return ctx.prisma.shop.findMany();
     },
+    shopsDetail: (parent, args: QueryShopsDetailArgs, ctx: Context) => {
+      const after = args.after ? { after: { shopId: args.after } } : undefined;
+      return ctx.prisma.shopDetails.findMany({
+        first: 10,
+        ...after,
+      });
+    },
     nearShops: async (parent, args: QueryNearShopsArgs, ctx: Context) => {
       const MAX_DISTANCE_KM = 1;
-      const shopIds = await ctx.prisma.raw`
-        SELECT 
-          shopId , 
-          ( 
-            (3959 * acos( 			
+      return await ctx.prisma.raw`
+        SELECT
+          * ,
+          (
+            (3959 * acos(
               cos( radians(${args.lat}) ) * cos( radians( lat ) ) 
                 * cos( radians(lng) - radians(${args.lng})) + sin(radians(${args.lat})) 
                 * sin( radians(lat))
             ))
-          ) AS distance 
-        FROM ShopDetails 
+          ) AS distance
+        FROM ShopDetails
         HAVING distance < ${MAX_DISTANCE_KM}
         ORDER BY distance
       `;
-      return ctx.prisma.shop.findMany({
-        where: {
-          id: {
-            in: shopIds.map((s) => s.shopId),
-          },
-        },
-      });
     },
   },
-  Mutation: {    
+  Mutation: {
     registerShop: (parent, args: MutationRegisterShopArgs, ctx: Context) => {
       return ctx.prisma.shop.create({
         data: {
@@ -83,6 +100,34 @@ const shopResolver = {
       return ctx.prisma.shopDetails.findOne({
         where: { shopId: parent.id },
       });
+    },
+  },
+  ShopDetails: {
+    isOpen: (parent: ShopDetails, args, ctx: Context) => {
+      const status = todaysStatus(parent);
+      if (!status) {
+        return false;
+      }
+      const open = parseUTCTime(status.start, status.now);
+      const close = parseUTCTime(status.end, status.now);
+
+      return isOpen(status.now, open, close);
+    },
+    shopPhone: (parent: ShopDetails, args, ctx: Context) => {
+      if (parent.shopPhone) {
+        const phone = parsePhone(parent.shopPhone);
+        return phone.number;
+      }
+
+      return null;
+    },
+    status: (parent: ShopDetails, args, ctx: Context) => {
+      const status = todaysStatus(parent);
+      if (!status) {
+        return null;
+      }
+
+      return { opens: status.start, closes: status.end };
     },
   },
 };

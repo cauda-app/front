@@ -3,7 +3,7 @@ import Router from 'next/router';
 import dynamic from 'next/dynamic';
 import useTranslation from 'next-translate/useTranslation';
 import Card from 'react-bootstrap/Card';
-import Spinner from 'react-bootstrap/Spinner';
+import Spinner from '../src/components/Spinner';
 import Layout from '../src/components/Layout';
 import { ReaderProps } from '../src/types/react-qr-reader';
 import img_templateUrl from '../public/cauda_qrcode@3x.png';
@@ -27,9 +27,7 @@ const Loading = () => {
 
   return (
     <div className="mt-1 d-flex align-content-center justify-content-center">
-      <Spinner animation="border" variant="primary" role="status">
-        <span className="sr-only">{t('common:loading')}</span>
-      </Spinner>
+      <Spinner />
       <p className="ml-2 mt-1 mb-0">{t('common:loading')}</p>
     </div>
   );

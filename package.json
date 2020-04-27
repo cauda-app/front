@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next-translate && next dev",
-    "build": "next-translate && next build",
+    "dev": "next-translate && yarn gen &&  next dev",
+    "build": "next-translate && yarn gen && next build",
     "start": "NODE_ENV=production next start",
     "storybook": "start-storybook -p 6006 -c .storybook",
     "build-storybook": "build-storybook -c .storybook -o storybook-static",
@@ -29,6 +29,7 @@
     "babel-plugin-import-graphql": "^2.7.0",
     "bootstrap": "^4.4.1",
     "date-fns": "^2.11.1",
+    "date-fns-tz": "^1.0.10",
     "dotenv": "^8.2.0",
     "google-libphonenumber": "^3.2.8",
     "google-map-react": "^1.1.7",
@@ -46,13 +47,14 @@
     "react": "github:preact-compat/react#1.0.0",
     "react-bootstrap": "^1.0.0",
     "react-dom": "github:preact-compat/react-dom#1.0.0",
-    "react-qr-reader": "^2.2.1",
     "react-geosuggest": "^2.12.1",
+    "react-qr-reader": "^2.2.1",
     "react-ssr-prepass": "npm:preact-ssr-prepass@^1.0.1",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
     "react-window-infinite-loader": "^1.0.5",
-    "sass": "^1.26.3"
+    "sass": "^1.26.3",
+    "tz-lookup": "^6.1.25"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
