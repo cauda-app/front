@@ -24,6 +24,7 @@ export default async function sendSms(
         recipient: phone,
         message: message,
         expiresAt,
+        ignore_banned: 1
       },
       {
         headers: {
