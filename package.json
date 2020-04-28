@@ -15,6 +15,17 @@
     "generateTypes": "graphql-codegen --config codegen.yml",
     "gen": "yarn generate && yarn generateTypes"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn generateTypes && yarn tsc && lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx,json,graphql,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
     "@fortawesome/free-brands-svg-icons": "^5.13.0",
@@ -37,6 +48,8 @@
     "graphql-import": "^1.0.2",
     "graphql-request": "^1.8.2",
     "graphql-tools": "^4.0.7",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.0",
     "merge-graphql-schemas": "^1.7.7",
     "next": "^9.3.4",
     "next-images": "^1.3.1",
@@ -70,6 +83,7 @@
     "babel-loader": "^8.0.6",
     "babel-preset-react-app": "^9.1.1",
     "graphql-iso-date": "^3.6.1",
+    "prettier": "^2.0.5",
     "ts-node": "8.8.2",
     "ts-node-dev": "1.0.0-pre.44",
     "typescript": "^3.8.3"
