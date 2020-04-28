@@ -34,7 +34,7 @@ const clientResolver = {
       await registerPhone(args.client.phone, ctx);
 
       return newClient;
-    },
+    }   
   },
 };
 

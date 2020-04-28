@@ -25,9 +25,11 @@ export type Query = {
    __typename?: 'Query';
   client?: Maybe<Client>;
   getAppointments: Array<IssuedNumber>;
-  nearShops: Array<Shop>;
+  myShop: Shop;
+  nearShops: Array<ShopDetails>;
   shop?: Maybe<Shop>;
   shops: Array<Shop>;
+  shopsDetail: Array<ShopDetails>;
 };
 
 
@@ -52,12 +54,17 @@ export type QueryShopArgs = {
   id: Scalars['String'];
 };
 
+
+export type QueryShopsDetailArgs = {
+  after?: Maybe<Scalars['String']>;
+};
+
 export type Mutation = {
    __typename?: 'Mutation';
   cancelAppointment: Scalars['Boolean'];
-  reSendVerificationCode: Scalars['Boolean'];
   registerShop: Shop;
   requestAppointment: IssuedNumber;
+  sendVerificationCode: Scalars['Boolean'];
   signUp: Client;
   updateShop: Shop;
   verifyCode: Scalars['Boolean'];
@@ -70,11 +77,6 @@ export type MutationCancelAppointmentArgs = {
 };
 
 
-export type MutationReSendVerificationCodeArgs = {
-  phone: Scalars['ID'];
-};
-
-
 export type MutationRegisterShopArgs = {
   shop: ShopInput;
 };
@@ -83,6 +85,11 @@ export type MutationRegisterShopArgs = {
 export type MutationRequestAppointmentArgs = {
   shopId: Scalars['String'];
   clientId: Scalars['Int'];
+};
+
+
+export type MutationSendVerificationCodeArgs = {
+  phone: Scalars['ID'];
 };
 
 
@@ -140,28 +147,37 @@ export type Shop = {
   issuedNumber: Array<IssuedNumber>;
 };
 
+export type ShopStatus = {
+   __typename?: 'ShopStatus';
+  opens: Scalars['Time'];
+  closes: Scalars['Time'];
+};
+
 export type ShopDetails = {
    __typename?: 'ShopDetails';
+  shopId: Scalars['String'];
   address: Scalars['String'];
   lat: Scalars['Float'];
   lng: Scalars['Float'];
   name: Scalars['String'];
   ownerPhone: Scalars['String'];
   shopPhone?: Maybe<Scalars['String']>;
-  mondayTimeEnd?: Maybe<Scalars['String']>;
-  mondayTimeStart?: Maybe<Scalars['String']>;
-  tuesdayTimeEnd?: Maybe<Scalars['String']>;
-  tuesdayTimeStart?: Maybe<Scalars['String']>;
-  wednesdayTimeEnd?: Maybe<Scalars['String']>;
-  wednesdayTimeStart?: Maybe<Scalars['String']>;
-  thursdayTimeEnd?: Maybe<Scalars['String']>;
-  thursdayTimeStart?: Maybe<Scalars['String']>;
-  fridayTimeEnd?: Maybe<Scalars['String']>;
-  fridayTimeStart?: Maybe<Scalars['String']>;
-  saturdayTimeEnd?: Maybe<Scalars['String']>;
-  saturdayTimeStart?: Maybe<Scalars['String']>;
-  sundayTimeEnd?: Maybe<Scalars['String']>;
-  sundayTimeStart?: Maybe<Scalars['String']>;
+  isOpen: Scalars['Boolean'];
+  status?: Maybe<ShopStatus>;
+  mondayTimeEnd?: Maybe<Scalars['Time']>;
+  mondayTimeStart?: Maybe<Scalars['Time']>;
+  tuesdayTimeEnd?: Maybe<Scalars['Time']>;
+  tuesdayTimeStart?: Maybe<Scalars['Time']>;
+  wednesdayTimeEnd?: Maybe<Scalars['Time']>;
+  wednesdayTimeStart?: Maybe<Scalars['Time']>;
+  thursdayTimeEnd?: Maybe<Scalars['Time']>;
+  thursdayTimeStart?: Maybe<Scalars['Time']>;
+  fridayTimeEnd?: Maybe<Scalars['Time']>;
+  fridayTimeStart?: Maybe<Scalars['Time']>;
+  saturdayTimeEnd?: Maybe<Scalars['Time']>;
+  saturdayTimeStart?: Maybe<Scalars['Time']>;
+  sundayTimeEnd?: Maybe<Scalars['Time']>;
+  sundayTimeStart?: Maybe<Scalars['Time']>;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
 };
@@ -280,6 +296,7 @@ export type ResolversTypes = ResolversObject<{
   IssuedNumberStatus: IssuedNumberStatus,
   IssuedNumber: ResolverTypeWrapper<IssuedNumber>,
   Shop: ResolverTypeWrapper<Shop>,
+  ShopStatus: ResolverTypeWrapper<ShopStatus>,
   ShopDetails: ResolverTypeWrapper<ShopDetails>,
   ShopInput: ShopInput,
 }>;
@@ -301,6 +318,7 @@ export type ResolversParentTypes = ResolversObject<{
   IssuedNumberStatus: IssuedNumberStatus,
   IssuedNumber: IssuedNumber,
   Shop: Shop,
+  ShopStatus: ShopStatus,
   ShopDetails: ShopDetails,
   ShopInput: ShopInput,
 }>;
@@ -316,16 +334,18 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryClientArgs, never>>,
   getAppointments?: Resolver<Array<ResolversTypes['IssuedNumber']>, ParentType, ContextType, RequireFields<QueryGetAppointmentsArgs, 'clientId'>>,
-  nearShops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType, RequireFields<QueryNearShopsArgs, 'lat' | 'lng'>>,
+  myShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
+  nearShops?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType, RequireFields<QueryNearShopsArgs, 'lat' | 'lng'>>,
   shop?: Resolver<Maybe<ResolversTypes['Shop']>, ParentType, ContextType, RequireFields<QueryShopArgs, 'id'>>,
   shops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType>,
+  shopsDetail?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType, RequireFields<QueryShopsDetailArgs, never>>,
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   cancelAppointment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCancelAppointmentArgs, 'shopId' | 'clientId'>>,
-  reSendVerificationCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationReSendVerificationCodeArgs, 'phone'>>,
   registerShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationRegisterShopArgs, 'shop'>>,
   requestAppointment?: Resolver<ResolversTypes['IssuedNumber'], ParentType, ContextType, RequireFields<MutationRequestAppointmentArgs, 'shopId' | 'clientId'>>,
+  sendVerificationCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendVerificationCodeArgs, 'phone'>>,
   signUp?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'client'>>,
   updateShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationUpdateShopArgs, 'shop'>>,
   verifyCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVerifyCodeArgs, 'phone' | 'code'>>,
@@ -368,27 +388,36 @@ export type ShopResolvers<ContextType = any, ParentType extends ResolversParentT
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
+export type ShopStatusResolvers<ContextType = any, ParentType extends ResolversParentTypes['ShopStatus'] = ResolversParentTypes['ShopStatus']> = ResolversObject<{
+  opens?: Resolver<ResolversTypes['Time'], ParentType, ContextType>,
+  closes?: Resolver<ResolversTypes['Time'], ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
+}>;
+
 export type ShopDetailsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ShopDetails'] = ResolversParentTypes['ShopDetails']> = ResolversObject<{
+  shopId?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   address?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   lat?: Resolver<ResolversTypes['Float'], ParentType, ContextType>,
   lng?: Resolver<ResolversTypes['Float'], ParentType, ContextType>,
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   ownerPhone?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   shopPhone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  mondayTimeEnd?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  mondayTimeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  tuesdayTimeEnd?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  tuesdayTimeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  wednesdayTimeEnd?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  wednesdayTimeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  thursdayTimeEnd?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  thursdayTimeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  fridayTimeEnd?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  fridayTimeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  saturdayTimeEnd?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  saturdayTimeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  sundayTimeEnd?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  sundayTimeStart?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  isOpen?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
+  status?: Resolver<Maybe<ResolversTypes['ShopStatus']>, ParentType, ContextType>,
+  mondayTimeEnd?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
+  mondayTimeStart?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
+  tuesdayTimeEnd?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
+  tuesdayTimeStart?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
+  wednesdayTimeEnd?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
+  wednesdayTimeStart?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
+  thursdayTimeEnd?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
+  thursdayTimeStart?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
+  fridayTimeEnd?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
+  fridayTimeStart?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
+  saturdayTimeEnd?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
+  saturdayTimeStart?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
+  sundayTimeEnd?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
+  sundayTimeStart?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
@@ -403,6 +432,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Time?: GraphQLScalarType,
   IssuedNumber?: IssuedNumberResolvers<ContextType>,
   Shop?: ShopResolvers<ContextType>,
+  ShopStatus?: ShopStatusResolvers<ContextType>,
   ShopDetails?: ShopDetailsResolvers<ContextType>,
 }>;
 

@@ -1,27 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import Layout from '../src/components/Layout';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Button from 'react-bootstrap/Button';
+import Spinner from '../src/components/Spinner';
+import useQuery from '../src/hooks/useQuery';
 
 import ShopCard from 'src/components/ShopCard';
-import graphqlClient from 'src/graphql-config';
 
-import { Shop } from '../graphql';
+import { ShopDetails } from '../graphql';
 
+const SHOPS = /* GraphQL */ `
+  query Shops($after: String) {
+    shopsDetail(after: $after) {
+      shopId
+      name
+      address
+      lat
+      lng
+      shopPhone
+      isOpen
+      status {
+        opens
+        closes
+      }
+    }
+  }
+`;
 
 const Shops = () => {
   const { t } = useTranslation();
+  const { data, loading, error, fetchMore } = useQuery(SHOPS);
 
-  const [shops, setShops] = useState<Shop[]>([]);
-  useEffect(() => {
-    graphqlClient.request(`{shops { id }}`).then((data) => {
-      setShops(data.shops);
-    });
-  }, []);
-
-  if(!shops.length) {
-    return <div>Loading...</div>
+  if (error) {
+    return <div>{String(error)}</div>;
   }
 
   return (
@@ -33,11 +46,40 @@ const Shops = () => {
           </Col>
         </Row>
 
-        {shops.map((s) => (
-          <ShopCard key={s.id} id={s.id} />
+        {data.shopsDetail?.map((shop) => (
+          <ShopCard key={shop.id} shop={shop} />
         ))}
+
+        {loading ? <Spinner /> : null}
+
+        {data.shopsDetail ? (
+          <Button
+            variant="primary"
+            className="mt-3"
+            block
+            disabled={loading}
+            onClick={() =>
+              fetchMore({
+                variables: {
+                  after: data.shopsDetail[data.shopsDetail.length - 1].shopId,
+                },
+                updateQuery: (prev, fetchMoreResult) => {
+                  if (!fetchMoreResult) return prev;
+                  return {
+                    ...prev,
+                    shopsDetail: [
+                      ...prev.shopsDetail,
+                      ...fetchMoreResult.shopsDetail,
+                    ],
+                  };
+                },
+              })
+            }
+          >
+            Cargar Mas
+          </Button>
+        ) : null}
       </div>
-      <style jsx global>{``}</style>
     </Layout>
   );
 };

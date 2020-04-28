@@ -6,7 +6,7 @@ import { serialize } from 'cookie';
 
 import { createToken } from '../../graphql/utils/jwt';
 import {
-  MutationReSendVerificationCodeArgs,
+  MutationSendVerificationCodeArgs,
   MutationVerifyCodeArgs,
 } from '../../graphql';
 import { Context } from '../../pages_/api/graphql';
@@ -78,7 +78,7 @@ const phoneVerificationResolver = {
     },
     sendVerificationCode: async (
       parent,
-      args: MutationReSendVerificationCodeArgs,
+      args: MutationSendVerificationCodeArgs,
       ctx: Context
     ) => {
       const phoneVerification = await ctx.prisma.phoneVerification.findOne({

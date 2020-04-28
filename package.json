@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next-translate && next dev",
-    "build": "next-translate && next build",
+    "dev": "next-translate && yarn gen &&  next dev",
+    "build": "next-translate && yarn gen && next build",
     "start": "NODE_ENV=production next start",
     "storybook": "start-storybook -p 6006 -c .storybook",
     "build-storybook": "build-storybook -c .storybook -o storybook-static",
@@ -56,7 +56,8 @@
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
     "react-window-infinite-loader": "^1.0.5",
-    "sass": "^1.26.3"
+    "sass": "^1.26.3",
+    "tz-lookup": "^6.1.25"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
