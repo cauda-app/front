@@ -17,25 +17,22 @@ const RequestTurn = () => {
   const { t } = useTranslation();
   return (
     <Layout>
-
       {/* <Shopcard /> */}
 
       <Card className="cauda_card mt-3 mx-auto text-center">
         <Card.Body>
-
           <Form>
-
             <Form.Group controlId="client-cellphone">
-              <Form.Label className="sr-only">{t('common:client-cellphone')}</Form.Label>
+              <Form.Label className="sr-only">
+                {t('common:client-cellphone')}
+              </Form.Label>
               <InputGroup size="lg">
                 <InputGroup.Prepend>
                   <InputGroup.Text>
                     <FontAwesomeIcon icon={faPhone} />
                   </InputGroup.Text>
                 </InputGroup.Prepend>
-                <FormControl
-                  placeholder={t('common:enter-cellphone')}
-                />
+                <FormControl placeholder={t('common:enter-cellphone')} />
               </InputGroup>
               <Form.Text className="text-muted">
                 {t('common:enter-phone-desc')}
@@ -55,21 +52,23 @@ const RequestTurn = () => {
             </Button>
 
             <small className="text-muted">
-              {t('common:accept-by-continue')} <Link href="/terms"><a>{t('common:terms-conditions')}</a></Link>. 
+              {t('common:accept-by-continue')}{' '}
+              <Link href="/terms">
+                <a>{t('common:terms-conditions')}</a>
+              </Link>
+              .
             </small>
-
           </Form>
-
         </Card.Body>
       </Card>
 
       <Card className="cauda_card mt-3 mx-auto text-center">
         <Card.Body>
-
           <Form>
-
             <Form.Group controlId="client-code">
-              <Form.Label className="sr-only">{t('common:enter-code')}</Form.Label>
+              <Form.Label className="sr-only">
+                {t('common:enter-code')}
+              </Form.Label>
               <InputGroup size="lg">
                 <InputGroup.Prepend>
                   <InputGroup.Text>
@@ -101,12 +100,9 @@ const RequestTurn = () => {
             <small className="text-muted">
               {t('common:enter-code-desc-line2')}
             </small>
-
           </Form>
-
         </Card.Body>
       </Card>
- 
     </Layout>
   );
 };

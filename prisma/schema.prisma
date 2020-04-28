@@ -8,11 +8,11 @@ datasource db {
 }
 
 model Client {
-  id           Int            @default(autoincrement()) @id
-  phone        String         @unique
-  issuedNumber IssuedNumber[]
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id               Int            @default(autoincrement()) @id
+  phone            String         @unique
+  issuedNumber     IssuedNumber[]
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt 
 }
 
 model IssuedNumber {
@@ -69,4 +69,14 @@ model ShopDetails {
   shop               Shop     @relation(fields: [shopId], references: [id])
 
   @@index([shopId], name: "fk_shopDetails_shop_idx")
+}
+
+model PhoneVerification {
+  id          Int        @default(autoincrement()) @id
+  phone       String     @unique
+  code        Int  
+  expiry      DateTime
+  verified    DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }

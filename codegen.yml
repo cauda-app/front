@@ -6,6 +6,5 @@ generates:
     plugins:
       - "typescript"
       - "typescript-resolvers"
-      - "typescript-operations"
     config:
       useIndexSignature: true

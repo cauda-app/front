@@ -1,7 +1,6 @@
 type Client {
   id: ID!
   phone: String!
-  isPhoneValidated: Boolean!
   createdAt: DateTime!
   updatedAt: DateTime!
   # issuedNumber: [IssuedNumber!]!
@@ -12,8 +11,7 @@ type Query {
 }
 
 type Mutation {
-  signUp(client: ClientSignupInput!): Client!
-  verifyClient(id: ID!, verificationCode: String!): Client!
+  signUp(client: ClientSignupInput!): Client!    
 }
 
 input ClientSignupInput {

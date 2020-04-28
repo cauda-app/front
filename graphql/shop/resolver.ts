@@ -1,15 +1,18 @@
 import { ApolloError } from 'apollo-server-core';
 import crypto from 'crypto';
-import { Context } from '../context';
+
+import { Context } from '../../pages_/api/graphql';
 import {
   Shop,
+  ShopDetails,
   QueryShopArgs,
   QueryShopsDetailArgs,
   QueryNearShopsArgs,
   MutationRegisterShopArgs,
   MutationUpdateShopArgs,
-  ShopDetails,
 } from '../../graphql';
+
+import { registerPhone } from '../utils/registerPhone';
 import { nowFromCoordinates, todayIs, isOpen } from 'src/utils/dates';
 import { parseUTCTime } from '../../src/utils/dates';
 import { parsePhone } from '../../src/utils/phone-utils';
@@ -60,10 +63,38 @@ const shopResolver = {
         ORDER BY distance
       `;
     },
+    myShop: (parent, args: QueryShopArgs, ctx: Context) => {
+      if (!ctx.tokenInfo) {
+        return new ApolloError('No Token provided', 'NO_TOKEN_PROVIDED');
+      }
+
+      if (
+        !ctx.tokenInfo.isValid &&
+        ctx.tokenInfo.error.name === 'TokenExpiredError'
+      ) {
+        return new ApolloError('Expired Token', 'EXPIRED_TOKEN');
+      }
+
+      if (!ctx.tokenInfo.isValid) {
+        return new ApolloError('Shop not verified', 'INVALID_TOKEN');
+      }
+
+      if (!ctx.tokenInfo.shopId) {
+        return new ApolloError('Shop Id not provided', 'INVALID_SHOP_ID');
+      }
+
+      return ctx.prisma.shop.findOne({
+        where: { id: ctx.tokenInfo.shopId },
+      });
+    },
   },
   Mutation: {
-    registerShop: (parent, args: MutationRegisterShopArgs, ctx: Context) => {
-      return ctx.prisma.shop.create({
+    registerShop: async (
+      parent,
+      args: MutationRegisterShopArgs,
+      ctx: Context
+    ) => {
+      const newShop = await ctx.prisma.shop.create({
         data: {
           id: crypto.randomBytes(20).toString('hex').substring(0, 19),
           isClosed: true,
@@ -76,6 +107,16 @@ const shopResolver = {
           },
         },
       });
+
+      await ctx.prisma.client.upsert({
+        where: { phone: args.shop.ownerPhone },
+        create: { phone: args.shop.ownerPhone },
+        update: {},
+      });
+
+      await registerPhone(args.shop.ownerPhone, ctx);
+
+      return newShop;
     },
     updateShop: (parent, args: MutationUpdateShopArgs, ctx: Context) => {
       if (!args.shop.id) {

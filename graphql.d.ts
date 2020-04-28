@@ -17,7 +17,6 @@ export type Client = {
    __typename?: 'Client';
   id: Scalars['ID'];
   phone: Scalars['String'];
-  isPhoneValidated: Scalars['Boolean'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
 };
@@ -26,6 +25,7 @@ export type Query = {
    __typename?: 'Query';
   client?: Maybe<Client>;
   getAppointments: Array<IssuedNumber>;
+  myShop: Shop;
   nearShops: Array<ShopDetails>;
   shop?: Maybe<Shop>;
   shops: Array<Shop>;
@@ -64,9 +64,10 @@ export type Mutation = {
   cancelAppointment: Scalars['Boolean'];
   registerShop: Shop;
   requestAppointment: IssuedNumber;
+  sendVerificationCode: Scalars['Boolean'];
   signUp: Client;
   updateShop: Shop;
-  verifyClient: Client;
+  verifyCode: Scalars['Boolean'];
 };
 
 
@@ -87,6 +88,11 @@ export type MutationRequestAppointmentArgs = {
 };
 
 
+export type MutationSendVerificationCodeArgs = {
+  phone: Scalars['ID'];
+};
+
+
 export type MutationSignUpArgs = {
   client: ClientSignupInput;
 };
@@ -97,9 +103,9 @@ export type MutationUpdateShopArgs = {
 };
 
 
-export type MutationVerifyClientArgs = {
-  id: Scalars['ID'];
-  verificationCode: Scalars['String'];
+export type MutationVerifyCodeArgs = {
+  phone: Scalars['String'];
+  code: Scalars['Int'];
 };
 
 export type ClientSignupInput = {
@@ -320,7 +326,6 @@ export type ResolversParentTypes = ResolversObject<{
 export type ClientResolvers<ContextType = any, ParentType extends ResolversParentTypes['Client'] = ResolversParentTypes['Client']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   phone?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
-  isPhoneValidated?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
@@ -329,6 +334,7 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryClientArgs, never>>,
   getAppointments?: Resolver<Array<ResolversTypes['IssuedNumber']>, ParentType, ContextType, RequireFields<QueryGetAppointmentsArgs, 'clientId'>>,
+  myShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
   nearShops?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType, RequireFields<QueryNearShopsArgs, 'lat' | 'lng'>>,
   shop?: Resolver<Maybe<ResolversTypes['Shop']>, ParentType, ContextType, RequireFields<QueryShopArgs, 'id'>>,
   shops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType>,
@@ -339,9 +345,10 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   cancelAppointment?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCancelAppointmentArgs, 'shopId' | 'clientId'>>,
   registerShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationRegisterShopArgs, 'shop'>>,
   requestAppointment?: Resolver<ResolversTypes['IssuedNumber'], ParentType, ContextType, RequireFields<MutationRequestAppointmentArgs, 'shopId' | 'clientId'>>,
+  sendVerificationCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendVerificationCodeArgs, 'phone'>>,
   signUp?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'client'>>,
   updateShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationUpdateShopArgs, 'shop'>>,
-  verifyClient?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationVerifyClientArgs, 'id' | 'verificationCode'>>,
+  verifyCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVerifyCodeArgs, 'phone' | 'code'>>,
 }>;
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
@@ -435,4 +442,3 @@ export type Resolvers<ContextType = any> = ResolversObject<{
  * Use "Resolvers" root object instead. If you wish to get "IResolvers", add "typesPrefix: I" to your config.
 */
 export type IResolvers<ContextType = any> = Resolvers<ContextType>;
-
