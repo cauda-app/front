@@ -1,7 +1,7 @@
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
 
-export const parse = (rawNumber: string) => {
+export const parsePhone = (rawNumber: string) => {
   try {
     const number = phoneUtil.parse(rawNumber);
 

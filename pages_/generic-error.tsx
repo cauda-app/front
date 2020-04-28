@@ -1,0 +1,1 @@
+export default () => <div>Something was wrong. Please contact us here: ...</div>

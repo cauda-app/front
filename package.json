@@ -2,9 +2,12 @@
   "name": "cauda-front",
   "version": "0.1.0",
   "private": true,
+  "keywords": [],
+  "author": "Cauda",
+  "license": "MIT",
   "scripts": {
-    "dev": "next-translate && next dev",
-    "build": "next-translate && next build",
+    "dev": "next-translate && yarn gen &&  next dev",
+    "build": "next-translate && yarn gen && next build",
     "start": "NODE_ENV=production next start",
     "storybook": "start-storybook -p 6006 -c .storybook",
     "build-storybook": "build-storybook -c .storybook -o storybook-static",
@@ -15,8 +18,18 @@
     "generateTypes": "graphql-codegen --config codegen.yml",
     "gen": "yarn generate && yarn generateTypes"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn generateTypes && yarn tsc && lint-staged"
+    }
+  },
+  "lint-staged": {
+    "**/*.{ts,tsx,json,graphql,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
   "dependencies": {
-    "@apollo/client": "^3.0.0-beta.41",
     "@fortawesome/fontawesome-svg-core": "^1.2.28",
     "@fortawesome/free-brands-svg-icons": "^5.13.0",
     "@fortawesome/free-regular-svg-icons": "^5.13.0",
@@ -27,21 +40,26 @@
     "@zeit/next-sass": "^1.0.1",
     "apollo-server-core": "^2.12.0",
     "apollo-server-micro": "^2.12.0",
+    "axios": "^0.19.2",
     "babel-plugin-import-graphql": "^2.7.0",
     "bootstrap": "^4.4.1",
-    "date-fns": "^2.11.1",
+    "date-fns": "^2.12.0",
+    "date-fns-tz": "^1.0.10",
     "dotenv": "^8.2.0",
     "google-libphonenumber": "^3.2.8",
     "google-map-react": "^1.1.7",
-    "graphql": "14.6.0",
+    "graphql": "^15.0.0",
     "graphql-import": "^1.0.2",
+    "graphql-request": "^1.8.2",
     "graphql-tools": "^4.0.7",
-    "graphql-yoga": "1.18.3",
+    "jsonwebtoken": "^8.5.1",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.0",
     "merge-graphql-schemas": "^1.7.7",
     "next": "^9.3.4",
+    "next-cookies": "^2.0.3",
     "next-images": "^1.3.1",
     "next-translate": "^0.14.2",
-    "next-with-apollo": "^5.0.0",
     "node-sass": "^4.13.1",
     "preact": "^10.3.4",
     "preact-render-to-string": "^5.1.4",
@@ -50,11 +68,13 @@
     "react-dom": "github:preact-compat/react-dom#1.0.0",
     "react-geolocated": "^3.0.1",
     "react-geosuggest": "^2.12.1",
+    "react-qr-reader": "^2.2.1",
     "react-ssr-prepass": "npm:preact-ssr-prepass@^1.0.1",
     "react-virtualized-auto-sizer": "^1.0.2",
     "react-window": "^1.8.5",
     "react-window-infinite-loader": "^1.0.5",
-    "sass": "^1.26.3"
+    "sass": "^1.26.3",
+    "tz-lookup": "^6.1.25"
   },
   "devDependencies": {
     "@babel/core": "^7.8.7",
@@ -63,12 +83,14 @@
     "@graphql-codegen/typescript-resolvers": "1.13.2",
     "@storybook/react": "^5.3.14",
     "@types/graphql": "14.5.0",
+    "@types/jsonwebtoken": "^8.3.9",
     "@types/node": "^13.11.1",
     "@types/react": "^16.9.23",
     "@types/ws": "7.2.3",
     "babel-loader": "^8.0.6",
     "babel-preset-react-app": "^9.1.1",
     "graphql-iso-date": "^3.6.1",
+    "prettier": "^2.0.5",
     "ts-node": "8.8.2",
     "ts-node-dev": "1.0.0-pre.44",
     "typescript": "^3.8.3"
@@ -79,9 +101,6 @@
     "type": "git",
     "url": "git+https://github.com/cauda-app/front.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/cauda-app/front/issues"
   },

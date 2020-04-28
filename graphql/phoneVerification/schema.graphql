@@ -1,0 +1,6 @@
+type Mutation {
+  verifyCode(phone: String!, code: Int!): Boolean!
+  sendVerificationCode(phone: ID!): Boolean!
+}
+
+

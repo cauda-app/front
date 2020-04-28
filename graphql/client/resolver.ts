@@ -1,5 +1,8 @@
-import { Context } from '../context';
-import { MutationSignUpArgs, MutationVerifyClientArgs } from '../../graphql';
+import { ApolloError } from 'apollo-server-core';
+
+import { Context } from '../../pages_/api/graphql';
+import { MutationSignUpArgs } from '../../graphql';
+import { registerPhone } from '../utils/registerPhone';
 
 const clientResolver = {
   Query: {
@@ -10,20 +13,28 @@ const clientResolver = {
     },
   },
   Mutation: {
-    signUp: (parent, args: MutationSignUpArgs, ctx: Context) => {
-      return ctx.prisma.client.create({
+    signUp: async (parent, args: MutationSignUpArgs, ctx: Context) => {
+      const client = await ctx.prisma.client.findOne({
+        where: { phone: args.client.phone },
+      });
+
+      if (client) {
+        return new ApolloError(
+          'Phone entered is already registered',
+          'PHONE_ALREADY_EXISTS'
+        );
+      }
+
+      const newClient = await ctx.prisma.client.create({
         data: {
           phone: args.client.phone,
-          phoneValidated: undefined,
         },
       });
-    },
-    verifyClient: (parent, args: MutationVerifyClientArgs, ctx: Context) => {
-      return ctx.prisma.client.update({
-        where: { id: Number(args.id) },
-        data: { phoneValidated: new Date().toISOString() },
-      });
-    },
+
+      await registerPhone(args.client.phone, ctx);
+
+      return newClient;
+    }   
   },
 };
 

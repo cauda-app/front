@@ -1,5 +1,5 @@
 import { ApolloError } from 'apollo-server-core';
-import { Context } from '../context';
+import { Context } from '../../pages_/api/graphql';
 import {
   MutationRequestAppointmentArgs,
   MutationCancelAppointmentArgs,
@@ -27,7 +27,7 @@ const IssuedNumberResolver = {
         where.shopId = args.shopId;
       }
       return ctx.prisma.issuedNumber.findMany({
-        where
+        where,
       });
     },
   },
@@ -44,7 +44,10 @@ const IssuedNumberResolver = {
       );
 
       if (appointments.length) {
-        return new ApolloError('There is already a pending appointment');
+        return new ApolloError(
+          'There is already a pending appointment',
+          'ACTIVE_APPOINTMENT'
+        );
       }
 
       const rawQuery = `CALL increaseShopCounter("${args.shopId}", ${args.clientId});`;
@@ -58,7 +61,8 @@ const IssuedNumberResolver = {
       );
       if (!appointments.length) {
         return new ApolloError(
-          'There was an error trying to set the appointment.'
+          'There was an error trying to set the appointment.',
+          'OP_ERROR'
         );
       }
       console.log(appointments);
@@ -76,7 +80,7 @@ const IssuedNumberResolver = {
       );
 
       if (!appointments.length) {
-        return new ApolloError('There is no pending appointment.');
+        return new ApolloError('There is no pending appointment.', 'APPOINtMENT_NOT_EXISTS');
       }
 
       await ctx.prisma.issuedNumber.update({

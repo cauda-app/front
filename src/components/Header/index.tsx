@@ -10,7 +10,7 @@ export default function Header(props) {
   return (
     <header>
       <Row className="no-gutters">
-        <Col className="text-center py-4">
+        <Col className="text-center pt-4 pb-3">
           <Link href="/">
             <a>
               <Image src="/cauda_logo.svg" />

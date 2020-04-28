@@ -15,15 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
-
-type MarkerProps = {
-  lat: number;
-  lng: number;
-};
-
-const Marker = (props: MarkerProps) => (
-  <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth size="lg" />
-);
+import Map from 'src/components/Map';
 
 interface FormValues {
   name?: string;
@@ -225,17 +217,7 @@ const EditShop = () => {
             </Form.Group>
 
             <Form.Group controlId="shop-map">
-              <div style={{ height: '200px', width: '100%' }}>
-                <GoogleMapReact
-                  bootstrapURLKeys={{ key: process.env.GOOGLE_PLACES_KEY }}
-                  defaultCenter={{ lat: -34.603722, lng: -58.381592 }} // TODO: Fixed for Argentina
-                  center={state.coord}
-                  zoom={state.coord ? 18 : 2}
-                  disabled={isSubmitting}
-                >
-                  {state.coord ? <Marker {...state.coord} /> : null}
-                </GoogleMapReact>
-              </div>
+              <Map {...state.coord} />
             </Form.Group>
 
             <Form.Group controlId="shop-phone">
@@ -262,6 +244,10 @@ const EditShop = () => {
                 </FormControl.Feedback>
               </InputGroup>
             </Form.Group>
+
+            <hr />
+
+            <h6 className="mb-3">{t('common:shop-hours')}</h6>
 
             <Container className="p-0">
               <DayHourDropDown

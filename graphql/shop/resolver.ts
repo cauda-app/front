@@ -1,13 +1,33 @@
 import { ApolloError } from 'apollo-server-core';
 import crypto from 'crypto';
-import { Context } from '../context';
+
+import { Context } from '../../pages_/api/graphql';
 import {
   Shop,
+  ShopDetails,
   QueryShopArgs,
+  QueryShopsDetailArgs,
   QueryNearShopsArgs,
   MutationRegisterShopArgs,
-  MutationUpdateShopArgs
+  MutationUpdateShopArgs,
 } from '../../graphql';
+
+import { registerPhone } from '../utils/registerPhone';
+import { nowFromCoordinates, todayIs, isOpen } from 'src/utils/dates';
+import { parseUTCTime } from '../../src/utils/dates';
+import { parsePhone } from '../../src/utils/phone-utils';
+
+const todaysStatus = (shopDetails: ShopDetails) => {
+  const now = nowFromCoordinates(shopDetails.lat, shopDetails.lng);
+  const today = todayIs(now).toLowerCase();
+  const timeStart = shopDetails[today + 'TimeStart'];
+  const timeEnd = shopDetails[today + 'TimeEnd'];
+  if (!timeStart || !timeEnd) {
+    return null;
+  }
+
+  return { start: timeStart, end: timeEnd, now };
+};
 
 const shopResolver = {
   Query: {
@@ -19,34 +39,62 @@ const shopResolver = {
     shops: (parent, args, ctx: Context) => {
       return ctx.prisma.shop.findMany();
     },
+    shopsDetail: (parent, args: QueryShopsDetailArgs, ctx: Context) => {
+      const after = args.after ? { after: { shopId: args.after } } : undefined;
+      return ctx.prisma.shopDetails.findMany({
+        first: 10,
+        ...after,
+      });
+    },
     nearShops: async (parent, args: QueryNearShopsArgs, ctx: Context) => {
       const MAX_DISTANCE_KM = 1;
-      const shopIds = await ctx.prisma.raw`
-        SELECT 
-          shopId , 
-          ( 
-            (3959 * acos( 			
+      return await ctx.prisma.raw`
+        SELECT
+          * ,
+          (
+            (3959 * acos(
               cos( radians(${args.lat}) ) * cos( radians( lat ) ) 
                 * cos( radians(lng) - radians(${args.lng})) + sin(radians(${args.lat})) 
                 * sin( radians(lat))
             ))
-          ) AS distance 
-        FROM ShopDetails 
+          ) AS distance
+        FROM ShopDetails
         HAVING distance < ${MAX_DISTANCE_KM}
         ORDER BY distance
       `;
-      return ctx.prisma.shop.findMany({
-        where: {
-          id: {
-            in: shopIds.map((s) => s.shopId),
-          },
-        },
+    },
+    myShop: (parent, args: QueryShopArgs, ctx: Context) => {
+      if (!ctx.tokenInfo) {
+        return new ApolloError('No Token provided', 'NO_TOKEN_PROVIDED');
+      }
+
+      if (
+        !ctx.tokenInfo.isValid &&
+        ctx.tokenInfo.error.name === 'TokenExpiredError'
+      ) {
+        return new ApolloError('Expired Token', 'EXPIRED_TOKEN');
+      }
+
+      if (!ctx.tokenInfo.isValid) {
+        return new ApolloError('Shop not verified', 'INVALID_TOKEN');
+      }
+
+      if (!ctx.tokenInfo.shopId) {
+        return new ApolloError('Shop Id not provided', 'INVALID_SHOP_ID');
+      }
+
+      return ctx.prisma.shop.findOne({
+        where: { id: ctx.tokenInfo.shopId },
       });
     },
   },
-  Mutation: {    
-    registerShop: (parent, args: MutationRegisterShopArgs, ctx: Context) => {
-      return ctx.prisma.shop.create({
+  Mutation: {
+    registerShop: async (
+      parent,
+      args: MutationRegisterShopArgs,
+      ctx: Context
+    ) => {
+      const newShop = await ctx.prisma.shop.create({
         data: {
           id: crypto.randomBytes(20).toString('hex').substring(0, 19),
           isClosed: true,
@@ -59,6 +107,16 @@ const shopResolver = {
           },
         },
       });
+
+      await ctx.prisma.client.upsert({
+        where: { phone: args.shop.ownerPhone },
+        create: { phone: args.shop.ownerPhone },
+        update: {},
+      });
+
+      await registerPhone(args.shop.ownerPhone, ctx);
+
+      return newShop;
     },
     updateShop: (parent, args: MutationUpdateShopArgs, ctx: Context) => {
       if (!args.shop.id) {
@@ -83,6 +141,34 @@ const shopResolver = {
       return ctx.prisma.shopDetails.findOne({
         where: { shopId: parent.id },
       });
+    },
+  },
+  ShopDetails: {
+    isOpen: (parent: ShopDetails, args, ctx: Context) => {
+      const status = todaysStatus(parent);
+      if (!status) {
+        return false;
+      }
+      const open = parseUTCTime(status.start, status.now);
+      const close = parseUTCTime(status.end, status.now);
+
+      return isOpen(status.now, open, close);
+    },
+    shopPhone: (parent: ShopDetails, args, ctx: Context) => {
+      if (parent.shopPhone) {
+        const phone = parsePhone(parent.shopPhone);
+        return phone.number;
+      }
+
+      return null;
+    },
+    status: (parent: ShopDetails, args, ctx: Context) => {
+      const status = todaysStatus(parent);
+      if (!status) {
+        return null;
+      }
+
+      return { opens: status.start, closes: status.end };
     },
   },
 };
