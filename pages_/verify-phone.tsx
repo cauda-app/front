@@ -12,9 +12,6 @@ import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import { faChevronRight } from '@fortawesome/free-solid-svg-icons';
 
 
-import graphqlClient from 'src/graphql-config';
-
-
 const VerifyPhone = () => {
   const { t } = useTranslation();
 

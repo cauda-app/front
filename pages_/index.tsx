@@ -8,38 +8,36 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
-import { withRouter, SingletonRouter } from 'next/router';
+import Router from 'next/router';
 
 import Layout from 'src/components/Layout';
-import graphqlClient from 'src/graphql-config';
-import { route } from 'next/dist/next-server/server/router';
+import useQuery from 'src/hooks/useQuery';
 
-type Props = {
-  router: SingletonRouter;
-};
+// type Props = {};
 
-const Home = ({ router }: Props) => {
+const Home = () => {
   const { t } = useTranslation();
 
   const onMyShopClick = () => {
-    graphqlClient
-      .request(`{ myShop { id } }`)
-      .then((data) => {
-        router.push('/my-shop');
-      })
-      .catch((error) => {
-        const errorCode = error.response?.errors[0]?.extensions?.code;
+    const { data, /* loading, */ error } = useQuery('{ myShop { id } }');
 
-        if (['NO_TOKEN_PROVIDED'].includes(errorCode)) {
-          return router.push('/form-shop');
-        }
+    if (error) {
+      const errorCode = error.response?.errors[0]?.extensions?.code;
 
-        if (['EXPIRED_TOKEN', 'INVALID_TOKEN'].includes(errorCode)) {
-          return router.push('/verify-phone');
-        }
+      if (['NO_TOKEN_PROVIDED'].includes(errorCode)) {
+        return Router.push('/form-shop');
+      }
 
-        return router.push('/generic-error');
-      });
+      if (['EXPIRED_TOKEN', 'INVALID_TOKEN'].includes(errorCode)) {
+        return Router.push('/verify-phone');
+      }
+
+      return Router.push('/generic-error');
+    }
+
+    if (data) {
+      Router.push('/my-shop');
+    }
   };
 
   return (
@@ -103,4 +101,4 @@ const Home = ({ router }: Props) => {
   );
 };
 
-export default withRouter(Home);
+export default Home;
