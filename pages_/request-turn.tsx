@@ -78,6 +78,7 @@ const RequestTurn = () => {
                 </InputGroup.Prepend>
                 <FormControl
                   placeholder={t('common:enter-code')}
+                  autoComplete="one-time-code"
                 />
               </InputGroup>
               <Form.Text className="text-muted">
