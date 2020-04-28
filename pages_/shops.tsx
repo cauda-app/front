@@ -4,6 +4,7 @@ import Layout from '../src/components/Layout';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
+import { geolocated } from 'react-geolocated';
 import Spinner from '../src/components/Spinner';
 import useQuery from '../src/hooks/useQuery';
 
@@ -28,7 +29,7 @@ const SHOPS = /* GraphQL */ `
   }
 `;
 
-const Shops = () => {
+const Shops = ({ isGeolocationAvailable, isGeolocationEnabled, coords }) => {
   const { t } = useTranslation();
   const { data, loading, error, fetchMore } = useQuery(SHOPS);
   const [hasNextPage, setHasNextPage] = React.useState(true);
@@ -88,4 +89,9 @@ const Shops = () => {
   );
 };
 
-export default Shops;
+export default geolocated({
+  positionOptions: {
+    enableHighAccuracy: false,
+  },
+  userDecisionTimeout: 5000,
+})(Shops);
