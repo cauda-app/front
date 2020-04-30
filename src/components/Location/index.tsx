@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { geolocated, GeolocatedProps } from 'react-geolocated';
 
-const GPS_STATUS_KEY = 'GPS_STATUS';
-const DENIED = 'DENIED';
-const APPROVED = 'APPROVED';
-const LOADING = 'LOADING';
+import step1 from './assets/step1.jpeg';
+import step2 from './assets/step2.jpeg';
+import step3 from './assets/step3.jpeg';
 
 export type Coords = {
   lat: number;
@@ -12,91 +10,97 @@ export type Coords = {
 };
 
 type Props = {
-  render: (props: Coords) => JSX.Element;
-} & GeolocatedProps;
-
-function Location({
-  isGeolocationAvailable,
-  isGeolocationEnabled,
-  coords,
-  render,
-}: Props) {
-  const deleteGPSStorageAndRefresh = () => {
-    window.localStorage.removeItem(GPS_STATUS_KEY);
-    location.reload();
-  };
-
-  if (!isGeolocationAvailable) {
-    return <div>Tu dispositivo no soporta uso de GPS</div>;
-  }
-
-  if (!isGeolocationEnabled) {
-    window.localStorage.setItem(GPS_STATUS_KEY, DENIED);
-    return (
-      <div>
-        Permita el uso de GPS
-        <button onClick={deleteGPSStorageAndRefresh}>Refrescar</button>
-      </div>
-    );
-  }
-
-  if (!coords) {
-    return <div>Loading...</div>;
-  }
-
-  window.localStorage.setItem(GPS_STATUS_KEY, APPROVED);
-  return render({ lat: coords.latitude, lng: coords.longitude });
-}
-
-const GeoLocation = geolocated({
-  positionOptions: {
-    enableHighAccuracy: false,
-  },
-  userDecisionTimeout: 15000,
-})(Location);
-
-type RequestGPSNotificationType = {
-  render: (props: Coords) => JSX.Element;
+  render: (props: Coords) => any;
 };
 
-const RequestGPSNotification = ({ render }: RequestGPSNotificationType) => {
-  const [gpsStatus, setGpsStatus] = useState(LOADING);
-  const [requestAccess, setRequestAccess] = useState(false);
+const GPS_STATUS_KEY = 'GPS_STATUS';
+const GPS_GRANTED = 'GPS_GRANTED';
 
-  const deleteGPSStorageAndRefresh = () => {
-    window.localStorage.removeItem(GPS_STATUS_KEY);
-    location.reload();
+const RequestGPSNotification = ({ render }: Props) => {
+  const [loading, setLoading] = useState(true);
+  const [errorCode, setErrorCode] = useState<number>();
+  const [coords, setCoords] = useState<Coords>();
+  const [notificationAccepted, setNotificationAccepted] = useState(false);
+
+  const requestAccess = () => {
+    setLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        window.localStorage.setItem(GPS_STATUS_KEY, GPS_GRANTED);
+        setCoords({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+        setNotificationAccepted(true);
+        setLoading(false);
+      },
+      (error) => {
+        window.localStorage.removeItem(GPS_STATUS_KEY);
+        setNotificationAccepted(false);
+        setLoading(false);
+        setErrorCode(error.code);
+      }
+    );
   };
 
   useEffect(() => {
-    setGpsStatus(window.localStorage.getItem(GPS_STATUS_KEY));
-  });
+    const res = window.localStorage.getItem(GPS_STATUS_KEY);
+    if (res) {
+      setNotificationAccepted(true);
+      requestAccess();
+    }
+    setLoading(false);
+  }, []);
 
-  if (gpsStatus === LOADING) {
+  if (loading) {
     return <div>Loading...</div>;
   }
 
-  if (!gpsStatus && !requestAccess) {
+  if (!navigator.geolocation) {
+    return <div>Geolocation is not supported by this device.</div>;
+  }
+
+  if (coords) {
+    return render({ ...coords });
+  }
+
+  if (!coords && !notificationAccepted && !errorCode) {
     return (
       <div>
         Vamos a solicitarte que actives tu GPS. Si denegas el acceso, no vas a
         poder usar la aplicación.
-        <button onClick={() => setRequestAccess(true)}>Continuar</button>
+        <button onClick={requestAccess}>Continuar</button>
       </div>
     );
   }
 
-  if (gpsStatus === DENIED) {
-    return (
-      <div>
-        Has denegado el acceso al GPS, tenés que habilitarlo antes de continuar
-        <button onClick={deleteGPSStorageAndRefresh}>Refrescar</button>
-      </div>
-    );
-  }
-
-  if (requestAccess || gpsStatus === APPROVED) {
-    return <GeoLocation render={render} />;
+  if (errorCode) {
+    switch (errorCode) {
+      case 1: //PERMISSION_DENIED
+        return (
+          <div>
+            <div
+              style={{
+                margin: '15px',
+                padding: '30px',
+                border: '1px solid black',
+                color: 'red',
+              }}
+            >
+              Tu Ubicación está bloqueada, segui estos pasos para desbloquearla
+            </div>
+            <img src={step1} alt="step1" />
+            <img src={step2} alt="step1" />
+            <img src={step3} alt="step1" />
+          </div>
+        );
+      case 2: //POSITION_UNAVAILABLE
+        return <div>"Location information is unavailable."</div>;
+      case 3: // TIMEOUT
+        return <div>"The request to get user location timed out."</div>;
+      default:
+        return <div>"An unknown error occurred."</div>;
+    }
   }
 };
 
