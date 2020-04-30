@@ -36,10 +36,8 @@ type Props = {
   coords: Coords;
 };
 
-const Shops = (props: Props) => {
-  console.log(props);
+const Shops = ({ coords: { lat, lng } }: Props) => {
   const { t } = useTranslation();
-  const [lat, lng] = [-36.789655, -59.862112];
   const variables = React.useMemo(() => ({ lat, lng }), [lat, lng]);
   const [offset, setOffset] = React.useState(0);
   const { data, loading, error, fetchMore } = useQuery(SHOPS, variables);
