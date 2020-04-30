@@ -47,25 +47,19 @@ const shopResolver = {
       });
     },
     nearByShops: async (parent, args: QueryNearByShopsArgs, ctx: Context) => {
-      const MAX_DISTANCE_KM = 1;
+      const MAX_DISTANCE_METERS = 1000;
       return await ctx.prisma.raw(`
         SELECT
           * ,
-          (
-            (3959 * acos(
-              cos( radians(${args.lat}) ) * cos( radians( lat ) ) 
-                * cos( radians(lng) - radians(${args.lng})) + sin(radians(${
-        args.lat
-      }))
-                * sin( radians(lat))
-            ))
+          ST_Distance_Sphere(
+            point(${args.lng}, ${args.lat}),
+            point(lng, lat)
           ) AS distance
         FROM ShopDetails
-        HAVING distance < ${MAX_DISTANCE_KM} ${
-        args.after ? `AND createdAt > '${args.after}'` : ''
-      }
+        HAVING distance < ${MAX_DISTANCE_METERS}
         ORDER BY distance
         LIMIT 10
+        OFFSET ${args.offset}
       `);
     },
     myShop: (parent, args: QueryShopArgs, ctx: Context) => {
