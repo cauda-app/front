@@ -7,6 +7,9 @@ import Button from 'react-bootstrap/Button';
 import Spinner from '../src/components/Spinner';
 import useQuery from '../src/hooks/useQuery';
 
+import Shopcard from '../src/components/ShopCard';
+import Location, { Coords } from '../src/components/Location';
+
 import ShopCard from 'src/components/ShopCard';
 const PAGE_ROWS = 10;
 
@@ -29,7 +32,12 @@ const SHOPS = /* GraphQL */ `
   }
 `;
 
-const Shops = () => {
+type Props = {
+  coords: Coords;
+};
+
+const Shops = (props: Props) => {
+  console.log(props);
   const { t } = useTranslation();
   const [lat, lng] = [-36.789655, -59.862112];
   const variables = React.useMemo(() => ({ lat, lng }), [lat, lng]);
@@ -97,4 +105,6 @@ const Shops = () => {
   );
 };
 
-export default Shops;
+export default () => (
+  <Location render={(coords: Coords) => <Shops coords={coords} />} />
+);
