@@ -8,12 +8,11 @@ import Spinner from '../src/components/Spinner';
 import useQuery from '../src/hooks/useQuery';
 
 import ShopCard from 'src/components/ShopCard';
-
-import { ShopDetails } from '../graphql';
+const PAGE_ROWS = 10;
 
 const SHOPS = /* GraphQL */ `
-  query Shops($after: String) {
-    shopsDetail(after: $after) {
+  query Shops($lat: Float!, $lng: Float!, $offset: Int) {
+    nearByShops(lat: $lat, lng: $lng, offset: $offset) {
       shopId
       name
       address
@@ -21,6 +20,7 @@ const SHOPS = /* GraphQL */ `
       lng
       shopPhone
       isOpen
+      createdAt
       status {
         opens
         closes
@@ -31,7 +31,36 @@ const SHOPS = /* GraphQL */ `
 
 const Shops = () => {
   const { t } = useTranslation();
-  const { data, loading, error, fetchMore } = useQuery(SHOPS);
+  const [lat, lng] = [-36.789655, -59.862112];
+  const variables = React.useMemo(() => ({ lat, lng }), [lat, lng]);
+  const [offset, setOffset] = React.useState(0);
+  const { data, loading, error, fetchMore } = useQuery(SHOPS, variables);
+  const [hasNextPage, setHasNextPage] = React.useState(true);
+
+  const handleFetchMore = () => {
+    const newOffset = offset + PAGE_ROWS;
+    setOffset(newOffset);
+
+    fetchMore({
+      variables: {
+        offset: newOffset,
+      },
+      updateQuery: (prev, fetchMoreResult) => {
+        if (
+          !fetchMoreResult ||
+          !fetchMoreResult.nearByShops.length ||
+          fetchMoreResult.nearByShops.length < PAGE_ROWS
+        ) {
+          setHasNextPage(false);
+          return prev;
+        }
+        return {
+          ...prev,
+          nearByShops: [...prev.nearByShops, ...fetchMoreResult.nearByShops],
+        };
+      },
+    });
+  };
 
   if (error) {
     return <div>{String(error)}</div>;
@@ -46,37 +75,21 @@ const Shops = () => {
           </Col>
         </Row>
 
-        {data.shopsDetail?.map((shop) => (
+        {data.nearByShops?.map((shop) => (
           <ShopCard key={shop.id} shop={shop} />
         ))}
 
         {loading ? <Spinner /> : null}
 
-        {data.shopsDetail ? (
+        {data.nearByShops && hasNextPage ? (
           <Button
             variant="primary"
             className="mt-3"
             block
             disabled={loading}
-            onClick={() =>
-              fetchMore({
-                variables: {
-                  after: data.shopsDetail[data.shopsDetail.length - 1].shopId,
-                },
-                updateQuery: (prev, fetchMoreResult) => {
-                  if (!fetchMoreResult) return prev;
-                  return {
-                    ...prev,
-                    shopsDetail: [
-                      ...prev.shopsDetail,
-                      ...fetchMoreResult.shopsDetail,
-                    ],
-                  };
-                },
-              })
-            }
+            onClick={handleFetchMore}
           >
-            Cargar Mas
+            {t('common:load-more')}
           </Button>
         ) : null}
       </div>
