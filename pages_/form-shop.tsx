@@ -5,11 +5,11 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import Container from 'react-bootstrap/Container';
-import GoogleMapReact from 'google-map-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import Router from 'next/router';
 
 import { isEmptyObject, validatePhoneRequest } from 'src/utils';
 import GeoSuggest from 'src/components/GeoSuggest';
@@ -46,21 +46,21 @@ const resetFormValues = () => ({
   coord: null,
   shopPhone: '',
   mondayIsOpen: true,
+  tuesdayIsOpen: true,
+  wednesdayIsOpen: true,
+  thursdayIsOpen: true,
+  fridayIsOpen: true,
+  saturdayIsOpen: true,
   mondayTimeStart: '09:00',
   mondayTimeEnd: '20:00',
-  tuesdayIsOpen: true,
   tuesdayTimeStart: '09:00',
   tuesdayTimeEnd: '20:00',
-  wednesdayIsOpen: true,
   wednesdayTimeStart: '09:00',
   wednesdayTimeEnd: '20:00',
-  thursdayIsOpen: true,
   thursdayTimeStart: '09:00',
   thursdayTimeEnd: '20:00',
-  fridayIsOpen: true,
   fridayTimeStart: '09:00',
   fridayTimeEnd: '20:00',
-  saturdayIsOpen: true,
   saturdayTimeStart: '09:00',
   saturdayTimeEnd: '20:00',
   sundayTimeStart: '09:00',
@@ -86,6 +86,7 @@ const EditShop = () => {
   const [submitAttempt, setSubmitAttempt] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errors, setErrors] = React.useState<ShopErrors>({});
+  const [creationError, setCreationError] = React.useState();
 
   const validate = async (values: FormValues) => {
     const errors: ShopErrors = {};
@@ -135,6 +136,39 @@ const EditShop = () => {
     dispatch({ field: name, value });
   };
 
+  const createShop = async () => {
+    const MUTATION = /* GraphQL */ `
+      mutation createShop($shop: ShopInput!) {
+        registerShop(shop: $shop) {
+          id
+        }
+      }
+    `;
+
+    const shopInput = {
+      ...state,
+      lat: state.coord.lat,
+      lng: state.coord.lng,
+    };
+    delete shopInput.coord;
+    delete shopInput.mondayIsOpen;
+    delete shopInput.tuesdayIsOpen;
+    delete shopInput.wednesdayIsOpen;
+    delete shopInput.thursdayIsOpen;
+    delete shopInput.fridayIsOpen;
+    delete shopInput.saturdayIsOpen;
+    delete shopInput.sundayIsOpen;
+
+    try {
+      await graphqlClient.request(MUTATION, {
+        shop: shopInput,
+      });
+      Router.push('/my-shop');
+    } catch (error) {
+      Router.push('/generic-error');
+    }
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -144,19 +178,7 @@ const EditShop = () => {
     const errors = await validate(state);
 
     if (isEmptyObject(errors)) {
-      const MUTATION = /* GraphQL */ `
-        mutation createShop($shop: ShopInput!) {
-          registerShop(shop: $shop) {
-            id
-          }
-        }
-      `;
-      debugger;
-      const response = await graphqlClient.request(MUTATION, {
-        shop: { ...state, lat: state.coord.lat, lng: state.coord.lng },
-      });
-      debugger;
-      console.log(response);
+      createShop();
     } else {
       setErrors(errors);
       setSubmitAttempt(true);

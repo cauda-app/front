@@ -12,7 +12,6 @@ import {
   MutationUpdateShopArgs,
 } from '../../graphql';
 
-// import { registerPhone } from '../utils/registerPhone';
 import { nowFromCoordinates, todayIs, isOpen } from 'src/utils/dates';
 import { parseUTCTime } from '../../src/utils/dates';
 import { parsePhone } from '../../src/utils/phone-utils';
@@ -93,6 +92,15 @@ const shopResolver = {
       args: MutationRegisterShopArgs,
       ctx: Context
     ) => {
+      console.log(ctx.tokenInfo);
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
+
+      if (ctx.tokenInfo?.shopId) {
+        return new ApolloError('Shop already exists', 'SHOP_EXISTS');
+      }
+
       const newShop = await ctx.prisma.shop.create({
         data: {
           id: crypto.randomBytes(20).toString('hex').substring(0, 19),
@@ -102,18 +110,11 @@ const shopResolver = {
           shopDetails: {
             create: {
               ...args.shop,
+              ownerPhone: ctx.tokenInfo.phone!,
             },
           },
         },
       });
-
-      await ctx.prisma.client.upsert({
-        where: { phone: args.shop.ownerPhone },
-        create: { phone: args.shop.ownerPhone },
-        update: {},
-      });
-
-      // await registerPhone(args.shop.ownerPhone, ctx);
 
       return newShop;
     },
@@ -122,12 +123,11 @@ const shopResolver = {
         return new ApolloError('Parameter id is required');
       }
 
-      const { id, isClosed, ...shopDetails } = args.shop;
+      const { id, ...shopDetails } = args.shop;
 
       return ctx.prisma.shop.update({
         where: { id },
         data: {
-          isClosed,
           shopDetails: {
             update: { ...shopDetails },
           },

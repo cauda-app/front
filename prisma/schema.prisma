@@ -32,7 +32,7 @@ model IssuedNumber {
 
 model Shop {
   id            String         @id
-  isClosed      Boolean
+  isClosed      Boolean        @default(false)
   numberCounter Int            @default(0)
   lastNumber    Int
   nextNumber    Int
