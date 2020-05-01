@@ -1,6 +1,9 @@
 import useTranslation from 'next-translate/useTranslation';
 import Link from 'next/link';
 
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
+
 export default function Footer(props) {
   const { t } = useTranslation();
 
@@ -13,7 +16,7 @@ export default function Footer(props) {
       </ul>
 
       <div className="devlinks">
-        FOR DEV: 
+        FOR DEV:
         <Link href="/">
           <a>Home</a>
         </Link>
@@ -29,7 +32,6 @@ export default function Footer(props) {
         <Link href="/my-turn">
           <a>Mi Turno</a>
         </Link>
-
         <Link href="/my-shop">
           <a>Mi Comercio</a>
         </Link>
@@ -38,12 +40,14 @@ export default function Footer(props) {
         </Link>
       </div>
 
+      <div>Version: {publicRuntimeConfig.version}</div>
+
       <style jsx>{`
-        footer {
+        footer  {
           text-align: center;
           padding: 20px;
         }
-        ul {
+        ul  {
           margin-bottom: 5px;
           font-size: 0.8rem;
         }

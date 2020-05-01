@@ -67,10 +67,10 @@ export type Mutation = {
   cancelAppointment: Scalars['Boolean'];
   registerShop: Shop;
   requestAppointment: IssuedNumber;
-  sendVerificationCode: Scalars['Boolean'];
   signUp: Client;
   updateShop: Shop;
   verifyCode: Scalars['Boolean'];
+  verifyPhone: Scalars['DateTime'];
 };
 
 export type MutationCancelAppointmentArgs = {
@@ -87,10 +87,6 @@ export type MutationRequestAppointmentArgs = {
   clientId: Scalars['Int'];
 };
 
-export type MutationSendVerificationCodeArgs = {
-  phone: Scalars['ID'];
-};
-
 export type MutationSignUpArgs = {
   client: ClientSignupInput;
 };
@@ -102,6 +98,10 @@ export type MutationUpdateShopArgs = {
 export type MutationVerifyCodeArgs = {
   phone: Scalars['String'];
   code: Scalars['Int'];
+};
+
+export type MutationVerifyPhoneArgs = {
+  phone: Scalars['String'];
 };
 
 export type ClientSignupInput = {
@@ -424,12 +424,6 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationRequestAppointmentArgs, 'shopId' | 'clientId'>
   >;
-  sendVerificationCode?: Resolver<
-    ResolversTypes['Boolean'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationSendVerificationCodeArgs, 'phone'>
-  >;
   signUp?: Resolver<
     ResolversTypes['Client'],
     ParentType,
@@ -447,6 +441,12 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationVerifyCodeArgs, 'phone' | 'code'>
+  >;
+  verifyPhone?: Resolver<
+    ResolversTypes['DateTime'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationVerifyPhoneArgs, 'phone'>
   >;
 }>;
 

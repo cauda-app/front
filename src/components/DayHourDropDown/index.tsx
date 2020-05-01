@@ -41,7 +41,7 @@ export default function DayHourDropDown({
             disabled={disabled}
             className="mr-0 d-block"
             label={label}
-            />
+          />
         </Col>
         <Col className="pr-1">
           <Form.Control
@@ -49,7 +49,6 @@ export default function DayHourDropDown({
             size="sm"
             custom
             value={openValue}
-            id={`${dayOfWeek}-open`}
             name={`${dayOfWeek}IsOpen`}
             disabled={disabled || !active}
             className="d-inline"
@@ -70,7 +69,6 @@ export default function DayHourDropDown({
             size="sm"
             custom
             value={closeValue}
-            id={`${dayOfWeek}-close`}
             name={`${dayOfWeek}IsClose`}
             disabled={disabled || !active}
             className="d-inline"

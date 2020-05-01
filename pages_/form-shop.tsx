@@ -1,68 +1,70 @@
 import React from 'react';
 import useTranslation from 'next-translate/useTranslation';
-import Layout from '../src/components/Layout';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import FormControl from 'react-bootstrap/FormControl';
 import Container from 'react-bootstrap/Container';
 import GoogleMapReact from 'google-map-react';
-import GeoSuggest from '../src/components/GeoSuggest';
-import { isEmptyObject, validatePhoneRequest } from '../src/utils';
-import DayHourDropDown from '../src/components/DayHourDropDown';
-import LoadingButton from '../src/components/LoadingButton';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
+
+import { isEmptyObject, validatePhoneRequest } from 'src/utils';
+import GeoSuggest from 'src/components/GeoSuggest';
+import DayHourDropDown from 'src/components/DayHourDropDown';
+import LoadingButton from 'src/components/LoadingButton';
 import Map from 'src/components/Map';
+import graphqlClient from 'src/graphqlClient';
+import Layout from 'src/components/Layout';
 
 interface FormValues {
   name?: string;
   address?: string;
   coord?: { lat: number; long: number };
-  phone?: string;
-  mondayOpen?: string;
-  mondayClose?: string;
-  tuesdayOpen?: string;
-  tuesdayClose?: string;
-  wednesdayOpen?: string;
-  wednesdayClose?: string;
-  thursdayOpen?: string;
-  thursdayClose?: string;
-  fridayOpen?: string;
-  fridayClose?: string;
-  saturdayOpen?: string;
-  saturdayClose?: string;
-  sundayOpen?: string;
-  sundayClose?: string;
+  shopPhone?: string;
+  mondayTimeStart?: string;
+  mondayTimeEnd?: string;
+  tuesdayTimeStart?: string;
+  tuesdayTimeEnd?: string;
+  wednesdayTimeStart?: string;
+  wednesdayTimeEnd?: string;
+  thursdayTimeStart?: string;
+  thursdayTimeEnd?: string;
+  fridayTimeStart?: string;
+  fridayTimeEnd?: string;
+  saturdayTimeStart?: string;
+  saturdayTimeEnd?: string;
+  sundayTimeStart?: string;
+  sundayTimeEnd?: string;
 }
 
 const resetFormValues = () => ({
   name: '',
   address: '',
   coord: null,
-  phone: '',
+  shopPhone: '',
   mondayIsOpen: true,
-  mondayOpen: '09:00',
-  mondayClose: '20:00',
+  mondayTimeStart: '09:00',
+  mondayTimeEnd: '20:00',
   tuesdayIsOpen: true,
-  tuesdayOpen: '09:00',
-  tuesdayClose: '20:00',
+  tuesdayTimeStart: '09:00',
+  tuesdayTimeEnd: '20:00',
   wednesdayIsOpen: true,
-  wednesdayOpen: '09:00',
-  wednesdayClose: '20:00',
+  wednesdayTimeStart: '09:00',
+  wednesdayTimeEnd: '20:00',
   thursdayIsOpen: true,
-  thursdayOpen: '09:00',
-  thursdayClose: '20:00',
+  thursdayTimeStart: '09:00',
+  thursdayTimeEnd: '20:00',
   fridayIsOpen: true,
-  fridayOpen: '09:00',
-  fridayClose: '20:00',
+  fridayTimeStart: '09:00',
+  fridayTimeEnd: '20:00',
   saturdayIsOpen: true,
-  saturdayOpen: '09:00',
-  saturdayClose: '20:00',
-  sundayOpen: '09:00',
-  sundayClose: '20:00',
+  saturdayTimeStart: '09:00',
+  saturdayTimeEnd: '20:00',
+  sundayTimeStart: '09:00',
+  sundayTimeEnd: '20:00',
 });
 
 const reducer = (state, { field, value }) => {
@@ -75,7 +77,7 @@ const reducer = (state, { field, value }) => {
 interface ShopErrors {
   name?: string;
   address?: string;
-  phone?: string;
+  shopPhone?: string;
 }
 
 const EditShop = () => {
@@ -96,12 +98,10 @@ const EditShop = () => {
       errors.address = t('common:shop-address-required');
     }
 
-    if (!values.phone) {
-      errors.phone = t('common:shop-phone-required');
-    } else {
-      const isValid = await validatePhoneRequest(values.phone);
+    if (values.shopPhone) {
+      const isValid = await validatePhoneRequest(values.shopPhone);
       if (!isValid) {
-        errors.phone = t('common:shop-phone-invalid');
+        errors.shopPhone = t('common:phone-invalid');
       }
     }
 
@@ -144,7 +144,19 @@ const EditShop = () => {
     const errors = await validate(state);
 
     if (isEmptyObject(errors)) {
-      console.log('Form OK');
+      const MUTATION = /* GraphQL */ `
+        mutation createShop($shop: ShopInput!) {
+          registerShop(shop: $shop) {
+            id
+          }
+        }
+      `;
+      debugger;
+      const response = await graphqlClient.request(MUTATION, {
+        shop: { ...state, lat: state.coord.lat, lng: state.coord.lng },
+      });
+      debugger;
+      console.log(response);
     } else {
       setErrors(errors);
       setSubmitAttempt(true);
@@ -233,14 +245,14 @@ const EditShop = () => {
                 <FormControl
                   type="text"
                   name="phone"
-                  value={state.phone}
+                  value={state.shopPhone}
                   onBlur={onChange}
                   placeholder={t('common:shop-phone')}
-                  isInvalid={!!errors.phone}
+                  isInvalid={!!errors.shopPhone}
                   disabled={isSubmitting}
                 />
                 <FormControl.Feedback type="invalid">
-                  {errors.phone}
+                  {errors.shopPhone}
                 </FormControl.Feedback>
               </InputGroup>
             </Form.Group>
@@ -254,11 +266,11 @@ const EditShop = () => {
                 label={t('common:days.monday')}
                 active={state.mondayIsOpen}
                 dayOfWeek="monday"
-                openValue={state.mondayOpen}
-                closeValue={state.mondayClose}
+                openValue={state.mondayTimeStart}
+                closeValue={state.mondayTimeEnd}
                 onActiveChange={onCheckboxChange}
-                onOpenChange={(value) => onHourChange('mondayOpen', value)}
-                onCloseChange={(value) => onHourChange('mondayClose', value)}
+                onOpenChange={(value) => onHourChange('mondayTimeStart', value)}
+                onCloseChange={(value) => onHourChange('mondayTimeEnd', value)}
                 disabled={isSubmitting}
               />
 
@@ -266,11 +278,13 @@ const EditShop = () => {
                 label={t('common:days.tuesday')}
                 active={state.tuesdayIsOpen}
                 dayOfWeek="tuesday"
-                openValue={state.tuesdayOpen}
-                closeValue={state.tuesdayClose}
+                openValue={state.tuesdayTimeStart}
+                closeValue={state.tuesdayTimeEnd}
                 onActiveChange={onCheckboxChange}
-                onOpenChange={(value) => onHourChange('tuesdayOpen', value)}
-                onCloseChange={(value) => onHourChange('tuesdayClose', value)}
+                onOpenChange={(value) =>
+                  onHourChange('tuesdayTimeStart', value)
+                }
+                onCloseChange={(value) => onHourChange('tuesdayTimeEnd', value)}
                 disabled={isSubmitting}
               />
 
@@ -278,11 +292,15 @@ const EditShop = () => {
                 label={t('common:days.wednesday')}
                 active={state.wednesdayIsOpen}
                 dayOfWeek="wednesday"
-                openValue={state.wednesdayOpen}
-                closeValue={state.wednesdayClose}
+                openValue={state.wednesdayTimeStart}
+                closeValue={state.wednesdayTimeEnd}
                 onActiveChange={onCheckboxChange}
-                onOpenChange={(value) => onHourChange('wednesdayOpen', value)}
-                onCloseChange={(value) => onHourChange('wednesdayClose', value)}
+                onOpenChange={(value) =>
+                  onHourChange('wednesdayTimeStart', value)
+                }
+                onCloseChange={(value) =>
+                  onHourChange('wednesdayTimeEnd', value)
+                }
                 disabled={isSubmitting}
               />
 
@@ -290,11 +308,15 @@ const EditShop = () => {
                 label={t('common:days.thursday')}
                 active={state.thursdayIsOpen}
                 dayOfWeek="thursday"
-                openValue={state.thursdayOpen}
-                closeValue={state.thursdayClose}
+                openValue={state.thursdayTimeStart}
+                closeValue={state.thursdayTimeEnd}
                 onActiveChange={onCheckboxChange}
-                onOpenChange={(value) => onHourChange('thursdayOpen', value)}
-                onCloseChange={(value) => onHourChange('thursdayClose', value)}
+                onOpenChange={(value) =>
+                  onHourChange('thursdayTimeStart', value)
+                }
+                onCloseChange={(value) =>
+                  onHourChange('thursdayTimeEnd', value)
+                }
                 disabled={isSubmitting}
               />
 
@@ -302,11 +324,11 @@ const EditShop = () => {
                 label={t('common:days.friday')}
                 active={state.fridayIsOpen}
                 dayOfWeek="friday"
-                openValue={state.fridayOpen}
-                closeValue={state.fridayClose}
+                openValue={state.fridayTimeStart}
+                closeValue={state.fridayTimeEnd}
                 onActiveChange={onCheckboxChange}
-                onOpenChange={(value) => onHourChange('fridayOpen', value)}
-                onCloseChange={(value) => onHourChange('fridayClose', value)}
+                onOpenChange={(value) => onHourChange('fridayTimeStart', value)}
+                onCloseChange={(value) => onHourChange('fridayTimeEnd', value)}
                 disabled={isSubmitting}
               />
 
@@ -314,11 +336,15 @@ const EditShop = () => {
                 label={t('common:days.saturday')}
                 active={state.saturdayIsOpen}
                 dayOfWeek="saturday"
-                openValue={state.saturdayOpen}
-                closeValue={state.saturdayClose}
+                openValue={state.saturdayTimeStart}
+                closeValue={state.saturdayTimeEnd}
                 onActiveChange={onCheckboxChange}
-                onOpenChange={(value) => onHourChange('saturdayOpen', value)}
-                onCloseChange={(value) => onHourChange('saturdayClose', value)}
+                onOpenChange={(value) =>
+                  onHourChange('saturdayTimeStart', value)
+                }
+                onCloseChange={(value) =>
+                  onHourChange('saturdayTimeEnd', value)
+                }
                 disabled={isSubmitting}
               />
 
@@ -326,11 +352,11 @@ const EditShop = () => {
                 label={t('common:days.sunday')}
                 active={state.sundayIsOpen}
                 dayOfWeek="sunday"
-                openValue={state.sundayOpen}
-                closeValue={state.sundayClose}
+                openValue={state.sundayTimeStart}
+                closeValue={state.sundayTimeEnd}
                 onActiveChange={onCheckboxChange}
-                onOpenChange={(value) => onHourChange('sundayOpen', value)}
-                onCloseChange={(value) => onHourChange('sundayClose', value)}
+                onOpenChange={(value) => onHourChange('sundayTimeStart', value)}
+                onCloseChange={(value) => onHourChange('sundayTimeEnd', value)}
                 disabled={isSubmitting}
               />
             </Container>

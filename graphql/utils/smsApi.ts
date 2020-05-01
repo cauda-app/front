@@ -24,7 +24,7 @@ export default async function sendSms(
         recipient: phone,
         message: message,
         expiresAt,
-        ignore_banned: 1
+        ignore_banned: 1,
       },
       {
         headers: {
@@ -34,6 +34,7 @@ export default async function sendSms(
         },
       }
     );
+    console.log(`SMS sent to phone: ${phone}`);
     return res.data.status === 'success';
   } catch (error) {
     console.log(error);

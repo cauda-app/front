@@ -14,7 +14,7 @@ export default function useQuery(query: string, variables?: any) {
   };
 
   const [state, setState] = React.useState<State>({
-    loading: false,
+    loading: true,
     data: {},
     fetchMore,
   });
@@ -29,6 +29,7 @@ export default function useQuery(query: string, variables?: any) {
         fetchMore,
       }));
     } catch (error) {
+      debugger;
       setState((state) => ({
         ...state,
         error,

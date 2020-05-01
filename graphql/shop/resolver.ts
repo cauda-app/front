@@ -12,7 +12,7 @@ import {
   MutationUpdateShopArgs,
 } from '../../graphql';
 
-import { registerPhone } from '../utils/registerPhone';
+// import { registerPhone } from '../utils/registerPhone';
 import { nowFromCoordinates, todayIs, isOpen } from 'src/utils/dates';
 import { parseUTCTime } from '../../src/utils/dates';
 import { parsePhone } from '../../src/utils/phone-utils';
@@ -67,15 +67,15 @@ const shopResolver = {
         return new ApolloError('No Token provided', 'NO_TOKEN_PROVIDED');
       }
 
+      if (!ctx.tokenInfo.isValid) {
+        return new ApolloError('Shop not verified', 'INVALID_TOKEN');
+      }
+
       if (
         !ctx.tokenInfo.isValid &&
         ctx.tokenInfo.error.name === 'TokenExpiredError'
       ) {
         return new ApolloError('Expired Token', 'EXPIRED_TOKEN');
-      }
-
-      if (!ctx.tokenInfo.isValid) {
-        return new ApolloError('Shop not verified', 'INVALID_TOKEN');
       }
 
       if (!ctx.tokenInfo.shopId) {
@@ -96,7 +96,7 @@ const shopResolver = {
       const newShop = await ctx.prisma.shop.create({
         data: {
           id: crypto.randomBytes(20).toString('hex').substring(0, 19),
-          isClosed: true,
+          isClosed: false,
           lastNumber: 0,
           nextNumber: 0,
           shopDetails: {
@@ -113,7 +113,7 @@ const shopResolver = {
         update: {},
       });
 
-      await registerPhone(args.shop.ownerPhone, ctx);
+      // await registerPhone(args.shop.ownerPhone, ctx);
 
       return newShop;
     },

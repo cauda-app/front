@@ -1,5 +1,5 @@
 import { GraphQLClient } from 'graphql-request';
 
-const client = new GraphQLClient('/api/graphql' /* , { headers: {} } */);
+const graphQLClient = new GraphQLClient('/api/graphql' /* , { headers: {} } */);
 
-export default client;
+export default graphQLClient;

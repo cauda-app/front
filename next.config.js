@@ -1,8 +1,12 @@
 const result = require('dotenv').config();
 const withImages = require('next-images');
+const packageJson = require('./package.json');
 
 module.exports = withImages({
   env: result.parsed || {},
+  publicRuntimeConfig: {
+    version: packageJson.version,
+  },
   experimental: {
     modern: true,
     polyfillsOptimization: true,
