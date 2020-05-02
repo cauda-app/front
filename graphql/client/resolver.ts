@@ -2,7 +2,7 @@ import { ApolloError } from 'apollo-server-core';
 
 import { Context } from '../../pages_/api/graphql';
 import { MutationSignUpArgs } from '../../graphql';
-import { registerPhone } from '../utils/registerPhone';
+// import { registerPhone } from '../utils/registerPhone';
 
 const clientResolver = {
   Query: {
@@ -31,10 +31,10 @@ const clientResolver = {
         },
       });
 
-      await registerPhone(args.client.phone, ctx);
+      // await registerPhone(args.client.phone, ctx);
 
       return newClient;
-    }   
+    },
   },
 };
 

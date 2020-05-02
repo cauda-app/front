@@ -5,10 +5,7 @@ import compareAsc from 'date-fns/compareAsc';
 import { serialize } from 'cookie';
 
 import { createToken } from '../../graphql/utils/jwt';
-import {
-  MutationSendVerificationCodeArgs,
-  MutationVerifyCodeArgs,
-} from '../../graphql';
+import { MutationVerifyCodeArgs, MutationVerifyPhoneArgs } from '../../graphql';
 import { Context } from '../../pages_/api/graphql';
 import randomCode from '../utils/randomCode';
 import { TOKEN_EXPIRY } from '../utils/constants';
@@ -34,28 +31,30 @@ const phoneVerificationResolver = {
         return new ApolloError('Incorrect code', 'INCORRECT_CODE');
       }
 
-      // if (phoneVerification.verified) {
-      //   return true;
-      // }
+      const updatedPhoneVerification = await ctx.prisma.phoneVerification.update(
+        {
+          where: {
+            phone: args.phone,
+          },
+          data: {
+            verified: new Date().toISOString(),
+          },
+        }
+      );
 
-      const updated = await ctx.prisma.phoneVerification.update({
+      const client = await ctx.prisma.client.upsert({
         where: {
           phone: args.phone,
         },
-        data: {
-          verified: new Date().toISOString(),
+        create: {
+          phone: updatedPhoneVerification.phone,
         },
+        update: {},
       });
 
       const shopDetails = await ctx.prisma.shopDetails.findOne({
         where: {
           ownerPhone: args.phone,
-        },
-      });
-
-      const client = await ctx.prisma.client.findOne({
-        where: {
-          phone: args.phone,
         },
       });
 
@@ -74,36 +73,18 @@ const phoneVerificationResolver = {
         })
       );
 
-      return !!updated;
+      return true;
     },
-    sendVerificationCode: async (
+    verifyPhone: async (
       parent,
-      args: MutationSendVerificationCodeArgs,
+      args: MutationVerifyPhoneArgs,
       ctx: Context
     ) => {
       const phoneVerification = await ctx.prisma.phoneVerification.findOne({
         where: { phone: args.phone },
       });
 
-      // search for user
-      const shop = await ctx.prisma.shopDetails.findOne({
-        where: { ownerPhone: args.phone },
-      });
-      let client;
-      if (!shop) {
-        client = await ctx.prisma.client.findOne({
-          where: { phone: args.phone },
-        });
-      }
-
-      if (!shop && !client) {
-        return new ApolloError(
-          'No shop or client registered with this phone',
-          'PHONE_NO_REGISTERED'
-        );
-      }
-
-      // Do not send before 5 mim
+      // Do not send before PHONE_CODE_EXPIRY
       if (
         phoneVerification &&
         compareAsc(
@@ -113,29 +94,31 @@ const phoneVerificationResolver = {
       ) {
         return new ApolloError(
           'A validation is active',
-          'IN_PROGRESS_VALIDATION'
+          'IN_PROGRESS_VERIFICATION'
         );
       }
 
       const code = randomCode();
-      const res = await ctx.prisma.phoneVerification.upsert({
-        where: {
-          phone: args.phone,
-        },
+      const expiry = addMinutes(new Date(), PHONE_CODE_EXPIRY).toISOString();
+
+      await ctx.prisma.phoneVerification.upsert({
+        where: { phone: args.phone },
         create: {
-          code,
           phone: args.phone,
-          expiry: addMinutes(new Date(), PHONE_CODE_EXPIRY).toISOString(),
+          code,
+          expiry,
         },
         update: {
           code,
-          expiry: addMinutes(new Date(), PHONE_CODE_EXPIRY).toISOString(),
+          expiry,
         },
       });
 
-      await sendSms(args.phone, code.toString());
+      if (process.env.SMS_VERIFICATION_ENABLED === '1') {
+        await sendSms(args.phone, code.toString());
+      }
 
-      return !!res;
+      return expiry;
     },
   },
 };

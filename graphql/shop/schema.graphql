@@ -61,8 +61,6 @@ input ShopInput {
   lat: Float!
   lng: Float!
   name: String!
-  ownerPhone: String!
-  isClosed: Boolean
   shopPhone: String
   mondayTimeEnd: Time
   mondayTimeStart: Time

@@ -5,6 +5,7 @@ import { Context } from '../../pages_/api/graphql';
 import {
   Shop,
   ShopDetails,
+  ShopInput,
   QueryShopArgs,
   QueryShopsDetailArgs,
   QueryNearByShopsArgs,
@@ -12,10 +13,36 @@ import {
   MutationUpdateShopArgs,
 } from '../../graphql';
 
-import { registerPhone } from '../utils/registerPhone';
 import { nowFromCoordinates, todayIs, isOpen } from 'src/utils/dates';
-import { parseUTCTime } from '../../src/utils/dates';
-import { parsePhone } from '../../src/utils/phone-utils';
+import { parseUTCTime, serializeTime } from 'src/utils/dates';
+import { parsePhone, formatPhone } from 'src/utils/phone-utils';
+
+const days = [
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday',
+];
+
+const mapShop = (shop: ShopInput): ShopInput => {
+  const updatedShop = { ...shop };
+
+  for (const day of days) {
+    updatedShop[day + 'TimeStart'] = serializeTime(
+      updatedShop[day + 'TimeStart']
+    );
+    updatedShop[day + 'TimeEnd'] = serializeTime(updatedShop[day + 'TimeEnd']);
+  }
+
+  if (updatedShop.shopPhone) {
+    updatedShop.shopPhone = formatPhone('AR', updatedShop.shopPhone);
+  }
+
+  return updatedShop;
+};
 
 const todaysStatus = (shopDetails: ShopDetails) => {
   const now = nowFromCoordinates(shopDetails.lat, shopDetails.lng);
@@ -67,15 +94,15 @@ const shopResolver = {
         return new ApolloError('No Token provided', 'NO_TOKEN_PROVIDED');
       }
 
+      if (!ctx.tokenInfo.isValid) {
+        return new ApolloError('Shop not verified', 'INVALID_TOKEN');
+      }
+
       if (
         !ctx.tokenInfo.isValid &&
         ctx.tokenInfo.error.name === 'TokenExpiredError'
       ) {
         return new ApolloError('Expired Token', 'EXPIRED_TOKEN');
-      }
-
-      if (!ctx.tokenInfo.isValid) {
-        return new ApolloError('Shop not verified', 'INVALID_TOKEN');
       }
 
       if (!ctx.tokenInfo.shopId) {
@@ -93,27 +120,29 @@ const shopResolver = {
       args: MutationRegisterShopArgs,
       ctx: Context
     ) => {
+      console.log(ctx.tokenInfo);
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
+
+      if (ctx.tokenInfo?.shopId) {
+        return new ApolloError('Shop already exists', 'SHOP_EXISTS');
+      }
+
       const newShop = await ctx.prisma.shop.create({
         data: {
           id: crypto.randomBytes(20).toString('hex').substring(0, 19),
-          isClosed: true,
+          isClosed: false,
           lastNumber: 0,
           nextNumber: 0,
           shopDetails: {
             create: {
-              ...args.shop,
+              ...mapShop(args.shop),
+              ownerPhone: formatPhone('AR', ctx.tokenInfo.phone!),
             },
           },
         },
       });
-
-      await ctx.prisma.client.upsert({
-        where: { phone: args.shop.ownerPhone },
-        create: { phone: args.shop.ownerPhone },
-        update: {},
-      });
-
-      await registerPhone(args.shop.ownerPhone, ctx);
 
       return newShop;
     },
@@ -122,14 +151,13 @@ const shopResolver = {
         return new ApolloError('Parameter id is required');
       }
 
-      const { id, isClosed, ...shopDetails } = args.shop;
+      const { id, ...shopDetails } = args.shop;
 
       return ctx.prisma.shop.update({
         where: { id },
         data: {
-          isClosed,
           shopDetails: {
-            update: { ...shopDetails },
+            update: { ...mapShop(shopDetails) },
           },
         },
       });

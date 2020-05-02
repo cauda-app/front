@@ -11,32 +11,36 @@ import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import Router from 'next/router';
 
 import Layout from 'src/components/Layout';
-import useQuery from 'src/hooks/useQuery';
+import graphqlClient from 'src/graphqlClient';
+import { getErrorCodeFromApollo } from 'src/utils';
 
 // type Props = {};
 
 const Home = () => {
   const { t } = useTranslation();
 
-  const onMyShopClick = () => {
-    const { data, /* loading, */ error } = useQuery('{ myShop { id } }');
+  const onMyShopClick = async () => {
+    try {
+      const response = await graphqlClient.request('{ myShop { id } }');
+      if (response) {
+        Router.push('/my-shop');
+      }
+    } catch (error) {
+      const errorCode = getErrorCodeFromApollo(error);
 
-    if (error) {
-      const errorCode = error.response?.errors[0]?.extensions?.code;
+      if (
+        ['NO_TOKEN_PROVIDED', 'EXPIRED_TOKEN', 'INVALID_TOKEN'].includes(
+          errorCode
+        )
+      ) {
+        return Router.push('/register-phone?type=shop');
+      }
 
-      if (['NO_TOKEN_PROVIDED'].includes(errorCode)) {
+      if (errorCode === 'INVALID_SHOP_ID') {
         return Router.push('/form-shop');
       }
 
-      if (['EXPIRED_TOKEN', 'INVALID_TOKEN'].includes(errorCode)) {
-        return Router.push('/verify-phone');
-      }
-
       return Router.push('/generic-error');
-    }
-
-    if (data) {
-      Router.push('/my-shop');
     }
   };
 

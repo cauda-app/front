@@ -27,7 +27,7 @@ export const parsePhone = (rawNumber: string) => {
   }
 };
 
-export const format = (countryCode: string, number: string): string => {
+export const formatPhone = (countryCode: string, number: string): string => {
   const parsedNumber = phoneUtil.parse(number, countryCode);
 
   return phoneUtil.format(parsedNumber, PNF.E164);
