@@ -57,7 +57,7 @@ export default function DayHourDropDown({
             }
           >
             {timeOptions.map((time, index) => (
-              <option key={index} value={time}>
+              <option key={index} value={time + ':00Z'}>
                 {time}
               </option>
             ))}
@@ -77,7 +77,7 @@ export default function DayHourDropDown({
             }
           >
             {timeOptions.map((time, index) => (
-              <option key={index} value={time}>
+              <option key={index} value={time + ':00Z'}>
                 {time}
               </option>
             ))}

@@ -62,18 +62,18 @@ input ShopInput {
   lng: Float!
   name: String!
   shopPhone: String
-  mondayTimeEnd: String
-  mondayTimeStart: String
-  tuesdayTimeEnd: String
-  tuesdayTimeStart: String
-  wednesdayTimeEnd: String
-  wednesdayTimeStart: String
-  thursdayTimeEnd: String
-  thursdayTimeStart: String
-  fridayTimeEnd: String
-  fridayTimeStart: String
-  saturdayTimeEnd: String
-  saturdayTimeStart: String
-  sundayTimeEnd: String
-  sundayTimeStart: String
+  mondayTimeEnd: Time
+  mondayTimeStart: Time
+  tuesdayTimeEnd: Time
+  tuesdayTimeStart: Time
+  wednesdayTimeEnd: Time
+  wednesdayTimeStart: Time
+  thursdayTimeEnd: Time
+  thursdayTimeStart: Time
+  fridayTimeEnd: Time
+  fridayTimeStart: Time
+  saturdayTimeEnd: Time
+  saturdayTimeStart: Time
+  sundayTimeEnd: Time
+  sundayTimeStart: Time
 }

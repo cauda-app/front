@@ -5,6 +5,7 @@ import { Context } from '../../pages_/api/graphql';
 import {
   Shop,
   ShopDetails,
+  ShopInput,
   QueryShopArgs,
   QueryShopsDetailArgs,
   QueryNearByShopsArgs,
@@ -13,8 +14,35 @@ import {
 } from '../../graphql';
 
 import { nowFromCoordinates, todayIs, isOpen } from 'src/utils/dates';
-import { parseUTCTime } from '../../src/utils/dates';
-import { parsePhone } from '../../src/utils/phone-utils';
+import { parseUTCTime, serializeTime } from 'src/utils/dates';
+import { parsePhone, formatPhone } from 'src/utils/phone-utils';
+
+const days = [
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday',
+];
+
+const mapShop = (shop: ShopInput): ShopInput => {
+  const updatedShop = { ...shop };
+
+  for (const day of days) {
+    updatedShop[day + 'TimeStart'] = serializeTime(
+      updatedShop[day + 'TimeStart']
+    );
+    updatedShop[day + 'TimeEnd'] = serializeTime(updatedShop[day + 'TimeEnd']);
+  }
+
+  if (updatedShop.shopPhone) {
+    updatedShop.shopPhone = formatPhone('AR', updatedShop.shopPhone);
+  }
+
+  return updatedShop;
+};
 
 const todaysStatus = (shopDetails: ShopDetails) => {
   const now = nowFromCoordinates(shopDetails.lat, shopDetails.lng);
@@ -109,8 +137,8 @@ const shopResolver = {
           nextNumber: 0,
           shopDetails: {
             create: {
-              ...args.shop,
-              ownerPhone: ctx.tokenInfo.phone!,
+              ...mapShop(args.shop),
+              ownerPhone: formatPhone('AR', ctx.tokenInfo.phone!),
             },
           },
         },
@@ -129,7 +157,7 @@ const shopResolver = {
         where: { id },
         data: {
           shopDetails: {
-            update: { ...shopDetails },
+            update: { ...mapShop(shopDetails) },
           },
         },
       });

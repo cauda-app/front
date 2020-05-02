@@ -19,6 +19,14 @@ import Map from 'src/components/Map';
 import graphqlClient from 'src/graphqlClient';
 import Layout from 'src/components/Layout';
 
+const MUTATION = /* GraphQL */ `
+  mutation createShop($shop: ShopInput!) {
+    registerShop(shop: $shop) {
+      id
+    }
+  }
+`;
+
 interface FormValues {
   name?: string;
   address?: string;
@@ -51,20 +59,20 @@ const resetFormValues = () => ({
   thursdayIsOpen: true,
   fridayIsOpen: true,
   saturdayIsOpen: true,
-  mondayTimeStart: '09:00',
-  mondayTimeEnd: '20:00',
-  tuesdayTimeStart: '09:00',
-  tuesdayTimeEnd: '20:00',
-  wednesdayTimeStart: '09:00',
-  wednesdayTimeEnd: '20:00',
-  thursdayTimeStart: '09:00',
-  thursdayTimeEnd: '20:00',
-  fridayTimeStart: '09:00',
-  fridayTimeEnd: '20:00',
-  saturdayTimeStart: '09:00',
-  saturdayTimeEnd: '20:00',
-  sundayTimeStart: '09:00',
-  sundayTimeEnd: '20:00',
+  mondayTimeStart: '09:00:00Z',
+  mondayTimeEnd: '20:00:00Z',
+  tuesdayTimeStart: '09:00:00Z',
+  tuesdayTimeEnd: '20:00:00Z',
+  wednesdayTimeStart: '09:00:00Z',
+  wednesdayTimeEnd: '20:00:00Z',
+  thursdayTimeStart: '09:00:00Z',
+  thursdayTimeEnd: '20:00:00Z',
+  fridayTimeStart: '09:00:00Z',
+  fridayTimeEnd: '20:00:00Z',
+  saturdayTimeStart: '09:00:00Z',
+  saturdayTimeEnd: '20:00:00Z',
+  sundayTimeStart: '09:00:00Z',
+  sundayTimeEnd: '20:00:00Z',
 });
 
 const reducer = (state, { field, value }) => {
@@ -137,14 +145,6 @@ const EditShop = () => {
   };
 
   const createShop = async () => {
-    const MUTATION = /* GraphQL */ `
-      mutation createShop($shop: ShopInput!) {
-        registerShop(shop: $shop) {
-          id
-        }
-      }
-    `;
-
     const shopInput = {
       ...state,
       lat: state.coord.lat,
@@ -266,7 +266,7 @@ const EditShop = () => {
                 </InputGroup.Prepend>
                 <FormControl
                   type="text"
-                  name="phone"
+                  name="shopPhone"
                   value={state.shopPhone}
                   onBlur={onChange}
                   placeholder={t('common:shop-phone')}

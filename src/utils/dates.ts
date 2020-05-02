@@ -34,3 +34,11 @@ export const nowFromCoordinates = (lat: number, lng: number): Date => {
   const timeZone = tzLookup(lat, lng);
   return utcToZonedTime(date, timeZone);
 };
+
+export const serializeTime = (date: Date): string => {
+  const dateTimeString = date.toISOString();
+  let time = dateTimeString.substr(dateTimeString.indexOf('T') + 1);
+  const regexFracSec = /\.\d{1,}/;
+  time = time.replace(regexFracSec, '');
+  return time;
+};
