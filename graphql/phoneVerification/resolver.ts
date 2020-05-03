@@ -70,6 +70,8 @@ const phoneVerificationResolver = {
           expires: addDays(new Date(), TOKEN_EXPIRY),
           secure: process.env.NODE_ENV === 'production',
           httpOnly: true,
+          path: '/',
+          sameSite: 'strict',
         })
       );
 
