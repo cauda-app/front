@@ -10,7 +10,7 @@ export type Coords = {
 };
 
 type Props = {
-  render: (props: Coords) => any;
+  render: (props: { coords: Coords }) => any;
 };
 
 const GPS_STATUS_KEY = 'GPS_STATUS';
@@ -61,7 +61,7 @@ const RequestGPSNotification = ({ render }: Props) => {
   }
 
   if (coords) {
-    return render({ ...coords });
+    return render({ coords });
   }
 
   if (!coords && !notificationAccepted && !errorCode) {

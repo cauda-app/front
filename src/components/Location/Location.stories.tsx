@@ -6,11 +6,11 @@ storiesOf('Location', module).add('default', () => {
   return (
     <div style={{ marginTop: '120px' }}>
       <Location
-        render={({ lat, lng }: Coords) => {
+        render={({ coords }: { coords: Coords }) => {
           return (
             <>
-              <div>lat: {lat}</div>
-              <div>lng: {lng}</div>
+              <div>lat: {coords.lat}</div>
+              <div>lng: {coords.lng}</div>
             </>
           );
         }}

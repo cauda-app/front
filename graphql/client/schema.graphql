@@ -7,11 +7,12 @@ type Client {
 }
 
 type Query {
+  myTurn: Client!
   client(id: ID): Client
 }
 
 type Mutation {
-  signUp(client: ClientSignupInput!): Client!    
+  signUp(client: ClientSignupInput!): Client!
 }
 
 input ClientSignupInput {

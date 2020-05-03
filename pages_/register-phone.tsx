@@ -102,7 +102,7 @@ const VerifyPhone = () => {
       if (Router.router?.query.type === 'shop') {
         goToShop();
       } else {
-        Router.push('/my-turn');
+        Router.push('/shops');
       }
     } catch (error) {
       const code = getErrorCodeFromApollo(error);
@@ -153,7 +153,7 @@ const VerifyPhone = () => {
   return (
     <Layout>
       <Card className="cauda_card mb-4 mx-auto text-center">
-        <Card.Header>{t('common:shop-details')}</Card.Header>
+        <Card.Header>{t('common:register')}</Card.Header>
         <Card.Body>
           <Form>
             {sendCodeScreen && (

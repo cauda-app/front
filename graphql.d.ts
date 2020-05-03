@@ -33,8 +33,8 @@ export type Query = {
   client?: Maybe<Client>;
   getAppointments: Array<IssuedNumber>;
   myShop: Shop;
+  myTurn: Client;
   nearByShops: Array<ShopDetails>;
-  shop?: Maybe<Shop>;
   shops: Array<Shop>;
   shopsDetail: Array<ShopDetails>;
 };
@@ -52,10 +52,6 @@ export type QueryNearByShopsArgs = {
   lat: Scalars['Float'];
   lng: Scalars['Float'];
   offset?: Scalars['Int'];
-};
-
-export type QueryShopArgs = {
-  id: Scalars['String'];
 };
 
 export type QueryShopsDetailArgs = {
@@ -379,17 +375,12 @@ export type QueryResolvers<
     RequireFields<QueryGetAppointmentsArgs, 'clientId'>
   >;
   myShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>;
+  myTurn?: Resolver<ResolversTypes['Client'], ParentType, ContextType>;
   nearByShops?: Resolver<
     Array<ResolversTypes['ShopDetails']>,
     ParentType,
     ContextType,
     RequireFields<QueryNearByShopsArgs, 'lat' | 'lng' | 'offset'>
-  >;
-  shop?: Resolver<
-    Maybe<ResolversTypes['Shop']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryShopArgs, 'id'>
   >;
   shops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType>;
   shopsDetail?: Resolver<

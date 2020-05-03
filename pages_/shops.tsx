@@ -104,5 +104,5 @@ const Shops = ({ coords: { lat, lng } }: Props) => {
 };
 
 export default () => (
-  <Location render={(coords: Coords) => <Shops coords={coords} />} />
+  <Location render={({ coords }) => <Shops coords={coords} />} />
 );

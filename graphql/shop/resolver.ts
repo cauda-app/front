@@ -6,7 +6,6 @@ import {
   Shop,
   ShopDetails,
   ShopInput,
-  QueryShopArgs,
   QueryShopsDetailArgs,
   QueryNearByShopsArgs,
   MutationRegisterShopArgs,
@@ -58,11 +57,6 @@ const todaysStatus = (shopDetails: ShopDetails) => {
 
 const shopResolver = {
   Query: {
-    shop: (parent, args: QueryShopArgs, ctx: Context) => {
-      return ctx.prisma.shop.findOne({
-        where: { id: args.id },
-      });
-    },
     shops: (parent, args, ctx: Context) => {
       return ctx.prisma.shop.findMany();
     },
@@ -89,7 +83,7 @@ const shopResolver = {
         OFFSET ${args.offset}
       `);
     },
-    myShop: (parent, args: QueryShopArgs, ctx: Context) => {
+    myShop: (parent, args, ctx: Context) => {
       if (!ctx.tokenInfo) {
         return new ApolloError('No Token provided', 'NO_TOKEN_PROVIDED');
       }
@@ -120,7 +114,6 @@ const shopResolver = {
       args: MutationRegisterShopArgs,
       ctx: Context
     ) => {
-      console.log(ctx.tokenInfo);
       if (!ctx.tokenInfo?.isValid) {
         return new ApolloError('Invalid token', 'INVALID_TOKEN');
       }

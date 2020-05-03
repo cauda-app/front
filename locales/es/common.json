@@ -16,6 +16,8 @@
     "saturday": "Sábado",
     "sunday": "Domingo"
   },
+  "register": "Registrate",
+  "goBack": "Volver",
   "loading": "Cargando...",
   "load-more": "Cargar Más",
   "my-active-turns": "Mis Turnos Activos",
