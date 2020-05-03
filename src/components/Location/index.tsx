@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import step1 from './assets/step1.jpeg';
 import step2 from './assets/step2.jpeg';
 import step3 from './assets/step3.jpeg';
+import Layout from '../Layout';
+import Spinner from '../Spinner';
 
 export type Coords = {
   lat: number;
@@ -53,11 +55,19 @@ const RequestGPSNotification = ({ render }: Props) => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Layout>
+        <Spinner />
+      </Layout>
+    );
   }
 
   if (!navigator.geolocation) {
-    return <div>Geolocation is not supported by this device.</div>;
+    return (
+      <Layout>
+        <div>Geolocation is not supported by this device.</div>
+      </Layout>
+    );
   }
 
   if (coords) {
@@ -66,11 +76,13 @@ const RequestGPSNotification = ({ render }: Props) => {
 
   if (!coords && !notificationAccepted && !errorCode) {
     return (
-      <div>
-        Vamos a solicitarte que actives tu GPS. Si denegas el acceso, no vas a
-        poder usar la aplicación.
-        <button onClick={requestAccess}>Continuar</button>
-      </div>
+      <Layout>
+        <div>
+          Vamos a solicitarte que actives tu GPS. Si denegas el acceso, no vas a
+          poder usar la aplicación.
+          <button onClick={requestAccess}>Continuar</button>
+        </div>
+      </Layout>
     );
   }
 
