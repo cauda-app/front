@@ -14,7 +14,7 @@ export type Context = {
   prisma: typeof prismaInstance;
 };
 
-const processCookie = (req: any): TokenInfo | undefined => {
+export const processCookie = (req: any): TokenInfo | undefined => {
   const { token } = nextCookie({ req });
   if (!token) {
     return undefined;

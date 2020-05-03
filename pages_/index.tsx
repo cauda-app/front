@@ -30,7 +30,7 @@ const Home = () => {
           errorCode
         )
       ) {
-        return Router.push('/register-phone?type=shop');
+        return Router.push('/register-phone?redirectTo=/my-shop');
       }
 
       if (errorCode === 'INVALID_SHOP_ID') {

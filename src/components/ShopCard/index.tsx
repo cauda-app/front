@@ -54,10 +54,22 @@ export default function ShopCard({ shop, ...rest }: Props) {
           </ListGroup.Item>
         </ListGroup>
         <Card.Body>
-          <Button variant="primary" block>
-            <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}
-            {t('common:request-turn')}
-          </Button>
+          {shop.shopId ? (
+            <Button
+              variant="primary"
+              block
+              href={`/${shop.shopId}`}
+              disabled={!shop.isOpen}
+            >
+              <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}
+              {t('common:request-turn')}
+            </Button>
+          ) : (
+            <Button variant="success" block disabled={!shop.isOpen}>
+              <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}
+              {t('common:confirm-turn')}
+            </Button>
+          )}
         </Card.Body>
       </Card>
     </div>
