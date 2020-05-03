@@ -42,3 +42,13 @@ export const serializeTime = (date: Date): string => {
   time = time.replace(regexFracSec, '');
   return time;
 };
+
+export const days = [
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday',
+];

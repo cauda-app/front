@@ -13,27 +13,19 @@ import {
 } from '../../graphql';
 
 import { nowFromCoordinates, todayIs, isOpen } from 'src/utils/dates';
-import { parseUTCTime, serializeTime } from 'src/utils/dates';
+import { days, parseUTCTime, serializeTime } from 'src/utils/dates';
 import { parsePhone, formatPhone } from 'src/utils/phone-utils';
-
-const days = [
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-  'sunday',
-];
 
 const mapShop = (shop: ShopInput): ShopInput => {
   const updatedShop = { ...shop };
 
   for (const day of days) {
-    updatedShop[day + 'TimeStart'] = serializeTime(
-      updatedShop[day + 'TimeStart']
-    );
-    updatedShop[day + 'TimeEnd'] = serializeTime(updatedShop[day + 'TimeEnd']);
+    const start = day + 'TimeStart';
+    const end = day + 'TimeEnd';
+    if (updatedShop[start]) {
+      updatedShop[start] = serializeTime(updatedShop[start]);
+      updatedShop[end] = serializeTime(updatedShop[end]);
+    }
   }
 
   if (updatedShop.shopPhone) {

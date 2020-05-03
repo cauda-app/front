@@ -18,6 +18,7 @@ import LoadingButton from 'src/components/LoadingButton';
 import Map from 'src/components/Map';
 import graphqlClient from 'src/graphqlClient';
 import Layout from 'src/components/Layout';
+import { days } from 'src/utils/dates';
 
 const MUTATION = /* GraphQL */ `
   mutation createShop($shop: ShopInput!) {
@@ -151,13 +152,14 @@ const EditShop = () => {
       lng: state.coord.lng,
     };
     delete shopInput.coord;
-    delete shopInput.mondayIsOpen;
-    delete shopInput.tuesdayIsOpen;
-    delete shopInput.wednesdayIsOpen;
-    delete shopInput.thursdayIsOpen;
-    delete shopInput.fridayIsOpen;
-    delete shopInput.saturdayIsOpen;
-    delete shopInput.sundayIsOpen;
+
+    for (const day of days) {
+      if (!shopInput[day + 'IsOpen']) {
+        delete shopInput[day + 'TimeStart'];
+        delete shopInput[day + 'TimeEnd'];
+      }
+      delete shopInput[day + 'IsOpen'];
+    }
 
     try {
       await graphqlClient.request(MUTATION, {
