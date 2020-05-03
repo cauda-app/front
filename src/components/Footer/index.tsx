@@ -20,6 +20,9 @@ export default function Footer(props) {
         <Link href="/">
           <a>Home</a>
         </Link>
+        <Link href="/logout">
+          <a>Logout</a>
+        </Link>
       </div>
 
       <div>Version: {publicRuntimeConfig.version}</div>
