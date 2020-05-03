@@ -13,8 +13,6 @@ import Layout from 'src/components/Layout';
 import graphqlClient from 'src/graphqlClient';
 import { getErrorCodeFromApollo } from 'src/utils';
 
-// type Props = {};
-
 const Home = () => {
   const { t } = useTranslation();
 
@@ -43,30 +41,6 @@ const Home = () => {
     }
   };
 
-  const onShopsClick = async () => {
-    try {
-      const response = await graphqlClient.request('{ myTurn { id } }');
-      if (response) {
-        Router.push('/shops');
-      }
-    } catch (error) {
-      const errorCode = getErrorCodeFromApollo(error);
-
-      if (
-        [
-          'NO_TOKEN_PROVIDED',
-          'EXPIRED_TOKEN',
-          'INVALID_TOKEN',
-          'INVALID_CLIENT_ID',
-        ].includes(errorCode)
-      ) {
-        return Router.push('/register-phone?type=client');
-      }
-
-      return Router.push('/generic-error');
-    }
-  };
-
   return (
     <Layout>
       <div className="content d-flex flex-column justify-content-between align-items-center h-100">
@@ -75,7 +49,7 @@ const Home = () => {
           <Row>
             <Col xs="12">
               <Button
-                onClick={onShopsClick}
+                href="/shops"
                 variant="primary"
                 size="lg"
                 className="mb-4 d-flex justify-content-between align-items-center py-4 p-sm-3"
