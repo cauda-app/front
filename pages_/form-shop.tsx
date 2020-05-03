@@ -265,7 +265,7 @@ const EditShop = () => {
                   </InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl
-                  type="text"
+                  type="number"
                   name="shopPhone"
                   value={state.shopPhone}
                   onBlur={onChange}

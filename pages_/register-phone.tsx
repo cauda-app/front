@@ -21,6 +21,18 @@ import {
 import graphqlClient from 'src/graphqlClient';
 import Spinner from 'src/components/Spinner';
 
+const VERIFY_CODE = /* GraphQL */ `
+  mutation VerifyCode($code: Int!, $phone: String!) {
+    verifyCode(code: $code, phone: $phone)
+  }
+`;
+
+const VERIFY_PHONE = /* GraphQL */ `
+  mutation VerifyPhone($phone: String!) {
+    verifyPhone(phone: $phone)
+  }
+`;
+
 const VerifyPhone = () => {
   const { t } = useTranslation();
 
@@ -39,6 +51,17 @@ const VerifyPhone = () => {
       : setCode(e.target.value);
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (sendCodeScreen) {
+      onSendCode();
+    } else {
+      onVerifyCode();
+    }
+  };
+
   const onSendCode = async () => {
     const isValid = await validatePhoneRequest(phone);
 
@@ -47,16 +70,10 @@ const VerifyPhone = () => {
       return;
     }
 
-    const MUTATION = /* GraphQL */ `
-      mutation VerifyPhone($phone: String!) {
-        verifyPhone(phone: $phone)
-      }
-    `;
-
     setIsSubmitting(true);
 
     try {
-      const res = await graphqlClient.request(MUTATION, { phone });
+      const res = await graphqlClient.request(VERIFY_PHONE, { phone });
       setExpiresIn(parseISO(res.verifyPhone));
       setIsSubmitting(false);
       setSendCodeScreen(false);
@@ -88,16 +105,10 @@ const VerifyPhone = () => {
       return;
     }
 
-    const MUTATION = /* GraphQL */ `
-      mutation VerifyCode($code: Int!, $phone: String!) {
-        verifyCode(code: $code, phone: $phone)
-      }
-    `;
-
     setIsSubmitting(true);
 
     try {
-      await graphqlClient.request(MUTATION, { code: Number(code), phone });
+      await graphqlClient.request(VERIFY_CODE, { code: Number(code), phone });
 
       if (Router.router?.query.type === 'shop') {
         goToShop();
@@ -155,7 +166,7 @@ const VerifyPhone = () => {
       <Card className="cauda_card mb-4 mx-auto text-center">
         <Card.Header>{t('common:register')}</Card.Header>
         <Card.Body>
-          <Form>
+          <Form onSubmit={handleSubmit}>
             {sendCodeScreen && (
               <>
                 <Form.Group controlId="register-cellphone">
@@ -171,7 +182,7 @@ const VerifyPhone = () => {
                     <FormControl
                       autoFocus
                       placeholder={t('common:enter-cellphone')}
-                      type="text"
+                      type="number"
                       name="phone"
                       value={phone}
                       onChange={onChange}
