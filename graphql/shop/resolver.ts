@@ -12,9 +12,9 @@ import {
   MutationUpdateShopArgs,
 } from '../../graphql';
 
-import { nowFromCoordinates, todayIs, isOpen } from 'src/utils/dates';
-import { days, parseUTCTime, serializeTime } from 'src/utils/dates';
-import { parsePhone, formatPhone } from 'src/utils/phone-utils';
+import { days, serializeTime } from 'src/utils/dates';
+import { formatPhone } from 'src/utils/phone-utils';
+import { isOpen, shopPhone, status } from './helpers';
 
 const mapShop = (shop: ShopInput): ShopInput => {
   const updatedShop = { ...shop };
@@ -33,18 +33,6 @@ const mapShop = (shop: ShopInput): ShopInput => {
   }
 
   return updatedShop;
-};
-
-const todaysStatus = (shopDetails: ShopDetails) => {
-  const now = nowFromCoordinates(shopDetails.lat, shopDetails.lng);
-  const today = todayIs(now).toLowerCase();
-  const timeStart = shopDetails[today + 'TimeStart'];
-  const timeEnd = shopDetails[today + 'TimeEnd'];
-  if (!timeStart || !timeEnd) {
-    return null;
-  }
-
-  return { start: timeStart, end: timeEnd, now };
 };
 
 const shopResolver = {
@@ -157,30 +145,13 @@ const shopResolver = {
   },
   ShopDetails: {
     isOpen: (parent: ShopDetails, args, ctx: Context) => {
-      const status = todaysStatus(parent);
-      if (!status) {
-        return false;
-      }
-      const open = parseUTCTime(status.start, status.now);
-      const close = parseUTCTime(status.end, status.now);
-
-      return isOpen(status.now, open, close);
+      return isOpen(parent);
     },
     shopPhone: (parent: ShopDetails, args, ctx: Context) => {
-      if (parent.shopPhone) {
-        const phone = parsePhone(parent.shopPhone);
-        return phone.number;
-      }
-
-      return null;
+      return shopPhone(parent);
     },
     status: (parent: ShopDetails, args, ctx: Context) => {
-      const status = todaysStatus(parent);
-      if (!status) {
-        return null;
-      }
-
-      return { opens: status.start, closes: status.end };
+      return status(parent);
     },
   },
 };
