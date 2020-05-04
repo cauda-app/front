@@ -3,10 +3,15 @@ import { GetServerSideProps } from 'next';
 import prismaClient from '../prisma/client';
 import ShopCard from 'src/components/ShopCard';
 import Layout from 'src/components/Layout';
+import NotFound from 'src/components/NotFound';
 import { isOpen, shopPhone, status } from '../graphql/shop/helpers';
 import { requireLogin } from 'src/utils/next';
 
-const RequestTurn = ({ shop }) => {
+const RequestTurn = ({ statusCode, shop }) => {
+  if (statusCode === 404) {
+    return <NotFound />;
+  }
+
   return (
     <Layout>
       <ShopCard shop={shop} />
@@ -15,12 +20,12 @@ const RequestTurn = ({ shop }) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const shopId = context.params?.shopId as string | undefined;
   const token = requireLogin(context);
   if (!token) {
     return { props: {} };
   }
 
+  const shopId = context.params?.shopId as string | undefined;
   let shop;
 
   if (shopId) {
@@ -37,6 +42,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         isOpen: isOpen(dbShop),
         status: status(dbShop),
       };
+    } else {
+      context.res.statusCode = 404;
+      return { props: { statusCode: 404 } };
     }
   }
 
