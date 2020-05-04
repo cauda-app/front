@@ -62,12 +62,14 @@ export default function ShopCard({ shop, ...rest }: Props) {
               disabled={!shop.isOpen}
             >
               <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}
-              {t('common:request-turn')}
+              {t('common:request-turn')}{' '}
+              {!shop.isOpen ? `(${t('common:close-now')})` : ''}
             </Button>
           ) : (
             <Button variant="success" block disabled={!shop.isOpen}>
               <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}
-              {t('common:confirm-turn')}
+              {t('common:confirm-turn')}{' '}
+              {!shop.isOpen ? `(${t('common:close-now')})` : ''}
             </Button>
           )}
         </Card.Body>
