@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import Link from 'next/link';
 import useTranslation from 'next-translate/useTranslation';
 import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
@@ -55,16 +56,13 @@ export default function ShopCard({ shop, ...rest }: Props) {
         </ListGroup>
         <Card.Body>
           {shop.shopId ? (
-            <Button
-              variant="primary"
-              block
-              href={`/${shop.shopId}`}
-              disabled={!shop.isOpen}
-            >
-              <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}
-              {t('common:request-turn')}{' '}
-              {!shop.isOpen ? `(${t('common:close-now')})` : ''}
-            </Button>
+            <Link href="/[shopId]" as={'/' + shop.shopId}>
+              <Button as="a" variant="primary" block disabled={!shop.isOpen}>
+                <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}
+                {t('common:request-turn')}{' '}
+                {!shop.isOpen ? `(${t('common:close-now')})` : ''}
+              </Button>
+            </Link>
           ) : (
             <Button variant="success" block disabled={!shop.isOpen}>
               <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}

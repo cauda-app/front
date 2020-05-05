@@ -1,3 +1,5 @@
+import Router from 'next/router';
+import Link from 'next/link';
 import useTranslation from 'next-translate/useTranslation';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
@@ -7,7 +9,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
-import Router from 'next/router';
 
 import Layout from 'src/components/Layout';
 import graphqlClient from 'src/graphqlClient';
@@ -48,30 +49,34 @@ const Home = () => {
         <Card className="cauda_card mt-3 px-3 py-4 p-sm-5 mb-5">
           <Row>
             <Col xs="12">
-              <Button
-                href="/shops"
-                variant="primary"
-                size="lg"
-                className="mb-4 d-flex justify-content-between align-items-center py-4 p-sm-3"
-                block
-              >
-                <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth />
-                {t('common:nearby-shops')}
-                <div></div>
-              </Button>
+              <Link href="/shops">
+                <Button
+                  as="a"
+                  variant="primary"
+                  size="lg"
+                  className="mb-4 d-flex justify-content-between align-items-center py-4 p-sm-3"
+                  block
+                >
+                  <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth />
+                  {t('common:nearby-shops')}
+                  <div></div>
+                </Button>
+              </Link>
             </Col>
             <Col xs="12">
-              <Button
-                href="/scan"
-                variant="secondary"
-                size="lg"
-                className="d-flex justify-content-between align-items-center py-4 p-sm-3"
-                block
-              >
-                <FontAwesomeIcon icon={faCamera} fixedWidth />
-                {t('common:scan-qr-code')}
-                <div></div>
-              </Button>
+              <Link href="/scan">
+                <Button
+                  as="a"
+                  variant="secondary"
+                  size="lg"
+                  className="d-flex justify-content-between align-items-center py-4 p-sm-3"
+                  block
+                >
+                  <FontAwesomeIcon icon={faCamera} fixedWidth />
+                  {t('common:scan-qr-code')}
+                  <div></div>
+                </Button>
+              </Link>
             </Col>
           </Row>
         </Card>
