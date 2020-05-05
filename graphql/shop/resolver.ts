@@ -11,7 +11,7 @@ import {
   MutationRegisterShopArgs,
   MutationUpdateShopArgs,
 } from '../../graphql';
-
+import { setCookieToken } from '../../graphql/utils/jwt';
 import { days, serializeTime } from 'src/utils/dates';
 import { formatPhone } from 'src/utils/phone-utils';
 import { isOpen, shopPhone, status } from './helpers';
@@ -85,6 +85,7 @@ const shopResolver = {
 
       return ctx.prisma.shop.findOne({
         where: { id: ctx.tokenInfo.shopId },
+        include: { shopDetails: true, issuedNumber: { last: 10 } },
       });
     },
   },
@@ -99,7 +100,7 @@ const shopResolver = {
       }
 
       if (ctx.tokenInfo?.shopId) {
-        return new ApolloError('Shop already exists', 'SHOP_EXISTS');
+        return new ApolloError('Shop registered for this phone', 'SHOP_EXISTS');
       }
 
       const newShop = await ctx.prisma.shop.create({
@@ -115,6 +116,12 @@ const shopResolver = {
             },
           },
         },
+      });
+
+      setCookieToken(ctx.res, {
+        clientId: ctx.tokenInfo!.clientId,
+        shopId: newShop.id,
+        phone: ctx.tokenInfo!.phone!,
       });
 
       return newShop;
