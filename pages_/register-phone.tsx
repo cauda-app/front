@@ -10,14 +10,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
 import parseISO from 'date-fns/parseISO';
-import Router from 'next/router';
+import Router, { useRouter } from 'next/router';
 
 import Layout from 'src/components/Layout';
-import {
-  isEmptyObject,
-  validatePhoneRequest,
-  getErrorCodeFromApollo,
-} from 'src/utils';
+import { validatePhoneRequest, getErrorCodeFromApollo } from 'src/utils';
 import graphqlClient from 'src/graphqlClient';
 import Spinner from 'src/components/Spinner';
 
@@ -35,6 +31,7 @@ const VERIFY_PHONE = /* GraphQL */ `
 
 const VerifyPhone = () => {
   const { t } = useTranslation();
+  const router = useRouter();
 
   const [sendCodeScreen, setSendCodeScreen] = useState(true);
   const [phone, setPhone] = useState<string>('');
@@ -90,15 +87,6 @@ const VerifyPhone = () => {
     }
   };
 
-  const goToShop = async () => {
-    try {
-      await graphqlClient.request('{ myShop { id } }');
-      Router.push('/my-shop');
-    } catch (error) {
-      Router.push('/form-shop');
-    }
-  };
-
   const onVerifyCode = async () => {
     if (!code) {
       setErrors({ ...errors, code: t('common:code-required') });
@@ -110,11 +98,9 @@ const VerifyPhone = () => {
     try {
       await graphqlClient.request(VERIFY_CODE, { code: Number(code), phone });
 
-      if (Router.router?.query.type === 'shop') {
-        goToShop();
-      } else {
-        Router.push('/shops');
-      }
+      const redirectTo = (router.query.redirectTo as string) || '/';
+
+      Router.push(redirectTo);
     } catch (error) {
       const code = getErrorCodeFromApollo(error);
 

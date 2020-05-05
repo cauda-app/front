@@ -20,23 +20,8 @@ export default function Footer(props) {
         <Link href="/">
           <a>Home</a>
         </Link>
-        <Link href="/scan">
-          <a>Scan</a>
-        </Link>
-        <Link href="/shops">
-          <a>Comercios</a>
-        </Link>
-        <Link href="/request-turn">
-          <a>Pedir Turno</a>
-        </Link>
-        <Link href="/my-turn">
-          <a>Mi Turno</a>
-        </Link>
-        <Link href="/my-shop">
-          <a>Mi Comercio</a>
-        </Link>
-        <Link href="/edit-shop">
-          <a>Editar Comercio</a>
+        <Link href="/logout">
+          <a>Logout</a>
         </Link>
       </div>
 

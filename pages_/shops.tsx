@@ -7,7 +7,6 @@ import Button from 'react-bootstrap/Button';
 import Spinner from '../src/components/Spinner';
 import useQuery from '../src/hooks/useQuery';
 
-import Shopcard from '../src/components/ShopCard';
 import Location, { Coords } from '../src/components/Location';
 
 import ShopCard from 'src/components/ShopCard';
@@ -23,7 +22,6 @@ const SHOPS = /* GraphQL */ `
       lng
       shopPhone
       isOpen
-      createdAt
       status {
         opens
         closes
