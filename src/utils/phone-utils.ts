@@ -27,6 +27,21 @@ export const parsePhone = (rawNumber: string) => {
   }
 };
 
+export const getNationalNumber = (rawNumber: string) => {
+  try {
+    const number = phoneUtil.parse(rawNumber);
+
+    if (!isValid(number)) {
+      throw Error(`Phone number ${rawNumber} is invalid`);
+    }
+
+    return number.getNationalNumber();
+  } catch (error) {
+    console.log(error);
+    return '';
+  }
+};
+
 export const formatPhone = (countryCode: string, number: string): string => {
   const parsedNumber = phoneUtil.parse(number, countryCode);
 

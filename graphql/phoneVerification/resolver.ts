@@ -8,12 +8,14 @@ import { Context } from '../../pages_/api/graphql';
 import randomCode from '../utils/randomCode';
 import { PHONE_CODE_EXPIRY } from '../utils/constants';
 import sendSms from '../utils/smsApi';
+import { formatPhone, getNationalNumber } from 'src/utils/phone-utils';
 
 const phoneVerificationResolver = {
   Mutation: {
     verifyCode: async (parent, args: MutationVerifyCodeArgs, ctx: Context) => {
+      const phone = formatPhone('AR', args.phone); // TODO: Fixed for Argentina
       const phoneVerification = await ctx.prisma.phoneVerification.findOne({
-        where: { phone: args.phone },
+        where: { phone },
       });
 
       if (!phoneVerification) {
@@ -31,7 +33,7 @@ const phoneVerificationResolver = {
       const updatedPhoneVerification = await ctx.prisma.phoneVerification.update(
         {
           where: {
-            phone: args.phone,
+            phone,
           },
           data: {
             verified: new Date().toISOString(),
@@ -41,7 +43,7 @@ const phoneVerificationResolver = {
 
       const client = await ctx.prisma.client.upsert({
         where: {
-          phone: args.phone,
+          phone,
         },
         create: {
           phone: updatedPhoneVerification.phone,
@@ -51,14 +53,14 @@ const phoneVerificationResolver = {
 
       const shopDetails = await ctx.prisma.shopDetails.findOne({
         where: {
-          ownerPhone: args.phone,
+          ownerPhone: phone,
         },
       });
 
       setCookieToken(ctx.res, {
         clientId: client?.id,
         shopId: shopDetails?.shopId,
-        phone: args.phone,
+        phone: phone,
       });
 
       return true;
@@ -68,8 +70,9 @@ const phoneVerificationResolver = {
       args: MutationVerifyPhoneArgs,
       ctx: Context
     ) => {
+      const phone = formatPhone('AR', args.phone);
       const phoneVerification = await ctx.prisma.phoneVerification.findOne({
-        where: { phone: args.phone },
+        where: { phone },
       });
 
       // Do not send before PHONE_CODE_EXPIRY
@@ -90,9 +93,9 @@ const phoneVerificationResolver = {
       const expiry = addMinutes(new Date(), PHONE_CODE_EXPIRY).toISOString();
 
       await ctx.prisma.phoneVerification.upsert({
-        where: { phone: args.phone },
+        where: { phone },
         create: {
-          phone: args.phone,
+          phone,
           code,
           expiry,
         },
@@ -103,7 +106,8 @@ const phoneVerificationResolver = {
       });
 
       if (process.env.SMS_VERIFICATION_ENABLED === '1') {
-        await sendSms(args.phone, code.toString());
+        const localPhone = getNationalNumber(phone);
+        await sendSms(localPhone, code.toString());
       }
 
       return expiry;
