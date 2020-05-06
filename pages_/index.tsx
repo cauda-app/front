@@ -49,7 +49,7 @@ const Home = () => {
         <Card className="cauda_card mt-3 px-3 py-4 p-sm-5 mb-5">
           <Row>
             <Col xs="12">
-              <Link href="/shops">
+              <Link href="/shops" passHref>
                 <Button
                   as="a"
                   variant="primary"
@@ -64,7 +64,7 @@ const Home = () => {
               </Link>
             </Col>
             <Col xs="12">
-              <Link href="/scan">
+              <Link href="/scan" passHref>
                 <Button
                   as="a"
                   variant="secondary"
