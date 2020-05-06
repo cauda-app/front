@@ -16,7 +16,7 @@ const MyTurn = () => {
           {t('common:shop-details')}
 
           <Button href="/" variant="danger" size="sm">
-            {t('common:goBack')}
+            {t('common:go-back')}
           </Button>
         </Card.Header>
         <Card.Body className="p-2 text-center">
