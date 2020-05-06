@@ -1,6 +1,8 @@
 import { ApolloError } from 'apollo-server-core';
 import crypto from 'crypto';
 
+import { days, serializeTime } from 'src/utils/dates';
+import { formatPhone } from 'src/utils/phone-utils';
 import { Context } from '../../pages_/api/graphql';
 import {
   Shop,
@@ -11,9 +13,8 @@ import {
   MutationRegisterShopArgs,
   MutationUpdateShopArgs,
 } from '../../graphql';
-
-import { days, serializeTime } from 'src/utils/dates';
-import { formatPhone } from 'src/utils/phone-utils';
+import { setCookieToken } from '../utils/jwt';
+import { numberToTurn } from '../utils/turn';
 import { isOpen, shopPhone, status } from './helpers';
 
 const mapShop = (shop: ShopInput): ShopInput => {
@@ -85,6 +86,7 @@ const shopResolver = {
 
       return ctx.prisma.shop.findOne({
         where: { id: ctx.tokenInfo.shopId },
+        include: { shopDetails: true },
       });
     },
   },
@@ -99,7 +101,7 @@ const shopResolver = {
       }
 
       if (ctx.tokenInfo?.shopId) {
-        return new ApolloError('Shop already exists', 'SHOP_EXISTS');
+        return new ApolloError('Shop registered for this phone', 'SHOP_EXISTS');
       }
 
       const newShop = await ctx.prisma.shop.create({
@@ -115,6 +117,12 @@ const shopResolver = {
             },
           },
         },
+      });
+
+      setCookieToken(ctx.res, {
+        clientId: ctx.tokenInfo!.clientId,
+        shopId: newShop.id,
+        phone: ctx.tokenInfo!.phone!,
       });
 
       return newShop;
@@ -140,6 +148,32 @@ const shopResolver = {
     details: (parent: Shop, args, ctx: Context) => {
       return ctx.prisma.shopDetails.findOne({
         where: { shopId: parent.id },
+      });
+    },
+    nextTurn: async (parent: Shop, args, ctx: Context) => {
+      const res = await ctx.prisma.issuedNumber.findMany({
+        where: { shopId: parent.id, AND: { status: 0 } },
+        first: 1,
+        orderBy: { issuedNumber: 'asc' },
+      });
+      return numberToTurn(res[0].issuedNumber);
+    },
+    lastTurnsAttended: async (parent: Shop, args, ctx: Context) => {
+      const res = await ctx.prisma.issuedNumber.findMany({
+        where: { shopId: parent.id, AND: { status: { in: [1, 2] } } },
+        first: 5,
+        orderBy: { issuedNumber: 'desc' },
+      });
+
+      if (!res.length) {
+        return [numberToTurn(0)];
+      }
+
+      return res.map((e) => numberToTurn(e.issuedNumber));
+    },
+    pendingTurnsAmount: (parent: Shop, args, ctx: Context) => {
+      return ctx.prisma.issuedNumber.count({
+        where: { shopId: parent.id, AND: { status: 0 } },
       });
     },
   },

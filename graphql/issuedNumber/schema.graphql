@@ -18,10 +18,10 @@ type IssuedNumber {
 }
 
 type Query {
-  getAppointments(clientId: Int!, shopId: String): [IssuedNumber!]!
+  getTurns(clientId: Int!, shopId: String): [IssuedNumber!]!
 }
 
 type Mutation {
-  requestAppointment(shopId: String!, clientId: Int!): IssuedNumber!
-  cancelAppointment(shopId: String!, clientId: Int!): Boolean!
+  requestTurn(shopId: String!, clientId: Int!): IssuedNumber!
+  cancelTurn(shopId: String!, clientId: Int!): Boolean!
 }

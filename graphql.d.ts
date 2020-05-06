@@ -31,7 +31,7 @@ export type Client = {
 export type Query = {
   __typename?: 'Query';
   client?: Maybe<Client>;
-  getAppointments: Array<IssuedNumber>;
+  getTurns: Array<IssuedNumber>;
   myShop: Shop;
   myTurn: Client;
   nearByShops: Array<ShopDetails>;
@@ -43,7 +43,7 @@ export type QueryClientArgs = {
   id?: Maybe<Scalars['ID']>;
 };
 
-export type QueryGetAppointmentsArgs = {
+export type QueryGetTurnsArgs = {
   clientId: Scalars['Int'];
   shopId?: Maybe<Scalars['String']>;
 };
@@ -60,16 +60,16 @@ export type QueryShopsDetailArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  cancelAppointment: Scalars['Boolean'];
+  cancelTurn: Scalars['Boolean'];
   registerShop: Shop;
-  requestAppointment: IssuedNumber;
+  requestTurn: IssuedNumber;
   signUp: Client;
   updateShop: Shop;
   verifyCode: Scalars['Boolean'];
   verifyPhone: Scalars['DateTime'];
 };
 
-export type MutationCancelAppointmentArgs = {
+export type MutationCancelTurnArgs = {
   shopId: Scalars['String'];
   clientId: Scalars['Int'];
 };
@@ -78,7 +78,7 @@ export type MutationRegisterShopArgs = {
   shop: ShopInput;
 };
 
-export type MutationRequestAppointmentArgs = {
+export type MutationRequestTurnArgs = {
   shopId: Scalars['String'];
   clientId: Scalars['Int'];
 };
@@ -130,6 +130,9 @@ export type Shop = {
   isClosed: Scalars['Boolean'];
   lastNumber: Scalars['Int'];
   nextNumber: Scalars['Int'];
+  nextTurn: Scalars['String'];
+  lastTurnsAttended: Array<Scalars['String']>;
+  pendingTurnsAmount: Scalars['Int'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   details: ShopDetails;
@@ -368,11 +371,11 @@ export type QueryResolvers<
     ContextType,
     RequireFields<QueryClientArgs, never>
   >;
-  getAppointments?: Resolver<
+  getTurns?: Resolver<
     Array<ResolversTypes['IssuedNumber']>,
     ParentType,
     ContextType,
-    RequireFields<QueryGetAppointmentsArgs, 'clientId'>
+    RequireFields<QueryGetTurnsArgs, 'clientId'>
   >;
   myShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>;
   myTurn?: Resolver<ResolversTypes['Client'], ParentType, ContextType>;
@@ -395,11 +398,11 @@ export type MutationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = ResolversObject<{
-  cancelAppointment?: Resolver<
+  cancelTurn?: Resolver<
     ResolversTypes['Boolean'],
     ParentType,
     ContextType,
-    RequireFields<MutationCancelAppointmentArgs, 'shopId' | 'clientId'>
+    RequireFields<MutationCancelTurnArgs, 'shopId' | 'clientId'>
   >;
   registerShop?: Resolver<
     ResolversTypes['Shop'],
@@ -407,11 +410,11 @@ export type MutationResolvers<
     ContextType,
     RequireFields<MutationRegisterShopArgs, 'shop'>
   >;
-  requestAppointment?: Resolver<
+  requestTurn?: Resolver<
     ResolversTypes['IssuedNumber'],
     ParentType,
     ContextType,
-    RequireFields<MutationRequestAppointmentArgs, 'shopId' | 'clientId'>
+    RequireFields<MutationRequestTurnArgs, 'shopId' | 'clientId'>
   >;
   signUp?: Resolver<
     ResolversTypes['Client'],
@@ -486,6 +489,13 @@ export type ShopResolvers<
   isClosed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   lastNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   nextNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  nextTurn?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  lastTurnsAttended?: Resolver<
+    Array<ResolversTypes['String']>,
+    ParentType,
+    ContextType
+  >;
+  pendingTurnsAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   details?: Resolver<ResolversTypes['ShopDetails'], ParentType, ContextType>;

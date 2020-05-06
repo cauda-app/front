@@ -3,6 +3,9 @@ type Shop {
   isClosed: Boolean!
   lastNumber: Int!
   nextNumber: Int!
+  nextTurn: String!
+  lastTurnsAttended: [String!]!
+  pendingTurnsAmount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
   details: ShopDetails!

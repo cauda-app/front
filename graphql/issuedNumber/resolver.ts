@@ -1,16 +1,12 @@
 import { ApolloError } from 'apollo-server-core';
 import { Context } from '../../pages_/api/graphql';
 import {
-  MutationRequestAppointmentArgs,
-  MutationCancelAppointmentArgs,
-  QueryGetAppointmentsArgs,
+  MutationRequestTurnArgs,
+  MutationCancelTurnArgs,
+  QueryGetTurnsArgs,
 } from '../../graphql';
 
-const getPendingAppointment = (
-  clientId: number,
-  shopId: string,
-  ctx: Context
-) =>
+const getPendingTurns = (clientId: number, shopId: string, ctx: Context) =>
   ctx.prisma.issuedNumber.findMany({
     where: {
       clientId: clientId,
@@ -21,7 +17,7 @@ const getPendingAppointment = (
 
 const IssuedNumberResolver = {
   Query: {
-    getAppointments: (parent, args: QueryGetAppointmentsArgs, ctx: Context) => {
+    getTurns: (parent, args: QueryGetTurnsArgs, ctx: Context) => {
       const where: any = { clientId: args.clientId };
       if (args.shopId) {
         where.shopId = args.shopId;
@@ -32,16 +28,12 @@ const IssuedNumberResolver = {
     },
   },
   Mutation: {
-    requestAppointment: async (
+    requestTurn: async (
       parent,
-      args: MutationRequestAppointmentArgs,
+      args: MutationRequestTurnArgs,
       ctx: Context
     ) => {
-      let appointments = await getPendingAppointment(
-        args.clientId,
-        args.shopId,
-        ctx
-      );
+      let appointments = await getPendingTurns(args.clientId, args.shopId, ctx);
 
       if (appointments.length) {
         return new ApolloError(
@@ -54,11 +46,7 @@ const IssuedNumberResolver = {
       console.log(rawQuery);
       await ctx.prisma.raw(rawQuery);
 
-      appointments = await getPendingAppointment(
-        args.clientId,
-        args.shopId,
-        ctx
-      );
+      appointments = await getPendingTurns(args.clientId, args.shopId, ctx);
       if (!appointments.length) {
         return new ApolloError(
           'There was an error trying to set the appointment.',
@@ -68,19 +56,14 @@ const IssuedNumberResolver = {
       console.log(appointments);
       return appointments[0];
     },
-    cancelAppointment: async (
-      parent,
-      args: MutationCancelAppointmentArgs,
-      ctx: Context
-    ) => {
-      let appointments = await getPendingAppointment(
-        args.clientId,
-        args.shopId,
-        ctx
-      );
+    cancelTurn: async (parent, args: MutationCancelTurnArgs, ctx: Context) => {
+      let appointments = await getPendingTurns(args.clientId, args.shopId, ctx);
 
       if (!appointments.length) {
-        return new ApolloError('There is no pending appointment.', 'APPOINtMENT_NOT_EXISTS');
+        return new ApolloError(
+          'There is no pending appointment.',
+          'APPOINtMENT_NOT_EXISTS'
+        );
       }
 
       await ctx.prisma.issuedNumber.update({
