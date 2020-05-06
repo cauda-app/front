@@ -89,7 +89,8 @@ const phoneVerificationResolver = {
         );
       }
 
-      const code = randomCode();
+      const code =
+        process.env.SMS_VERIFICATION_ENABLED === '1' ? randomCode() : 1234;
       const expiry = addMinutes(new Date(), PHONE_CODE_EXPIRY).toISOString();
 
       await ctx.prisma.phoneVerification.upsert({
