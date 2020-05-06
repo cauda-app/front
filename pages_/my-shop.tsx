@@ -12,7 +12,7 @@ import graphqlClient from 'src/graphqlClient';
 import { useState, useEffect } from 'react';
 import Spinner from 'react-bootstrap/Spinner';
 
-const MyShop = ({ id }) => {
+const MyShop = () => {
   const { t } = useTranslation();
   const [myShop, setMyShop] = useState<any>();
   const [firstFetch, setFirstFetch] = useState(true);
@@ -22,22 +22,19 @@ const MyShop = ({ id }) => {
     const MY_SHOP = /* GraphQL */ `
       query MyShop {
         myShop {
-          lastNumber
-          nextNumber
           details {
             name
           }
-          issuedNumber {
-            id
-            issuedNumber
-            status
-          }
+          nextTurn
+          lastTurnsAttended
+          pendingTurnsAmount
         }
       }
     `;
 
     setLoading(true);
     const res = await graphqlClient.request(MY_SHOP);
+    console.log(res);
     setMyShop(res.myShop);
     if (firstFetch) {
       setFirstFetch(false);
@@ -75,7 +72,7 @@ const MyShop = ({ id }) => {
 
         <Card.Body className="p-2 text-center">
           <p className="myturn__number display-5">PRÓXIMO TURNO</p>
-          <p className="myturn__number display-1">A21</p>
+          <p className="myturn__number display-1">{myShop!.nextTurn}</p>
 
           <div className="pl-4 pr-4">
             <Button
@@ -107,7 +104,7 @@ const MyShop = ({ id }) => {
             Turnos Pendientes
           </span>
           <span className="h2 text-uppercase text-muted font-weight-light">
-            12
+            {myShop!.pendingTurnsAmount}
           </span>
         </div>
 
@@ -124,15 +121,15 @@ const MyShop = ({ id }) => {
 
       <div className="myturn__turns mb-5 text-center">
         <p className="h6 text-uppercase text-muted font-weight-light">
-          Últimos Números Atendidos
+          Últimos Números
         </p>
 
         <ul className="list-unstyled list-inline h4 mb-0">
-          <li className="list-inline-item text-success">A20</li>
-          <li className="list-inline-item text-danger">A19</li>
-          <li className="list-inline-item text-danger">A18</li>
-          <li className="list-inline-item text-danger">A17</li>
-          <li className="list-inline-item text-danger">A16</li>
+          {myShop!.lastTurnsAttended.map((turn, index) => (
+            <li key={index} className="list-inline-item text-success">
+              {turn}
+            </li>
+          ))}
         </ul>
       </div>
     </Layout>
@@ -149,7 +146,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     context.res.end();
   }
 
-  return { props: { id: token?.shopId } };
+  return { props: {} };
 };
 
 export default MyShop;
