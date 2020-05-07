@@ -43,13 +43,13 @@ export default function useQuery(query: string, options: Options = {}) {
   };
 
   React.useEffect(() => {
-    runQuery(options.variables);
+    if (options.pollInterval) {
+      const interval = setInterval(() => {
+        runQuery(options.variables);
+      }, options.pollInterval);
 
-    const interval = setInterval(() => {
-      runQuery(options.variables);
-    }, options.pollInterval);
-
-    return () => clearInterval(interval);
+      return () => clearInterval(interval);
+    }
   }, [query, options.variables, options.pollInterval]);
 
   React.useEffect(() => {
