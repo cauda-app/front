@@ -1,4 +1,3 @@
-import Router from 'next/router';
 import Link from 'next/link';
 import useTranslation from 'next-translate/useTranslation';
 import Card from 'react-bootstrap/Card';
@@ -11,36 +10,9 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 
 import Layout from 'src/components/Layout';
-import graphqlClient from 'src/graphqlClient';
-import { getErrorCodeFromApollo } from 'src/utils';
 
 const Home = () => {
   const { t } = useTranslation();
-
-  const onMyShopClick = async () => {
-    try {
-      const response = await graphqlClient.request('{ myShop { id } }');
-      if (response) {
-        Router.push('/my-shop');
-      }
-    } catch (error) {
-      const errorCode = getErrorCodeFromApollo(error);
-
-      if (
-        ['NO_TOKEN_PROVIDED', 'EXPIRED_TOKEN', 'INVALID_TOKEN'].includes(
-          errorCode
-        )
-      ) {
-        return Router.push('/register-phone?redirectTo=/my-shop');
-      }
-
-      if (errorCode === 'INVALID_SHOP_ID') {
-        return Router.push('/form-shop');
-      }
-
-      return Router.push('/generic-error');
-    }
-  };
 
   return (
     <Layout>
@@ -83,16 +55,17 @@ const Home = () => {
 
         <Row className="w-100">
           <Col className="d-flex justify-content-center align-items-center mx-auto">
-            <Button
-              onClick={onMyShopClick}
-              variant="info"
-              size="lg"
-              className="btn_myshop tertiary d-flex justify-content-between align-items-center py-2"
-            >
-              <FontAwesomeIcon icon={faStoreAlt} fixedWidth />
-              {t('common:my-shop')}
-              <div></div>
-            </Button>
+            <Link href="/my-shop" passHref>
+              <Button
+                variant="info"
+                size="lg"
+                className="btn_myshop tertiary d-flex justify-content-between align-items-center py-2"
+              >
+                <FontAwesomeIcon icon={faStoreAlt} fixedWidth />
+                {t('common:my-shop')}
+                <div></div>
+              </Button>
+            </Link>
           </Col>
         </Row>
       </div>

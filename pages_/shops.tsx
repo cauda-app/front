@@ -38,7 +38,7 @@ const Shops = ({ coords: { lat, lng } }: Props) => {
   const { t } = useTranslation();
   const variables = React.useMemo(() => ({ lat, lng }), [lat, lng]);
   const [offset, setOffset] = React.useState(0);
-  const { data, loading, error, fetchMore } = useQuery(SHOPS, variables);
+  const { data, loading, error, fetchMore } = useQuery(SHOPS, { variables });
   const [hasNextPage, setHasNextPage] = React.useState(true);
 
   const handleFetchMore = () => {

@@ -1,60 +1,43 @@
+import Link from 'next/link';
 import useTranslation from 'next-translate/useTranslation';
 import Button from 'react-bootstrap/Button';
-import Layout from '../src/components/Layout';
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { GetServerSideProps } from 'next';
 
 import { requireLogin } from 'src/utils/next';
-import graphqlClient from 'src/graphqlClient';
-//import useQuery, { State } from 'src/hooks/useQuery';
-import { useState, useEffect } from 'react';
-import Spinner from 'react-bootstrap/Spinner';
+import Layout from 'src/components/Layout';
+import useQuery from 'src/hooks/useQuery';
+import Spinner from 'src/components/Spinner';
+
+const MY_SHOP = /* GraphQL */ `
+  query MyShop {
+    myShop {
+      details {
+        name
+      }
+      nextTurn
+      lastTurnsAttended
+      pendingTurnsAmount
+    }
+  }
+`;
 
 const MyShop = () => {
   const { t } = useTranslation();
-  const [myShop, setMyShop] = useState<any>();
-  const [firstFetch, setFirstFetch] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const { data, loading, error } = useQuery(MY_SHOP, { pollInterval: 10_000 });
 
-  const getShopData = async () => {
-    const MY_SHOP = /* GraphQL */ `
-      query MyShop {
-        myShop {
-          details {
-            name
-          }
-          nextTurn
-          lastTurnsAttended
-          pendingTurnsAmount
-        }
-      }
-    `;
+  if (!data.myShop && loading) {
+    return (
+      <Layout>
+        <Spinner />
+      </Layout>
+    );
+  }
 
-    setLoading(true);
-    const res = await graphqlClient.request(MY_SHOP);
-    console.log(res);
-    setMyShop(res.myShop);
-    if (firstFetch) {
-      setFirstFetch(false);
-    }
-    setLoading(false);
-  };
-
-  // fetch data
-  useEffect(() => {
-    getShopData();
-
-    const interval = setInterval(() => {
-      getShopData();
-    }, 1000 * 10);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  if (firstFetch && loading) {
-    return <Spinner animation="border" />;
+  if (error) {
+    return <Layout>{String(error)}</Layout>;
   }
 
   return (
@@ -64,51 +47,66 @@ const MyShop = () => {
           <Button href="/" variant="link" className="py-0">
             <FontAwesomeIcon icon={faChevronLeft} className="mr-2" />
           </Button>
-          <p>{myShop!.details.name}</p>
-          <Button href="/form-shop" variant="link" size="sm">
-            <FontAwesomeIcon icon={faPen} className="mr-2" />
-          </Button>
+          <p>{data.myShop!.details.name}</p>
+          <Link href="/shop-form" passHref>
+            <Button variant="link" size="sm">
+              <FontAwesomeIcon icon={faPen} className="mr-2" />
+            </Button>
+          </Link>
         </Card.Header>
 
         <Card.Body className="p-2 text-center">
-          <p className="myturn__number display-5">PRÓXIMO TURNO</p>
-          <p className="myturn__number display-1">{myShop!.nextTurn}</p>
+          {data.myShop!.nextTurn ? (
+            <>
+              <p className="myturn__number display-5 text-uppercase">
+                {t('common:next-turn')}
+              </p>
+              <p className="myturn__number display-1">
+                {data.myShop!.nextTurn}
+              </p>
 
-          <div className="pl-4 pr-4">
-            <Button
-              href=""
-              variant="success"
-              size="lg"
-              className="d-flex justify-content-center align-items-center"
-              block
-            >
-              {t('common:attend-turn')}
-            </Button>
+              <div className="pl-4 pr-4">
+                <Button
+                  href=""
+                  variant="success"
+                  size="lg"
+                  className="d-flex justify-content-center align-items-center"
+                  block
+                >
+                  {t('common:attend-turn')}
+                </Button>
 
-            <Button
-              href=""
-              variant="danger"
-              size="lg"
-              className="d-flex justify-content-center align-items-center"
-              block
-            >
-              {t('common:turn-missed')}
-            </Button>
-          </div>
+                <Button
+                  href=""
+                  variant="danger"
+                  size="lg"
+                  className="d-flex justify-content-center align-items-center"
+                  block
+                >
+                  {t('common:turn-missed')}
+                </Button>
+              </div>
+            </>
+          ) : (
+            <p className="myturn__number display-5 text-uppercase">
+              {t('common:no-turns')}
+            </p>
+          )}
         </Card.Body>
       </Card>
 
       <div className="mb-5">
         <div className="d-flex justify-content-center align-items-baseline">
           <span className="h6 text-uppercase text-muted font-weight-light mr-1">
-            Turnos Pendientes
+            {t('common:pending-turns')}
           </span>
           <span className="h2 text-uppercase text-muted font-weight-light">
-            {myShop!.pendingTurnsAmount}
+            {data.myShop!.pendingTurnsAmount}
           </span>
         </div>
 
         <Button
+          disabled={data.myShop.pendingTurnsAmount === 0}
           href=""
           variant="warning"
           size="lg"
@@ -119,19 +117,21 @@ const MyShop = () => {
         </Button>
       </div>
 
-      <div className="myturn__turns mb-5 text-center">
-        <p className="h6 text-uppercase text-muted font-weight-light">
-          Últimos Números
-        </p>
+      {data.myShop!.lastTurnsAttended.length > 0 ? (
+        <div className="myturn__turns mb-5 text-center">
+          <p className="h6 text-uppercase text-muted font-weight-light">
+            {t('common:last-numbers')}
+          </p>
 
-        <ul className="list-unstyled list-inline h4 mb-0">
-          {myShop!.lastTurnsAttended.map((turn, index) => (
-            <li key={index} className="list-inline-item text-success">
-              {turn}
-            </li>
-          ))}
-        </ul>
-      </div>
+          <ul className="list-unstyled list-inline h4 mb-0">
+            {data.myShop!.lastTurnsAttended.map((turn, index) => (
+              <li key={index} className="list-inline-item text-success">
+                {turn}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </Layout>
   );
 };
@@ -141,7 +141,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   if (!token?.shopId) {
     context.res.writeHead(303, {
-      Location: '/form-shop',
+      Location: '/shop-form',
     });
     context.res.end();
   }

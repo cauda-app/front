@@ -11,13 +11,25 @@ import { faClock } from '@fortawesome/free-solid-svg-icons';
 import { faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
 import Map from '../Map';
 import { formats, parseUTCTime } from 'src/utils/dates';
+import LoadingButton from '../LoadingButton';
 
 type Props = {
   shop: any;
+  onRequestTurn?: (shopId: String) => Promise<any>;
 };
 
-export default function ShopCard({ shop, ...rest }: Props) {
+export default function ShopCard({ shop, onRequestTurn, ...rest }: Props) {
   const { t } = useTranslation();
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  const handleConfirm = async () => {
+    try {
+      setIsLoading(true);
+      await onRequestTurn!(shop.shopId);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div {...rest}>
@@ -55,7 +67,19 @@ export default function ShopCard({ shop, ...rest }: Props) {
           </ListGroup.Item>
         </ListGroup>
         <Card.Body>
-          {shop.shopId ? (
+          {onRequestTurn ? (
+            <LoadingButton
+              isLoading={isLoading}
+              variant="success"
+              block
+              disabled={!shop.isOpen}
+              onClick={handleConfirm}
+            >
+              <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}
+              {t('common:confirm-turn')}{' '}
+              {!shop.isOpen ? `(${t('common:close-now')})` : ''}
+            </LoadingButton>
+          ) : (
             <Link href="/[shopId]" as={'/' + shop.shopId} passHref>
               <Button as="a" variant="primary" block disabled={!shop.isOpen}>
                 <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}
@@ -63,12 +87,6 @@ export default function ShopCard({ shop, ...rest }: Props) {
                 {!shop.isOpen ? `(${t('common:close-now')})` : ''}
               </Button>
             </Link>
-          ) : (
-            <Button variant="success" block disabled={!shop.isOpen}>
-              <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}
-              {t('common:confirm-turn')}{' '}
-              {!shop.isOpen ? `(${t('common:close-now')})` : ''}
-            </Button>
           )}
         </Card.Body>
       </Card>

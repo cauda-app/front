@@ -1,4 +1,6 @@
 import React from 'react';
+import { GetServerSideProps } from 'next';
+import Router from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Card from 'react-bootstrap/Card';
 import Form from 'react-bootstrap/Form';
@@ -9,8 +11,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
-import Router from 'next/router';
 
+import prismaClient from '../prisma/client';
+import { requireLogin } from 'src/utils/next';
 import { isEmptyObject, validatePhoneRequest } from 'src/utils';
 import GeoSuggest from 'src/components/GeoSuggest';
 import DayHourDropDown from 'src/components/DayHourDropDown';
@@ -19,8 +22,9 @@ import Map from 'src/components/Map';
 import graphqlClient from 'src/graphqlClient';
 import Layout from 'src/components/Layout';
 import { days } from 'src/utils/dates';
+import { getNationalNumber } from 'src/utils/phone-utils';
 
-const MUTATION = /* GraphQL */ `
+const CREATE = /* GraphQL */ `
   mutation createShop($shop: ShopInput!) {
     registerShop(shop: $shop) {
       id
@@ -28,10 +32,20 @@ const MUTATION = /* GraphQL */ `
   }
 `;
 
-interface FormValues {
-  name?: string;
-  address?: string;
-  coord?: { lat: number; long: number };
+const EDIT = /* GraphQL */ `
+  mutation updateShop($shop: ShopInput!) {
+    updateShop(shop: $shop) {
+      id
+    }
+  }
+`;
+
+interface Shop {
+  id: string;
+  name: string;
+  address: string;
+  lat: number;
+  lng: number;
   shopPhone?: string;
   mondayTimeStart?: string;
   mondayTimeEnd?: string;
@@ -49,32 +63,95 @@ interface FormValues {
   sundayTimeEnd?: string;
 }
 
-const resetFormValues = () => ({
-  name: '',
-  address: '',
-  coord: null,
-  shopPhone: '',
-  mondayIsOpen: true,
-  tuesdayIsOpen: true,
-  wednesdayIsOpen: true,
-  thursdayIsOpen: true,
-  fridayIsOpen: true,
-  saturdayIsOpen: true,
-  mondayTimeStart: '09:00:00Z',
-  mondayTimeEnd: '20:00:00Z',
-  tuesdayTimeStart: '09:00:00Z',
-  tuesdayTimeEnd: '20:00:00Z',
-  wednesdayTimeStart: '09:00:00Z',
-  wednesdayTimeEnd: '20:00:00Z',
-  thursdayTimeStart: '09:00:00Z',
-  thursdayTimeEnd: '20:00:00Z',
-  fridayTimeStart: '09:00:00Z',
-  fridayTimeEnd: '20:00:00Z',
-  saturdayTimeStart: '09:00:00Z',
-  saturdayTimeEnd: '20:00:00Z',
-  sundayTimeStart: '09:00:00Z',
-  sundayTimeEnd: '20:00:00Z',
-});
+interface FormValues {
+  id?: string;
+  name?: string;
+  address?: string;
+  coord?: { lat: number; lng: number };
+  shopPhone?: string;
+  mondayIsOpen: boolean;
+  tuesdayIsOpen: boolean;
+  wednesdayIsOpen: boolean;
+  thursdayIsOpen: boolean;
+  fridayIsOpen: boolean;
+  saturdayIsOpen: boolean;
+  sundayIsOpen: boolean;
+  mondayTimeStart?: string;
+  mondayTimeEnd?: string;
+  tuesdayTimeStart?: string;
+  tuesdayTimeEnd?: string;
+  wednesdayTimeStart?: string;
+  wednesdayTimeEnd?: string;
+  thursdayTimeStart?: string;
+  thursdayTimeEnd?: string;
+  fridayTimeStart?: string;
+  fridayTimeEnd?: string;
+  saturdayTimeStart?: string;
+  saturdayTimeEnd?: string;
+  sundayTimeStart?: string;
+  sundayTimeEnd?: string;
+}
+
+const initFormValues = (shop?: Shop): FormValues => {
+  if (shop) {
+    return {
+      id: shop.id,
+      name: shop.name,
+      address: shop.address,
+      coord: { lat: shop.lat, lng: shop.lng },
+      shopPhone: shop.shopPhone,
+      mondayIsOpen: !!shop.mondayTimeStart,
+      tuesdayIsOpen: !!shop.tuesdayTimeStart,
+      wednesdayIsOpen: !!shop.wednesdayTimeStart,
+      thursdayIsOpen: !!shop.thursdayTimeStart,
+      fridayIsOpen: !!shop.fridayTimeStart,
+      saturdayIsOpen: !!shop.saturdayTimeStart,
+      sundayIsOpen: !!shop.sundayTimeStart,
+      mondayTimeStart: shop.mondayTimeStart || '09:00:00Z',
+      mondayTimeEnd: shop.mondayTimeEnd || '20:00:00Z',
+      tuesdayTimeStart: shop.tuesdayTimeStart || '09:00:00Z',
+      tuesdayTimeEnd: shop.tuesdayTimeEnd || '20:00:00Z',
+      wednesdayTimeStart: shop.wednesdayTimeStart || '09:00:00Z',
+      wednesdayTimeEnd: shop.wednesdayTimeEnd || '20:00:00Z',
+      thursdayTimeStart: shop.thursdayTimeStart || '09:00:00Z',
+      thursdayTimeEnd: shop.thursdayTimeEnd || '20:00:00Z',
+      fridayTimeStart: shop.fridayTimeStart || '09:00:00Z',
+      fridayTimeEnd: shop.fridayTimeEnd || '20:00:00Z',
+      saturdayTimeStart: shop.saturdayTimeStart || '09:00:00Z',
+      saturdayTimeEnd: shop.saturdayTimeEnd || '20:00:00Z',
+      sundayTimeStart: shop.sundayTimeStart || '09:00:00Z',
+      sundayTimeEnd: shop.sundayTimeEnd || '20:00:00Z',
+    };
+  }
+
+  return {
+    name: '',
+    address: '',
+    coord: undefined,
+    shopPhone: '',
+    mondayIsOpen: true,
+    tuesdayIsOpen: true,
+    wednesdayIsOpen: true,
+    thursdayIsOpen: true,
+    fridayIsOpen: true,
+    saturdayIsOpen: true,
+    sundayIsOpen: false,
+    mondayTimeStart: '09:00:00Z',
+    mondayTimeEnd: '20:00:00Z',
+    tuesdayTimeStart: '09:00:00Z',
+    tuesdayTimeEnd: '20:00:00Z',
+    wednesdayTimeStart: '09:00:00Z',
+    wednesdayTimeEnd: '20:00:00Z',
+    thursdayTimeStart: '09:00:00Z',
+    thursdayTimeEnd: '20:00:00Z',
+    fridayTimeStart: '09:00:00Z',
+    fridayTimeEnd: '20:00:00Z',
+    saturdayTimeStart: '09:00:00Z',
+    saturdayTimeEnd: '20:00:00Z',
+    sundayTimeStart: '09:00:00Z',
+    sundayTimeEnd: '20:00:00Z',
+  };
+};
 
 const reducer = (state, { field, value }) => {
   return {
@@ -89,13 +166,16 @@ interface ShopErrors {
   shopPhone?: string;
 }
 
-const EditShop = () => {
+type Props = {
+  shop?: Shop;
+};
+
+const EditShop = ({ shop }: Props) => {
   const { t } = useTranslation();
-  const [state, dispatch] = React.useReducer(reducer, resetFormValues());
+  const [state, dispatch] = React.useReducer(reducer, initFormValues(shop));
   const [submitAttempt, setSubmitAttempt] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const [errors, setErrors] = React.useState<ShopErrors>({});
-  const [creationError, setCreationError] = React.useState();
 
   const validate = async (values: FormValues) => {
     const errors: ShopErrors = {};
@@ -145,7 +225,7 @@ const EditShop = () => {
     dispatch({ field: name, value });
   };
 
-  const createShop = async () => {
+  const upsertShop = async (id?: string) => {
     const shopInput = {
       ...state,
       lat: state.coord.lat,
@@ -155,14 +235,15 @@ const EditShop = () => {
 
     for (const day of days) {
       if (!shopInput[day + 'IsOpen']) {
-        delete shopInput[day + 'TimeStart'];
-        delete shopInput[day + 'TimeEnd'];
+        shopInput[day + 'TimeStart'] = null;
+        shopInput[day + 'TimeEnd'] = null;
       }
       delete shopInput[day + 'IsOpen'];
     }
 
     try {
-      await graphqlClient.request(MUTATION, {
+      const mutation = id ? EDIT : CREATE;
+      await graphqlClient.request(mutation, {
         shop: shopInput,
       });
       Router.push('/my-shop');
@@ -180,7 +261,7 @@ const EditShop = () => {
     const errors = await validate(state);
 
     if (isEmptyObject(errors)) {
-      createShop();
+      upsertShop(state.id);
     } else {
       setErrors(errors);
       setSubmitAttempt(true);
@@ -234,6 +315,7 @@ const EditShop = () => {
                   </InputGroup.Text>
                 </InputGroup.Prepend>
                 <GeoSuggest
+                  initialValue={state.address}
                   isInvalid={!!errors.address}
                   placeholder={t('common:shop-address')}
                   disabled={isSubmitting}
@@ -387,12 +469,67 @@ const EditShop = () => {
 
             {/* {JSON.stringify(state)} */}
 
-            <LoadingButton isLoading={isSubmitting} label={t('common:save')} />
+            <LoadingButton
+              isLoading={isSubmitting}
+              type="submit"
+              variant="success"
+              size="lg"
+              className="mt-4"
+            >
+              {t('common:save')}
+            </LoadingButton>
           </Form>
         </Card.Body>
       </Card>
     </Layout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const token = requireLogin(context);
+  if (!token) {
+    return { props: {} };
+  }
+
+  const shopId = token.shopId;
+
+  if (shopId) {
+    const dbShop = await prismaClient.shopDetails.findOne({
+      where: { shopId },
+    });
+    if (dbShop) {
+      const shop = {
+        id: dbShop.shopId,
+        name: dbShop.name,
+        address: dbShop.address,
+        lat: dbShop.lat,
+        lng: dbShop.lng,
+        shopPhone: dbShop.shopPhone
+          ? String(getNationalNumber(dbShop.shopPhone))
+          : '',
+        mondayTimeStart: dbShop.mondayTimeStart,
+        mondayTimeEnd: dbShop.mondayTimeEnd,
+        tuesdayTimeStart: dbShop.tuesdayTimeStart,
+        tuesdayTimeEnd: dbShop.tuesdayTimeEnd,
+        wednesdayTimeStart: dbShop.wednesdayTimeStart,
+        wednesdayTimeEnd: dbShop.wednesdayTimeEnd,
+        thursdayTimeStart: dbShop.thursdayTimeStart,
+        thursdayTimeEnd: dbShop.thursdayTimeEnd,
+        fridayTimeStart: dbShop.fridayTimeStart,
+        fridayTimeEnd: dbShop.fridayTimeEnd,
+        saturdayTimeStart: dbShop.saturdayTimeStart,
+        saturdayTimeEnd: dbShop.saturdayTimeEnd,
+        sundayTimeStart: dbShop.sundayTimeStart,
+        sundayTimeEnd: dbShop.sundayTimeEnd,
+      };
+      return { props: { shop } };
+    } else {
+      context.res.statusCode = 404;
+      return { props: { statusCode: 404 } };
+    }
+  } else {
+    return { props: { shop: null } };
+  }
 };
 
 export default EditShop;

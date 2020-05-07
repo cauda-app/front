@@ -156,7 +156,7 @@ const shopResolver = {
         first: 1,
         orderBy: { issuedNumber: 'asc' },
       });
-      return numberToTurn(res[0].issuedNumber);
+      return res.length > 0 ? numberToTurn(res[0].issuedNumber) : null;
     },
     lastTurnsAttended: async (parent: Shop, args, ctx: Context) => {
       const res = await ctx.prisma.issuedNumber.findMany({
@@ -166,7 +166,7 @@ const shopResolver = {
       });
 
       if (!res.length) {
-        return [numberToTurn(0)];
+        return [];
       }
 
       return res.map((e) => numberToTurn(e.issuedNumber));
