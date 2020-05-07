@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import useTranslation from 'next-translate/useTranslation';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -47,9 +48,11 @@ const MyShop = () => {
             <FontAwesomeIcon icon={faChevronLeft} className="mr-2" />
           </Button>
           <p>{data.myShop!.details.name}</p>
-          <Button href="/form-shop" variant="link" size="sm">
-            <FontAwesomeIcon icon={faPen} className="mr-2" />
-          </Button>
+          <Link href="/shop-form" passHref>
+            <Button variant="link" size="sm">
+              <FontAwesomeIcon icon={faPen} className="mr-2" />
+            </Button>
+          </Link>
         </Card.Header>
 
         <Card.Body className="p-2 text-center">
@@ -138,7 +141,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   if (!token?.shopId) {
     context.res.writeHead(303, {
-      Location: '/form-shop',
+      Location: '/shop-form',
     });
     context.res.end();
   }
