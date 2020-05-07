@@ -23,8 +23,9 @@ import graphqlClient from 'src/graphqlClient';
 import Layout from 'src/components/Layout';
 import { days } from 'src/utils/dates';
 import { getNationalNumber } from 'src/utils/phone-utils';
+import { create } from 'domain';
 
-const MUTATION = /* GraphQL */ `
+const CREATE = /* GraphQL */ `
   mutation createShop($shop: ShopInput!) {
     registerShop(shop: $shop) {
       id
@@ -32,7 +33,16 @@ const MUTATION = /* GraphQL */ `
   }
 `;
 
+const EDIT = /* GraphQL */ `
+  mutation updateShop($shop: ShopInput!) {
+    updateShop(shop: $shop) {
+      id
+    }
+  }
+`;
+
 interface Shop {
+  id: string;
   name: string;
   address: string;
   lat: number;
@@ -55,9 +65,10 @@ interface Shop {
 }
 
 interface FormValues {
+  id?: string;
   name?: string;
   address?: string;
-  coord?: { lat: number; long: number };
+  coord?: { lat: number; lng: number };
   shopPhone?: string;
   mondayIsOpen: boolean;
   tuesdayIsOpen: boolean;
@@ -85,9 +96,10 @@ interface FormValues {
 const initFormValues = (shop?: Shop): FormValues => {
   if (shop) {
     return {
+      id: shop.id,
       name: shop.name,
       address: shop.address,
-      coord: { lat: shop.lat, long: shop.lng },
+      coord: { lat: shop.lat, lng: shop.lng },
       shopPhone: shop.shopPhone,
       mondayIsOpen: !!shop.mondayTimeStart,
       tuesdayIsOpen: !!shop.tuesdayTimeStart,
@@ -214,7 +226,7 @@ const EditShop = ({ shop }: Props) => {
     dispatch({ field: name, value });
   };
 
-  const createShop = async () => {
+  const upsertShop = async (id?: string) => {
     const shopInput = {
       ...state,
       lat: state.coord.lat,
@@ -224,14 +236,15 @@ const EditShop = ({ shop }: Props) => {
 
     for (const day of days) {
       if (!shopInput[day + 'IsOpen']) {
-        delete shopInput[day + 'TimeStart'];
-        delete shopInput[day + 'TimeEnd'];
+        shopInput[day + 'TimeStart'] = null;
+        shopInput[day + 'TimeEnd'] = null;
       }
       delete shopInput[day + 'IsOpen'];
     }
 
     try {
-      await graphqlClient.request(MUTATION, {
+      const mutation = id ? EDIT : CREATE;
+      await graphqlClient.request(mutation, {
         shop: shopInput,
       });
       Router.push('/my-shop');
@@ -249,7 +262,7 @@ const EditShop = ({ shop }: Props) => {
     const errors = await validate(state);
 
     if (isEmptyObject(errors)) {
-      createShop();
+      upsertShop(state.id);
     } else {
       setErrors(errors);
       setSubmitAttempt(true);
@@ -487,12 +500,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     });
     if (dbShop) {
       const shop = {
-        shopId: dbShop.shopId,
+        id: dbShop.shopId,
         name: dbShop.name,
         address: dbShop.address,
         lat: dbShop.lat,
         lng: dbShop.lng,
-        shopPhone: dbShop.shopPhone ? getNationalNumber(dbShop.shopPhone) : '',
+        shopPhone: dbShop.shopPhone
+          ? String(getNationalNumber(dbShop.shopPhone))
+          : '',
         mondayTimeStart: dbShop.mondayTimeStart,
         mondayTimeEnd: dbShop.mondayTimeEnd,
         tuesdayTimeStart: dbShop.tuesdayTimeStart,
