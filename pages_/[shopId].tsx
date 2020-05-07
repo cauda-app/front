@@ -1,4 +1,5 @@
 import { GetServerSideProps } from 'next';
+import Router from 'next/router';
 
 import prismaClient from '../prisma/client';
 import ShopCard from 'src/components/ShopCard';
@@ -6,15 +7,30 @@ import Layout from 'src/components/Layout';
 import NotFound from 'src/components/NotFound';
 import { isOpen, shopPhone, status } from '../graphql/shop/helpers';
 import { requireLogin } from 'src/utils/next';
+import graphqlClient from 'src/graphqlClient';
+
+const REQUEST_TURN = /* GraphQL */ `
+  mutation RequestTurn($shopId: String!) {
+    requestTurn(shopId: $shopId) {
+      id
+    }
+  }
+`;
 
 const RequestTurn = ({ statusCode, shop }) => {
   if (statusCode === 404) {
     return <NotFound />;
   }
 
+  const handleRequestTurn = async (shopId) => {
+    await graphqlClient.request(REQUEST_TURN, { shopId });
+
+    Router.push('/');
+  };
+
   return (
     <Layout>
-      <ShopCard shop={shop} />
+      <ShopCard shop={shop} onRequestTurn={handleRequestTurn} />
     </Layout>
   );
 };
@@ -34,6 +50,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     });
     if (dbShop) {
       shop = {
+        shopId: dbShop.shopId,
         name: dbShop.name,
         address: dbShop.address,
         lat: dbShop.lat,

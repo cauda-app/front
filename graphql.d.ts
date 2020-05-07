@@ -80,7 +80,6 @@ export type MutationRegisterShopArgs = {
 
 export type MutationRequestTurnArgs = {
   shopId: Scalars['String'];
-  clientId: Scalars['Int'];
 };
 
 export type MutationSignUpArgs = {
@@ -414,7 +413,7 @@ export type MutationResolvers<
     ResolversTypes['IssuedNumber'],
     ParentType,
     ContextType,
-    RequireFields<MutationRequestTurnArgs, 'shopId' | 'clientId'>
+    RequireFields<MutationRequestTurnArgs, 'shopId'>
   >;
   signUp?: Resolver<
     ResolversTypes['Client'],

@@ -2,19 +2,20 @@ import Button from 'react-bootstrap/Button';
 import Spinner from 'react-bootstrap/Spinner';
 import useTranslation from 'next-translate/useTranslation';
 
-export default function LoadingButton({ isLoading, label, ...rest }) {
+type Props = {
+  isLoading: boolean;
+  children: React.ReactNode;
+};
+
+export default function LoadingButton({
+  isLoading,
+  children,
+  ...props
+}: Props & any) {
   const { t } = useTranslation();
 
   return (
-    <Button
-      type="submit"
-      variant="success"
-      size="lg"
-      className="mt-4"
-      block
-      disabled={isLoading}
-      {...rest}
-    >
+    <Button block disabled={isLoading} {...props}>
       {isLoading ? (
         <Spinner
           as="span"
@@ -25,8 +26,9 @@ export default function LoadingButton({ isLoading, label, ...rest }) {
         >
           <span className="sr-only">{t('common:loading')}</span>
         </Spinner>
-      ) : null}
-      {label}
+      ) : (
+        children
+      )}
     </Button>
   );
 }

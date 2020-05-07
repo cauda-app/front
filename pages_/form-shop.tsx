@@ -387,7 +387,15 @@ const EditShop = () => {
 
             {/* {JSON.stringify(state)} */}
 
-            <LoadingButton isLoading={isSubmitting} label={t('common:save')} />
+            <LoadingButton
+              isLoading={isSubmitting}
+              type="submit"
+              variant="success"
+              size="lg"
+              className="mt-4"
+            >
+              {t('common:save')}
+            </LoadingButton>
           </Form>
         </Card.Body>
       </Card>

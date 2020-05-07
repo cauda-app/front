@@ -33,7 +33,15 @@ const IssuedNumberResolver = {
       args: MutationRequestTurnArgs,
       ctx: Context
     ) => {
-      let appointments = await getPendingTurns(args.clientId, args.shopId, ctx);
+      if (!ctx.tokenInfo?.clientId) {
+        return new ApolloError('Client Id not provided', 'INVALID_CLIENT_ID');
+      }
+
+      let appointments = await getPendingTurns(
+        ctx.tokenInfo.clientId,
+        args.shopId,
+        ctx
+      );
 
       if (appointments.length) {
         return new ApolloError(
@@ -42,18 +50,21 @@ const IssuedNumberResolver = {
         );
       }
 
-      const rawQuery = `CALL increaseShopCounter("${args.shopId}", ${args.clientId});`;
-      console.log(rawQuery);
+      const rawQuery = `CALL increaseShopCounter("${args.shopId}", ${ctx.tokenInfo.clientId});`;
       await ctx.prisma.raw(rawQuery);
 
-      appointments = await getPendingTurns(args.clientId, args.shopId, ctx);
+      appointments = await getPendingTurns(
+        ctx.tokenInfo.clientId,
+        args.shopId,
+        ctx
+      );
       if (!appointments.length) {
         return new ApolloError(
           'There was an error trying to set the appointment.',
           'OP_ERROR'
         );
       }
-      console.log(appointments);
+
       return appointments[0];
     },
     cancelTurn: async (parent, args: MutationCancelTurnArgs, ctx: Context) => {
