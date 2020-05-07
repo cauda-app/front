@@ -8,6 +8,7 @@ import NotFound from 'src/components/NotFound';
 import { isOpen, shopPhone, status } from '../graphql/shop/helpers';
 import { requireLogin } from 'src/utils/next';
 import graphqlClient from 'src/graphqlClient';
+import { getErrorCodeFromApollo } from 'src/utils';
 
 const REQUEST_TURN = /* GraphQL */ `
   mutation RequestTurn($shopId: String!) {
@@ -23,9 +24,16 @@ const RequestTurn = ({ statusCode, shop }) => {
   }
 
   const handleRequestTurn = async (shopId) => {
-    await graphqlClient.request(REQUEST_TURN, { shopId });
-
-    Router.push('/');
+    try {
+      await graphqlClient.request(REQUEST_TURN, { shopId });
+      Router.push('/');
+    } catch (error) {
+      console.log(error);
+      const errorCode = getErrorCodeFromApollo(error);
+      if (errorCode === 'ACTIVE_TURN') {
+        Router.push('/');
+      }
+    }
   };
 
   return (

@@ -45,8 +45,8 @@ const IssuedNumberResolver = {
 
       if (appointments.length) {
         return new ApolloError(
-          'There is already a pending appointment',
-          'ACTIVE_APPOINTMENT'
+          'There is already a pending turn',
+          'ACTIVE_TURN'
         );
       }
 
