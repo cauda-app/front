@@ -8,28 +8,26 @@ export default function Footer(props) {
   const { t } = useTranslation();
 
   return (
-    <footer>
-      <ul className="list-inline">
+    <footer className="root">
+      <ul className="list-inline text-center">
         <li className="list-inline-item">{t('common:add-shop')}</li>
         <li className="list-inline-item">{t('common:about')}</li>
         <li className="list-inline-item">{t('common:contact')}</li>
       </ul>
 
-      <div className="devlinks">
+      <div className="devlinks text-center">
         FOR DEV:
-        <Link href="/">
-          <a>Home</a>
-        </Link>
         <Link href="/logout">
           <a>Logout</a>
         </Link>
       </div>
 
-      <div>Version: {publicRuntimeConfig.version}</div>
+      <div className="version text-center">
+        Version: {publicRuntimeConfig.version}
+      </div>
 
       <style jsx>{`
-        footer  {
-          text-align: center;
+        .root {
           padding: 20px;
         }
         ul  {
@@ -44,6 +42,12 @@ export default function Footer(props) {
           font-size: 0.7rem;
         }
         .devlinks a {
+          padding: 5px;
+          color: #666;
+        }
+        .version {
+          opacity: 0.5;
+          font-size: 0.7rem;
           padding: 5px;
           color: #666;
         }

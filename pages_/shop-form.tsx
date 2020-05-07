@@ -23,7 +23,6 @@ import graphqlClient from 'src/graphqlClient';
 import Layout from 'src/components/Layout';
 import { days } from 'src/utils/dates';
 import { getNationalNumber } from 'src/utils/phone-utils';
-import { create } from 'domain';
 
 const CREATE = /* GraphQL */ `
   mutation createShop($shop: ShopInput!) {
