@@ -8,9 +8,14 @@ interface State {
   fetchMore: (variables: any) => void;
 }
 
-export default function useQuery(query: string, variables?: any) {
+interface Options {
+  variables?: any;
+  pollInterval?: number;
+}
+
+export default function useQuery(query: string, options: Options = {}) {
   const fetchMore = ({ variables: newVariables, updateQuery }) => {
-    runQuery({ ...variables, ...newVariables }, updateQuery);
+    runQuery({ ...options.variables, ...newVariables }, updateQuery);
   };
 
   const [state, setState] = React.useState<State>({
@@ -29,7 +34,6 @@ export default function useQuery(query: string, variables?: any) {
         fetchMore,
       }));
     } catch (error) {
-      debugger;
       setState((state) => ({
         ...state,
         error,
@@ -39,8 +43,18 @@ export default function useQuery(query: string, variables?: any) {
   };
 
   React.useEffect(() => {
-    runQuery(variables);
-  }, [query, variables]);
+    runQuery(options.variables);
+
+    const interval = setInterval(() => {
+      runQuery(options.variables);
+    }, options.pollInterval);
+
+    return () => clearInterval(interval);
+  }, [query, options.variables, options.pollInterval]);
+
+  React.useEffect(() => {
+    runQuery(options.variables);
+  }, [query, options.variables]);
 
   return state;
 }

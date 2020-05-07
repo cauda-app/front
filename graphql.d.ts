@@ -130,7 +130,7 @@ export type Shop = {
   isClosed: Scalars['Boolean'];
   lastNumber: Scalars['Int'];
   nextNumber: Scalars['Int'];
-  nextTurn: Scalars['String'];
+  nextTurn?: Maybe<Scalars['String']>;
   lastTurnsAttended: Array<Scalars['String']>;
   pendingTurnsAmount: Scalars['Int'];
   createdAt: Scalars['DateTime'];
@@ -489,7 +489,7 @@ export type ShopResolvers<
   isClosed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   lastNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   nextNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  nextTurn?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  nextTurn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   lastTurnsAttended?: Resolver<
     Array<ResolversTypes['String']>,
     ParentType,
