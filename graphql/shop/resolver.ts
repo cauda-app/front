@@ -149,6 +149,41 @@ const shopResolver = {
         },
       });
     },
+    attendNextTurn: async (parent, args, ctx: Context) => {
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
+
+      if (!ctx.tokenInfo?.shopId) {
+        return new ApolloError(
+          'Not possible to attend turn, No id provided',
+          'NO_SHOP_ID'
+        );
+      }
+
+      const getShop = () =>
+        ctx.prisma.shop.findOne({
+          where: { id: ctx.tokenInfo!.shopId },
+        });
+
+      // TODO: this won't work for multiple employees attending in parallel
+      const nextTurn = await ctx.prisma.issuedNumber.findMany({
+        where: { shopId: ctx.tokenInfo!.shopId, AND: { status: 0 } },
+        orderBy: { issuedNumber: 'asc' },
+        first: 1,
+      });
+
+      if (!nextTurn.length) {
+        return getShop();
+      }
+
+      await ctx.prisma.issuedNumber.update({
+        where: { id: nextTurn[0].id },
+        data: { status: 1 },
+      });
+
+      return getShop();
+    },
   },
   Shop: {
     details: (parent: Shop, args, ctx: Context) => {

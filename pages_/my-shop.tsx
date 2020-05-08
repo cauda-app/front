@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import useTranslation from 'next-translate/useTranslation';
 import Button from 'react-bootstrap/Button';
@@ -10,34 +11,80 @@ import { requireLogin } from 'src/utils/next';
 import Layout from 'src/components/Layout';
 import useQuery from 'src/hooks/useQuery';
 import Spinner from 'src/components/Spinner';
-
-const MY_SHOP = /* GraphQL */ `
-  query MyShop {
-    myShop {
-      details {
-        name
-      }
-      nextTurn
-      lastTurnsAttended
-      pendingTurnsAmount
-    }
-  }
-`;
+import graphqlClient from 'src/graphqlClient';
 
 const MyShop = () => {
   const { t } = useTranslation();
-  const { data, loading, error } = useQuery(MY_SHOP, { pollInterval: 10_000 });
 
-  if (!data.myShop && loading) {
+  const [myShop, setMyShop] = useState<any>();
+  const [error, setError] = useState();
+  const [actionLoading, setActionLoading] = useState(false);
+
+  const attendTurn = async () => {
+    setActionLoading(true);
+    const ATTEND_NEXT_TURN = /* GraphQL */ `
+      mutation AttendNextTurn {
+        attendNextTurn {
+          nextTurn
+          lastTurnsAttended
+          pendingTurnsAmount
+        }
+      }
+    `;
+
+    try {
+      const res = await graphqlClient.request(ATTEND_NEXT_TURN);
+      setMyShop({ ...myShop, ...res.attendNextTurn });
+      setActionLoading(false);
+    } catch (error) {
+      setError(error);
+      setActionLoading(false);
+    }
+  };
+
+  const getShopData = async () => {
+    const MY_SHOP = /* GraphQL */ `
+      query MyShop {
+        myShop {
+          details {
+            name
+          }
+          nextTurn
+          lastTurnsAttended
+          pendingTurnsAmount
+        }
+      }
+    `;
+
+    try {
+      const res = await graphqlClient.request(MY_SHOP);
+      setMyShop(res.myShop);
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  // fetch data
+  useEffect(() => {
+    getShopData();
+
+    const interval = setInterval(() => {
+      getShopData();
+    }, 10_000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  if (error) {
+    return <Layout>{String(error)}</Layout>;
+  }
+
+  if (!myShop) {
     return (
       <Layout>
         <Spinner />
       </Layout>
     );
-  }
-
-  if (error) {
-    return <Layout>{String(error)}</Layout>;
   }
 
   return (
@@ -47,7 +94,7 @@ const MyShop = () => {
           <Button href="/" variant="link" className="py-0">
             <FontAwesomeIcon icon={faChevronLeft} className="mr-2" />
           </Button>
-          <p>{data.myShop!.details.name}</p>
+          <p>{myShop!.details.name}</p>
           <Link href="/shop-form" passHref>
             <Button variant="link" size="sm">
               <FontAwesomeIcon icon={faPen} className="mr-2" />
@@ -56,18 +103,17 @@ const MyShop = () => {
         </Card.Header>
 
         <Card.Body className="p-2 text-center">
-          {data.myShop!.nextTurn ? (
+          {myShop!.nextTurn ? (
             <>
               <p className="myturn__number display-5 text-uppercase">
                 {t('common:next-turn')}
               </p>
-              <p className="myturn__number display-1">
-                {data.myShop!.nextTurn}
-              </p>
+              <p className="myturn__number display-1">{myShop!.nextTurn}</p>
 
               <div className="pl-4 pr-4">
                 <Button
-                  href=""
+                  disabled={actionLoading}
+                  onClick={attendTurn}
                   variant="success"
                   size="lg"
                   className="d-flex justify-content-center align-items-center"
@@ -77,6 +123,7 @@ const MyShop = () => {
                 </Button>
 
                 <Button
+                  disabled={actionLoading}
                   href=""
                   variant="danger"
                   size="lg"
@@ -101,12 +148,12 @@ const MyShop = () => {
             {t('common:pending-turns')}
           </span>
           <span className="h2 text-uppercase text-muted font-weight-light">
-            {data.myShop!.pendingTurnsAmount}
+            {myShop!.pendingTurnsAmount}
           </span>
         </div>
 
         <Button
-          disabled={data.myShop.pendingTurnsAmount === 0}
+          disabled={myShop.pendingTurnsAmount === 0 || actionLoading}
           href=""
           variant="warning"
           size="lg"
@@ -117,14 +164,14 @@ const MyShop = () => {
         </Button>
       </div>
 
-      {data.myShop!.lastTurnsAttended.length > 0 ? (
+      {myShop!.lastTurnsAttended.length > 0 ? (
         <div className="myturn__turns mb-5 text-center">
           <p className="h6 text-uppercase text-muted font-weight-light">
             {t('common:last-numbers')}
           </p>
 
           <ul className="list-unstyled list-inline h4 mb-0">
-            {data.myShop!.lastTurnsAttended.map((turn, index) => (
+            {myShop!.lastTurnsAttended.map((turn, index) => (
               <li key={index} className="list-inline-item text-success">
                 {turn}
               </li>
