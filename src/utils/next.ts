@@ -10,16 +10,10 @@ export const processCookie = (req: any): TokenInfo | undefined => {
   return verifyToken(token);
 };
 
-export const requireLogin = (context): TokenInfo | undefined => {
+export const getToken = (context): TokenInfo | null => {
   const token = processCookie(context.req);
   if (!token || !token.isValid) {
-    let redirectToQuery = '?redirectTo=' + context.req.url;
-    context.res.writeHead(303, {
-      Location: '/register-phone' + redirectToQuery,
-    });
-    context.res.end();
-
-    return;
+    return null;
   }
 
   return token;
