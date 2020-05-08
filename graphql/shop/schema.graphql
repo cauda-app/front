@@ -55,6 +55,7 @@ type Query {
 type Mutation {
   registerShop(shop: ShopInput!): Shop!
   updateShop(shop: ShopInput!): Shop!
+  attendNextTurn: Shop!
 }
 
 input ShopInput {

@@ -60,6 +60,7 @@ export type QueryShopsDetailArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  attendNextTurn: Shop;
   cancelTurn: Scalars['Boolean'];
   registerShop: Shop;
   requestTurn: IssuedNumber;
@@ -397,6 +398,7 @@ export type MutationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = ResolversObject<{
+  attendNextTurn?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>;
   cancelTurn?: Resolver<
     ResolversTypes['Boolean'],
     ParentType,

@@ -49,7 +49,7 @@ const shopResolver = {
       });
     },
     nearByShops: async (parent, args: QueryNearByShopsArgs, ctx: Context) => {
-      const MAX_DISTANCE_METERS = 1000;
+      const MAX_DISTANCE_METERS = 2000;
       return await ctx.prisma.raw(`
         SELECT
           * ,
@@ -86,7 +86,6 @@ const shopResolver = {
 
       return ctx.prisma.shop.findOne({
         where: { id: ctx.tokenInfo.shopId },
-        include: { shopDetails: true },
       });
     },
   },
@@ -128,20 +127,62 @@ const shopResolver = {
       return newShop;
     },
     updateShop: (parent, args: MutationUpdateShopArgs, ctx: Context) => {
-      if (!args.shop.id) {
-        return new ApolloError('Parameter id is required');
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
+
+      if (!ctx.tokenInfo?.shopId) {
+        return new ApolloError(
+          'Not possible to modify Shop, No id provided',
+          'NO_SHOP_ID'
+        );
       }
 
       const { id, ...shopDetails } = args.shop;
 
       return ctx.prisma.shop.update({
-        where: { id },
+        where: { id: ctx.tokenInfo!.shopId },
         data: {
           shopDetails: {
             update: { ...mapShop(shopDetails) },
           },
         },
       });
+    },
+    attendNextTurn: async (parent, args, ctx: Context) => {
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
+
+      if (!ctx.tokenInfo?.shopId) {
+        return new ApolloError(
+          'Not possible to attend turn, No id provided',
+          'NO_SHOP_ID'
+        );
+      }
+
+      const getShop = () =>
+        ctx.prisma.shop.findOne({
+          where: { id: ctx.tokenInfo!.shopId },
+        });
+
+      // TODO: this won't work for multiple employees attending in parallel
+      const nextTurn = await ctx.prisma.issuedNumber.findMany({
+        where: { shopId: ctx.tokenInfo!.shopId, AND: { status: 0 } },
+        orderBy: { issuedNumber: 'asc' },
+        first: 1,
+      });
+
+      if (!nextTurn.length) {
+        return getShop();
+      }
+
+      await ctx.prisma.issuedNumber.update({
+        where: { id: nextTurn[0].id },
+        data: { status: 1 },
+      });
+
+      return getShop();
     },
   },
   Shop: {
