@@ -86,7 +86,6 @@ const shopResolver = {
 
       return ctx.prisma.shop.findOne({
         where: { id: ctx.tokenInfo.shopId },
-        include: { shopDetails: true },
       });
     },
   },
