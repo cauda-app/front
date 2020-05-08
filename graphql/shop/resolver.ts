@@ -128,14 +128,21 @@ const shopResolver = {
       return newShop;
     },
     updateShop: (parent, args: MutationUpdateShopArgs, ctx: Context) => {
-      if (!args.shop.id) {
-        return new ApolloError('Parameter id is required');
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
+
+      if (!ctx.tokenInfo?.shopId) {
+        return new ApolloError(
+          'Not possible to modify Shop, No id provided',
+          'NO_SHOP_ID'
+        );
       }
 
       const { id, ...shopDetails } = args.shop;
 
       return ctx.prisma.shop.update({
-        where: { id },
+        where: { id: ctx.tokenInfo!.shopId },
         data: {
           shopDetails: {
             update: { ...mapShop(shopDetails) },
