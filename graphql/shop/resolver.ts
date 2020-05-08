@@ -49,7 +49,7 @@ const shopResolver = {
       });
     },
     nearByShops: async (parent, args: QueryNearByShopsArgs, ctx: Context) => {
-      const MAX_DISTANCE_METERS = 1000;
+      const MAX_DISTANCE_METERS = 2000;
       return await ctx.prisma.raw(`
         SELECT
           * ,
