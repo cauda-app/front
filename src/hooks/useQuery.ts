@@ -9,6 +9,7 @@ interface State {
 }
 
 interface Options {
+  skip?: boolean;
   variables?: any;
   pollInterval?: number;
 }
@@ -26,6 +27,9 @@ export default function useQuery(query: string, options: Options = {}) {
 
   const runQuery = async (variables, updateQuery?) => {
     try {
+      if (options.skip) {
+        return;
+      }
       setState((state) => ({ ...state, loading: true }));
       const response = await graphqlClient.request(query, variables);
       setState((state) => ({

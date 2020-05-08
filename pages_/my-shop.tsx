@@ -1,4 +1,6 @@
+import React from 'react';
 import Link from 'next/link';
+import Router from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
@@ -6,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { GetServerSideProps } from 'next';
 
-import { requireLogin } from 'src/utils/next';
+import { getToken } from 'src/utils/next';
 import Layout from 'src/components/Layout';
 import useQuery from 'src/hooks/useQuery';
 import Spinner from 'src/components/Spinner';
@@ -24,9 +26,20 @@ const MY_SHOP = /* GraphQL */ `
   }
 `;
 
-const MyShop = () => {
+const MyShop = ({ isLoggedIn, shopId }) => {
   const { t } = useTranslation();
-  const { data, loading, error } = useQuery(MY_SHOP, { pollInterval: 10_000 });
+  const { data, loading, error } = useQuery(MY_SHOP, {
+    pollInterval: 10_000,
+    skip: !isLoggedIn || !shopId,
+  });
+
+  React.useEffect(() => {
+    if (!isLoggedIn) {
+      Router.push('/register-phone?redirectTo=/my-shop');
+    } else if (!shopId) {
+      Router.push('/shop-form');
+    }
+  }, [isLoggedIn, shopId]);
 
   if (!data.myShop && loading) {
     return (
@@ -137,16 +150,13 @@ const MyShop = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const token = requireLogin(context);
+  const token = getToken(context);
 
-  if (!token?.shopId) {
-    context.res.writeHead(303, {
-      Location: '/shop-form',
-    });
-    context.res.end();
+  if (!token) {
+    return { props: { isLoggedIn: false } };
   }
 
-  return { props: {} };
+  return { props: { isLoggedIn: true, shopId: token?.shopId || '' } };
 };
 
 export default MyShop;

@@ -13,7 +13,7 @@ import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 
 import prismaClient from '../prisma/client';
-import { requireLogin } from 'src/utils/next';
+import { getToken } from 'src/utils/next';
 import { isEmptyObject, validatePhoneRequest } from 'src/utils';
 import GeoSuggest from 'src/components/GeoSuggest';
 import DayHourDropDown from 'src/components/DayHourDropDown';
@@ -21,6 +21,7 @@ import LoadingButton from 'src/components/LoadingButton';
 import Map from 'src/components/Map';
 import graphqlClient from 'src/graphqlClient';
 import Layout from 'src/components/Layout';
+import Spinner from 'src/components/Spinner';
 import { days } from 'src/utils/dates';
 import { getNationalNumber } from 'src/utils/phone-utils';
 
@@ -167,10 +168,11 @@ interface ShopErrors {
 }
 
 type Props = {
+  isLoggedIn: boolean;
   shop?: Shop;
 };
 
-const EditShop = ({ shop }: Props) => {
+const EditShop = ({ isLoggedIn, shop }: Props) => {
   const { t } = useTranslation();
   const [state, dispatch] = React.useReducer(reducer, initFormValues(shop));
   const [submitAttempt, setSubmitAttempt] = React.useState(false);
@@ -207,6 +209,12 @@ const EditShop = ({ shop }: Props) => {
 
     setErrorsAsync();
   }, [state]);
+
+  React.useEffect(() => {
+    if (!isLoggedIn) {
+      Router.push('/register-phone?redirectTo=/shop-form');
+    }
+  }, [isLoggedIn]);
 
   const onChange = (e) => {
     dispatch({ field: e.target.name, value: e.target.value });
@@ -269,6 +277,14 @@ const EditShop = ({ shop }: Props) => {
 
     setIsSubmitting(false);
   };
+
+  if (!isLoggedIn) {
+    return (
+      <Layout>
+        <Spinner />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -486,9 +502,9 @@ const EditShop = ({ shop }: Props) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const token = requireLogin(context);
+  const token = getToken(context);
   if (!token) {
-    return { props: {} };
+    return { props: { isLoggedIn: false } };
   }
 
   const shopId = token.shopId;
@@ -522,13 +538,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         sundayTimeStart: dbShop.sundayTimeStart,
         sundayTimeEnd: dbShop.sundayTimeEnd,
       };
-      return { props: { shop } };
+      return { props: { isLoggedIn: true, shop } };
     } else {
       context.res.statusCode = 404;
-      return { props: { statusCode: 404 } };
+      return { props: { isLoggedIn: true, statusCode: 404 } };
     }
   } else {
-    return { props: { shop: null } };
+    return { props: { isLoggedIn: true, shop: null } };
   }
 };
 
