@@ -6,6 +6,7 @@ import typeDefs from '../../graphql/typeDefs';
 import resolvers from '../../graphql/resolvers';
 import { TokenInfo } from '../../graphql/utils/jwt';
 import { processCookie } from 'src/utils/next';
+import { Main } from 'next/document';
 
 export type Context = {
   res: any;
@@ -33,5 +34,9 @@ export const config = {
     bodyParser: false,
   },
 };
+
+process.on('exit', async () => {
+  await prismaInstance.disconnect;
+});
 
 export default server.createHandler({ path: '/api/graphql' });

@@ -60,8 +60,9 @@ export type QueryShopsDetailArgs = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  attendNextTurn: Shop;
   cancelTurn: Scalars['Boolean'];
+  cancelTurns: Shop;
+  nextTurn: Shop;
   registerShop: Shop;
   requestTurn: IssuedNumber;
   signUp: Client;
@@ -73,6 +74,10 @@ export type Mutation = {
 export type MutationCancelTurnArgs = {
   shopId: Scalars['String'];
   clientId: Scalars['Int'];
+};
+
+export type MutationNextTurnArgs = {
+  op: NextTurnOperation;
 };
 
 export type MutationRegisterShopArgs = {
@@ -124,6 +129,11 @@ export type IssuedNumber = {
   updatedAt: Scalars['DateTime'];
 };
 
+export enum NextTurnOperation {
+  Attend = 'ATTEND',
+  Skip = 'SKIP',
+}
+
 export type Shop = {
   __typename?: 'Shop';
   id: Scalars['ID'];
@@ -131,12 +141,18 @@ export type Shop = {
   lastNumber: Scalars['Int'];
   nextNumber: Scalars['Int'];
   nextTurn?: Maybe<Scalars['String']>;
-  lastTurnsAttended: Array<Scalars['String']>;
+  lastTurns: Array<LastTurns>;
   pendingTurnsAmount: Scalars['Int'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   details: ShopDetails;
   issuedNumber: Array<IssuedNumber>;
+};
+
+export type LastTurns = {
+  __typename?: 'LastTurns';
+  status: IssuedNumberStatus;
+  turn: Scalars['String'];
 };
 
 export type ShopStatus = {
@@ -322,7 +338,9 @@ export type ResolversTypes = ResolversObject<{
   Time: ResolverTypeWrapper<Scalars['Time']>;
   IssuedNumberStatus: IssuedNumberStatus;
   IssuedNumber: ResolverTypeWrapper<IssuedNumber>;
+  NextTurnOperation: NextTurnOperation;
   Shop: ResolverTypeWrapper<Shop>;
+  LastTurns: ResolverTypeWrapper<LastTurns>;
   ShopStatus: ResolverTypeWrapper<ShopStatus>;
   ShopDetails: ResolverTypeWrapper<ShopDetails>;
   ShopInput: ShopInput;
@@ -344,7 +362,9 @@ export type ResolversParentTypes = ResolversObject<{
   Time: Scalars['Time'];
   IssuedNumberStatus: IssuedNumberStatus;
   IssuedNumber: IssuedNumber;
+  NextTurnOperation: NextTurnOperation;
   Shop: Shop;
+  LastTurns: LastTurns;
   ShopStatus: ShopStatus;
   ShopDetails: ShopDetails;
   ShopInput: ShopInput;
@@ -398,12 +418,18 @@ export type MutationResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']
 > = ResolversObject<{
-  attendNextTurn?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>;
   cancelTurn?: Resolver<
     ResolversTypes['Boolean'],
     ParentType,
     ContextType,
     RequireFields<MutationCancelTurnArgs, 'shopId' | 'clientId'>
+  >;
+  cancelTurns?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>;
+  nextTurn?: Resolver<
+    ResolversTypes['Shop'],
+    ParentType,
+    ContextType,
+    RequireFields<MutationNextTurnArgs, 'op'>
   >;
   registerShop?: Resolver<
     ResolversTypes['Shop'],
@@ -491,8 +517,8 @@ export type ShopResolvers<
   lastNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   nextNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   nextTurn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  lastTurnsAttended?: Resolver<
-    Array<ResolversTypes['String']>,
+  lastTurns?: Resolver<
+    Array<ResolversTypes['LastTurns']>,
     ParentType,
     ContextType
   >;
@@ -505,6 +531,19 @@ export type ShopResolvers<
     ParentType,
     ContextType
   >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type LastTurnsResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['LastTurns'] = ResolversParentTypes['LastTurns']
+> = ResolversObject<{
+  status?: Resolver<
+    ResolversTypes['IssuedNumberStatus'],
+    ParentType,
+    ContextType
+  >;
+  turn?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
@@ -622,6 +661,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Time?: GraphQLScalarType;
   IssuedNumber?: IssuedNumberResolvers<ContextType>;
   Shop?: ShopResolvers<ContextType>;
+  LastTurns?: LastTurnsResolvers<ContextType>;
   ShopStatus?: ShopStatusResolvers<ContextType>;
   ShopDetails?: ShopDetailsResolvers<ContextType>;
 }>;
