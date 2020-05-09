@@ -168,7 +168,7 @@ const VerifyPhone = () => {
                     <FormControl
                       autoFocus
                       placeholder={t('common:enter-cellphone')}
-                      type="number"
+                      type="tel"
                       name="phone"
                       value={phone}
                       onChange={onChange}
@@ -185,7 +185,7 @@ const VerifyPhone = () => {
                   onClick={onSendCode}
                   variant="primary"
                   size="lg"
-                  className="mb-3 mb-sm-0"
+                  className="mb-3 mb-sm-1"
                   block
                 >
                   {isSubmitting ? <Spinner /> : t('common:send-code')}
@@ -203,7 +203,7 @@ const VerifyPhone = () => {
                     <FormControl
                       autoFocus
                       placeholder={t('common:enter-code')}
-                      type="number"
+                      type="tel"
                       name="code"
                       value={code}
                       onChange={onChange}
@@ -220,7 +220,7 @@ const VerifyPhone = () => {
                   onClick={onVerifyCode}
                   variant="primary"
                   size="lg"
-                  className="mb-3 mb-sm-0"
+                  className="mb-3 mb-sm-1"
                   block
                   disabled={isSubmitting}
                 >

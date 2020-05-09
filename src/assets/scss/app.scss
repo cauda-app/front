@@ -18,6 +18,7 @@ $theme-colors: (
   'primary': #007aff,
   'secondary': #ff2d55,
   'info': #ff9500,
+  'light': #BF5AF2
 );
 
 $font-family-sans-serif: 'Roboto', -apple-system, system-ui, BlinkMacSystemFont,
@@ -63,6 +64,68 @@ body {
 }
 main {
   flex: 1;
+}
+
+.input-group > .form-control {
+  border-top-right-radius: $border-radius !important;
+  border-bottom-right-radius: $border-radius !important;
+}
+.input-group-lg > .form-control {
+  border-top-right-radius: $border-radius-lg !important;
+  border-bottom-right-radius: $border-radius-lg !important;
+}
+.geosuggest__input.form-control {
+  border-top-right-radius: $border-radius !important;
+  border-bottom-right-radius: $border-radius !important;
+}
+
+.my_turns {
+  .card-header {
+    border: none;
+    padding-top: 1rem;
+    padding-bottom: 0;
+    font-size: 1.3rem;
+  }
+  .card-body {
+    padding: 1.2rem 1rem !important;
+  }
+  ul {
+    margin-bottom: 0;
+    li:last-child .btn {
+      margin-bottom: 0 !important;
+    }
+  }
+  .btn {
+    margin-bottom: 1rem;
+    padding: 1.25rem 0.4rem 1.25rem 1.1rem !important;
+    color: var(--color_black);
+    font-size: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .primary {
+      text-align: left;
+      line-height: 1.2;
+    }
+    .secondary {
+      line-height: 1;
+      font-size: 2.6rem;
+      color: var(--success);
+      white-space: nowrap;
+      text-align: right;
+      svg {
+        margin-left: 3px;
+        color: var(--color_black);
+        opacity: 0.2;
+      }
+    }
+    &:hover{
+      color: var(--color_white) !important;
+      .numberbox {
+        color: var(--color_white) !important;
+      }
+    }
+  }
 }
 
 // https://github.com/react-bootstrap/react-bootstrap/issues/5081
@@ -176,4 +239,18 @@ main {
   text-align: center;
 }
 
+
+// MY TURNS
+
+.home_nav {
+  .col-auto {
+    padding: 2px;
+  }
+  .btn {
+    font-size: 0.78rem;
+    @include media-breakpoint-up(sm) {
+      font-size: 1rem;
+    }
+  }
+}
 

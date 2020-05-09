@@ -365,7 +365,7 @@ const EditShop = ({ isLoggedIn, shop }: Props) => {
                   </InputGroup.Text>
                 </InputGroup.Prepend>
                 <FormControl
-                  type="number"
+                  type="tel"
                   name="shopPhone"
                   value={state.shopPhone}
                   onBlur={onChange}
