@@ -65,6 +65,20 @@ main {
   flex: 1;
 }
 
+.input-group > .form-control {
+  border-top-right-radius: $border-radius !important;
+  border-bottom-right-radius: $border-radius !important;
+}
+.input-group-lg > .form-control {
+  border-top-right-radius: $border-radius-lg !important;
+  border-bottom-right-radius: $border-radius-lg !important;
+}
+.geosuggest__input.form-control {
+  border-top-right-radius: $border-radius !important;
+  border-bottom-right-radius: $border-radius !important;
+}
+
+
 // https://github.com/react-bootstrap/react-bootstrap/issues/5081
 .dropdown-menu {
   margin: 0 !important;
