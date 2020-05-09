@@ -5,6 +5,9 @@ import step2 from './assets/step2.jpeg';
 import step3 from './assets/step3.jpeg';
 import Layout from '../Layout';
 import Spinner from '../Spinner';
+import Button from 'react-bootstrap/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 export type Coords = {
   lat: number;
@@ -77,10 +80,27 @@ const RequestGPSNotification = ({ render }: Props) => {
   if (!coords && !notificationAccepted && !errorCode) {
     return (
       <Layout>
-        <div>
-          Vamos a solicitarte que actives tu GPS. Si denegas el acceso, no vas a
-          poder usar la aplicación.
-          <button onClick={requestAccess}>Continuar</button>
+        <div className="card cauda_card mt-3 mx-auto mb-5 px-3 py-4 p-sm-5 text-center">
+          <p>
+            <strong className="d-block mb-3">
+              Por favor activa tu Ubicación (GPS)
+            </strong>
+            <span className="text-muted">
+              Debes compartir tu ubicación actual para localizar comercios
+              cercanos.
+            </span>
+          </p>
+          <Button
+            onClick={requestAccess}
+            variant="primary"
+            size="lg"
+            className="d-flex justify-content-between align-items-center"
+            block
+          >
+            <div></div>
+            Continuar
+            <FontAwesomeIcon icon={faArrowRight} />
+          </Button>
         </div>
       </Layout>
     );
@@ -90,21 +110,26 @@ const RequestGPSNotification = ({ render }: Props) => {
     switch (errorCode) {
       case 1: //PERMISSION_DENIED
         return (
-          <div>
-            <div
-              style={{
-                margin: '15px',
-                padding: '30px',
-                border: '1px solid black',
-                color: 'red',
-              }}
-            >
-              Tu Ubicación está bloqueada, segui estos pasos para desbloquearla
+          <Layout>
+            <div className="card Xcauda_card mt-0 mx-auto mb-5 px-2 py-3 p-sm-4 text-center">
+              <div className="alert alert-warning mb-3">
+                <strong>Tu Ubicación está bloqueada</strong> <br /> sigue estos
+                pasos para activarla:
+              </div>
+              <p>
+                <strong>
+                  Debes compartir tu ubicación actual para usar esta aplicación.
+                </strong>
+              </p>
+              <hr />
+              <h3 className="h5">Paso 1</h3>
+              <img src={step1} alt="Paso 1" className="img-fluid mb-4 border" />
+              <h3 className="h5">Paso 2</h3>
+              <img src={step2} alt="Paso 2" className="img-fluid mb-4 border" />
+              <h3 className="h5">Paso 3</h3>
+              <img src={step3} alt="Paso 3" className="img-fluid border" />
             </div>
-            <img src={step1} alt="step1" />
-            <img src={step2} alt="step1" />
-            <img src={step3} alt="step1" />
-          </div>
+          </Layout>
         );
       case 2: //POSITION_UNAVAILABLE
         return <div>"Location information is unavailable."</div>;
