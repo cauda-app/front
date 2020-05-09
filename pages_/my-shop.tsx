@@ -107,11 +107,11 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
   return (
     <Layout>
       <Card className="cauda_card mb-4 mx-auto">
-        <Card.Header className="d-flex justify-content-between align-items-center">
-          <Button href="/" variant="link" className="py-0">
+        <Card.Header className="d-flex justify-content-between align-items-center px-0">
+          <Button href="/" variant="link" className="py-0 text-dark">
             <FontAwesomeIcon icon={faChevronLeft} className="mr-2" />
           </Button>
-          <p>{myShop!.details.name}</p>
+          <span className="text-truncate">{myShop!.details.name}</span>
           <Link href="/shop-form" passHref>
             <Button variant="link" size="sm">
               <FontAwesomeIcon icon={faPen} className="mr-2" />
@@ -159,27 +159,28 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
         </Card.Body>
       </Card>
 
-      <div className="mb-5">
-        <div className="d-flex justify-content-center align-items-baseline">
-          <span className="h6 text-uppercase text-muted font-weight-light mr-1">
-            {t('common:pending-turns')}
-          </span>
-          <span className="h2 text-uppercase text-muted font-weight-light">
-            {myShop!.pendingTurnsAmount}
-          </span>
-        </div>
+      <Card className="Xcauda_card mb-4 mx-auto">
+        <Card.Body className="p-2 text-center">
+          <div className="d-flex justify-content-center align-items-center mb-1">
+            <span className="h6 text-uppercase font-weight-light mr-1 text-light">
+              {t('common:pending-turns')}
+            </span>
+            <span className="h2 text-uppercase font-weight-light ml-2 text-light">
+              {myShop!.pendingTurnsAmount}
+            </span>
+          </div>
 
-        <Button
-          disabled={myShop.pendingTurnsAmount === 0 || actionLoading}
-          href=""
-          variant="warning"
-          size="lg"
-          className="d-flex justify-content-center align-items-center"
-          block
-        >
-          {t('common:cancel-pending')}
-        </Button>
-      </div>
+          <Button
+            disabled={myShop.pendingTurnsAmount === 0 || actionLoading}
+            href=""
+            variant="light"
+            className="d-flex justify-content-center align-items-center"
+            block
+          >
+            {t('common:cancel-pending')}
+          </Button>
+        </Card.Body>
+      </Card>
 
       {myShop!.lastTurnsAttended.length > 0 ? (
         <div className="myturn__turns mb-5 text-center">
