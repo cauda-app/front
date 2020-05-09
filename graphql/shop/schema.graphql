@@ -1,15 +1,25 @@
+enum NextTurnOperation {
+  ATTEND
+  SKIP
+}
+
 type Shop {
   id: ID!
   isClosed: Boolean!
   lastNumber: Int!
   nextNumber: Int!
   nextTurn: String
-  lastTurnsAttended: [String!]!
+  lastTurns: [LastTurns!]!
   pendingTurnsAmount: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
   details: ShopDetails!
   issuedNumber: [IssuedNumber!]!
+}
+
+type LastTurns {
+  status: IssuedNumberStatus!
+  turn: String!
 }
 
 type ShopStatus {
@@ -55,7 +65,8 @@ type Query {
 type Mutation {
   registerShop(shop: ShopInput!): Shop!
   updateShop(shop: ShopInput!): Shop!
-  attendNextTurn: Shop!
+  nextTurn(op: NextTurnOperation!): Shop!
+  cancelTurns: Shop!
 }
 
 input ShopInput {

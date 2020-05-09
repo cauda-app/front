@@ -12,6 +12,7 @@ import {
   QueryNearByShopsArgs,
   MutationRegisterShopArgs,
   MutationUpdateShopArgs,
+  MutationNextTurnArgs,
 } from '../../graphql';
 import { setCookieToken } from '../utils/jwt';
 import { numberToTurn } from '../utils/turn';
@@ -149,7 +150,7 @@ const shopResolver = {
         },
       });
     },
-    attendNextTurn: async (parent, args, ctx: Context) => {
+    nextTurn: async (parent, args: MutationNextTurnArgs, ctx: Context) => {
       if (!ctx.tokenInfo?.isValid) {
         return new ApolloError('Invalid token', 'INVALID_TOKEN');
       }
@@ -179,10 +180,31 @@ const shopResolver = {
 
       await ctx.prisma.issuedNumber.update({
         where: { id: nextTurn[0].id },
-        data: { status: 1 },
+        data: { status: args.op === 'ATTEND' ? 1 : 2 },
       });
 
       return getShop();
+    },
+    cancelTurns: async (parent, args, ctx: Context) => {
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
+
+      if (!ctx.tokenInfo?.shopId) {
+        return new ApolloError(
+          'Not possible to attend turn, No id provided',
+          'NO_SHOP_ID'
+        );
+      }
+
+      await ctx.prisma.issuedNumber.updateMany({
+        where: { shopId: ctx.tokenInfo.shopId, AND: { status: 0 } },
+        data: { status: 3 },
+      });
+
+      return ctx.prisma.shop.findOne({
+        where: { id: ctx.tokenInfo!.shopId },
+      });
     },
   },
   Shop: {
@@ -199,9 +221,9 @@ const shopResolver = {
       });
       return res.length > 0 ? numberToTurn(res[0].issuedNumber) : null;
     },
-    lastTurnsAttended: async (parent: Shop, args, ctx: Context) => {
+    lastTurns: async (parent: Shop, args, ctx: Context) => {
       const res = await ctx.prisma.issuedNumber.findMany({
-        where: { shopId: parent.id, AND: { status: { in: [1, 2] } } },
+        where: { shopId: parent.id, AND: { status: { in: [1, 2, 3] } } },
         first: 5,
         orderBy: { issuedNumber: 'desc' },
       });
@@ -210,7 +232,10 @@ const shopResolver = {
         return [];
       }
 
-      return res.map((e) => numberToTurn(e.issuedNumber));
+      return res.map((e) => ({
+        status: e.status,
+        turn: numberToTurn(e.issuedNumber),
+      }));
     },
     pendingTurnsAmount: (parent: Shop, args, ctx: Context) => {
       return ctx.prisma.issuedNumber.count({

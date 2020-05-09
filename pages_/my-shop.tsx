@@ -25,20 +25,48 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
   const [error, setError] = useState();
   const [actionLoading, setActionLoading] = useState(false);
 
-  const attendTurn = async () => {
+  const nextTurn = async (op: 'ATTEND' | 'SKIP') => {
     setActionLoading(true);
-    const ATTEND_NEXT_TURN = /* GraphQL */ `
-      mutation AttendNextTurn {
-        attendNextTurn {
+    const NEXT_TURN = /* GraphQL */ `
+      mutation NextTurn($op: NextTurnOperation!) {
+        nextTurn(op: $op) {
           nextTurn
-          lastTurnsAttended
+          lastTurns {
+            status
+            turn
+          }
           pendingTurnsAmount
         }
       }
     `;
 
     try {
-      const res = await graphqlClient.request(ATTEND_NEXT_TURN);
+      const res = await graphqlClient.request(NEXT_TURN, { op });
+      setMyShop({ ...myShop, ...res.attendNextTurn });
+      setActionLoading(false);
+    } catch (error) {
+      setError(error);
+      setActionLoading(false);
+    }
+  };
+
+  const cancelTurns = async () => {
+    setActionLoading(true);
+    const CANCEL_TURNS = /* GraphQL */ `
+      mutation CancelTurns {
+        cancelTurns {
+          nextTurn
+          lastTurns {
+            status
+            turn
+          }
+          pendingTurnsAmount
+        }
+      }
+    `;
+
+    try {
+      const res = await graphqlClient.request(CANCEL_TURNS);
       setMyShop({ ...myShop, ...res.attendNextTurn });
       setActionLoading(false);
     } catch (error) {
@@ -59,7 +87,10 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
             name
           }
           nextTurn
-          lastTurnsAttended
+          lastTurns {
+            status
+            turn
+          }
           pendingTurnsAmount
         }
       }
@@ -70,6 +101,20 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
       setMyShop(res.myShop);
     } catch (error) {
       setError(error);
+    }
+  };
+
+  const getTurnColor = (status: 'ATTENDED' | 'SKIPPED' | 'CANCELLED') => {
+    if (status === 'ATTENDED') {
+      return 'success';
+    }
+
+    if (status === 'SKIPPED') {
+      return 'danger';
+    }
+
+    if (status === 'CANCELLED') {
+      return 'warning';
     }
   };
 
@@ -130,7 +175,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
               <div className="pl-4 pr-4">
                 <Button
                   disabled={actionLoading}
-                  onClick={attendTurn}
+                  onClick={() => nextTurn('ATTEND')}
                   variant="success"
                   size="lg"
                   className="d-flex justify-content-center align-items-center"
@@ -141,7 +186,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
 
                 <Button
                   disabled={actionLoading}
-                  href=""
+                  onClick={() => nextTurn('SKIP')}
                   variant="danger"
                   size="lg"
                   className="d-flex justify-content-center align-items-center"
@@ -172,7 +217,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
 
           <Button
             disabled={myShop.pendingTurnsAmount === 0 || actionLoading}
-            href=""
+            onClick={cancelTurns}
             variant="light"
             className="d-flex justify-content-center align-items-center"
             block
@@ -182,16 +227,19 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
         </Card.Body>
       </Card>
 
-      {myShop!.lastTurnsAttended.length > 0 ? (
+      {myShop!.lastTurns.length > 0 ? (
         <div className="myturn__turns mb-5 text-center">
           <p className="h6 text-uppercase text-muted font-weight-light">
             {t('common:last-numbers')}
           </p>
 
           <ul className="list-unstyled list-inline h4 mb-0">
-            {myShop!.lastTurnsAttended.map((turn, index) => (
-              <li key={index} className="list-inline-item text-success">
-                {turn}
+            {myShop!.lastTurns.map((lt, index) => (
+              <li
+                key={index}
+                className={`list-inline-item text-${getTurnColor(lt.status)}`}
+              >
+                {lt.turn}
               </li>
             ))}
           </ul>
