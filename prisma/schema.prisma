@@ -8,26 +8,29 @@ datasource db {
 }
 
 model Client {
-  id               Int            @default(autoincrement()) @id
-  phone            String         @unique
-  issuedNumber     IssuedNumber[]
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt 
+  id           Int            @default(autoincrement()) @id
+  phone        String         @unique
+  issuedNumber IssuedNumber[]
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 }
 
 model IssuedNumber {
-  id           Int      @default(autoincrement()) @id
-  clientId     Int      @default(autoincrement())
+  id           Int         @default(autoincrement()) @id
+  clientId     Int
   shopId       String
   issuedNumber Int
   status       Int
-  client       Client   @relation(fields: [clientId], references: [id])
-  shop         Shop     @relation(fields: [shopId], references: [id])
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  client       Client      @relation(fields: [clientId], references: [id])
+  shop         Shop        @relation(fields: [shopId], references: [id])
+  shopDetails  ShopDetails @relation(fields: [shopId], references: [shopId])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 
   @@index([clientId], name: "fk_issuedNumbers_clienId_idx")
   @@index([shopId], name: "fk_issuedNumbers_shopId_idx")
+  @@index([shopId], name: "fk_issuedNumbers_shopDetails")
+  @@index([clientId, status], name: "issuedNumbers_clientId_status")
 }
 
 model Shop {
@@ -43,13 +46,13 @@ model Shop {
 }
 
 model ShopDetails {
-  shopId             String   @id
+  shopId             String         @id
   address            String
   lat                Float
   lng                Float
   name               String
   shopPhone          String?
-  ownerPhone         String   @unique
+  ownerPhone         String         @unique
   mondayTimeEnd      String?
   mondayTimeStart    String?
   tuesdayTimeEnd     String?
@@ -64,19 +67,20 @@ model ShopDetails {
   saturdayTimeStart  String?
   sundayTimeEnd      String?
   sundayTimeStart    String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  shop               Shop     @relation(fields: [shopId], references: [id])
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  shop               Shop           @relation(fields: [shopId], references: [id])
+  IssuedNumber       IssuedNumber[]
 
   @@index([shopId], name: "fk_shopDetails_shop_idx")
 }
 
 model PhoneVerification {
-  id          Int        @default(autoincrement()) @id
-  phone       String     @unique
-  code        Int  
-  expiry      DateTime
-  verified    DateTime?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        Int       @default(autoincrement()) @id
+  phone     String    @unique
+  code      Int
+  expiry    DateTime
+  verified  DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 }

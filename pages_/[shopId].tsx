@@ -13,7 +13,7 @@ import graphqlClient from 'src/graphqlClient';
 import { getErrorCodeFromApollo } from 'src/utils';
 
 const REQUEST_TURN = /* GraphQL */ `
-  mutation RequestTurn($shopId: String!) {
+  mutation RequestTurn($shopId: ID!) {
     requestTurn(shopId: $shopId) {
       id
     }

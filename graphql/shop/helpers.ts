@@ -1,5 +1,5 @@
 import { ShopDetails } from './../../graphql.d';
-import { ShopDetails as PrismaShopDetails } from '@prisma/client';
+import { ShopDetails as PrismaShopDetails, PrismaClient } from '@prisma/client';
 
 import {
   nowFromCoordinates,
@@ -8,6 +8,7 @@ import {
 } from 'src/utils/dates';
 import { parseUTCTime } from 'src/utils/dates';
 import { parsePhone } from 'src/utils/phone-utils';
+import { numberToTurn } from 'graphql/utils/turn';
 
 const todaysStatus = (shopDetails: ShopDetails | PrismaShopDetails) => {
   const now = nowFromCoordinates(shopDetails.lat, shopDetails.lng);
@@ -48,4 +49,21 @@ export const status = (shopDetails: ShopDetails | PrismaShopDetails) => {
   }
 
   return { opens: status.start, closes: status.end };
+};
+
+export const lastTurns = async (prismaClient: PrismaClient, shopId) => {
+  const res = await prismaClient.issuedNumber.findMany({
+    where: { shopId, AND: { status: { in: [1, 2, 3] } } },
+    first: 5,
+    orderBy: { issuedNumber: 'desc' },
+  });
+
+  if (!res.length) {
+    return [];
+  }
+
+  return res.map((e) => ({
+    turn: numberToTurn(e.issuedNumber),
+    status: e.status,
+  }));
 };

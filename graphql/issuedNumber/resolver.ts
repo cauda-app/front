@@ -4,7 +4,8 @@ import {
   MutationRequestTurnArgs,
   MutationCancelTurnArgs,
   QueryGetTurnsArgs,
-} from '../../graphql';
+} from '../../graphql.d';
+import { decodeId } from 'src/utils/hashids';
 
 const getPendingTurns = (clientId: number, shopId: string, ctx: Context) =>
   ctx.prisma.issuedNumber.findMany({
@@ -68,22 +69,41 @@ const IssuedNumberResolver = {
       return appointments[0];
     },
     cancelTurn: async (parent, args: MutationCancelTurnArgs, ctx: Context) => {
-      let appointments = await getPendingTurns(args.clientId, args.shopId, ctx);
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
 
-      if (!appointments.length) {
-        return new ApolloError(
-          'There is no pending appointment.',
-          'APPOINtMENT_NOT_EXISTS'
-        );
+      if (!ctx.tokenInfo?.clientId) {
+        return new ApolloError('No client id', 'NO_CLIENT_ID');
+      }
+
+      const id = decodeId(args.turnId);
+
+      if (!id) {
+        return new ApolloError('Invalid id', 'INVALID_TURN_ID');
+      }
+
+      const issuedNumber = await ctx.prisma.issuedNumber.findOne({
+        where: { id: id as number },
+        select: { clientId: true },
+      });
+
+      if (!issuedNumber) {
+        return new ApolloError('Turn not found', 'TURN_NOT_FOUND');
+      }
+
+      if (issuedNumber.clientId !== ctx.tokenInfo.clientId) {
+        return new ApolloError('Invalid client', 'INVALID_CLIENT_ID');
       }
 
       await ctx.prisma.issuedNumber.update({
         where: {
-          id: appointments[0].id,
+          id: id as number,
         },
         data: {
           status: 3,
         },
+        select: { id: true },
       });
 
       return true;
