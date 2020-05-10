@@ -1,3 +1,5 @@
+import { GetServerSideProps } from 'next';
+import Link from 'next/link';
 import useTranslation from 'next-translate/useTranslation';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
@@ -7,16 +9,23 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
-import Router from 'next/router';
-
 import Layout from 'src/components/Layout';
-import graphqlClient from 'src/graphqlClient';
-import { getErrorCodeFromApollo } from 'src/utils';
+import { getToken } from 'src/utils/next';
+import prismaClient from 'prisma/client';
+import { encodeId } from 'src/utils/hashids';
+import { numberToTurn } from 'graphql/utils/turn';
 
-// type Props = {};
+type Turn = {
+  id: string;
+  turn: string;
+  shopName: string;
+};
 
-const MyTurns = () => {
+type Props = {
+  turns: Array<Turn>;
+};
+
+const MyTurns = ({ turns }: Props) => {
   const { t } = useTranslation();
 
   return (
@@ -24,28 +33,30 @@ const MyTurns = () => {
       <div className="content d-flex flex-column justify-content-start align-items-center h-100">
         <Row className="home_nav">
           <Col xs="auto">
-            <Button
-              href={'/shops'}
-              variant="primary"
-              size="sm"
-              className="d-flex justify-content-between align-items-center py-2"
-            >
-              <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth />
-              {t('common:nearby-shops')}
-              <div></div>
-            </Button>
+            <Link href={'/shops'} passHref>
+              <Button
+                variant="primary"
+                size="sm"
+                className="d-flex justify-content-between align-items-center py-2"
+              >
+                <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth />
+                {t('common:nearby-shops')}
+                <div></div>
+              </Button>
+            </Link>
           </Col>
           <Col xs="auto">
-            <Button
-              href="/scan"
-              variant="secondary"
-              size="sm"
-              className="d-flex justify-content-between align-items-center py-2"
-            >
-              <FontAwesomeIcon icon={faCamera} fixedWidth />
-              {t('common:scan-qr-code')}
-              <div></div>
-            </Button>
+            <Link href={'/shops'} passHref>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="d-flex justify-content-between align-items-center py-2"
+              >
+                <FontAwesomeIcon icon={faCamera} fixedWidth />
+                {t('common:scan-qr-code')}
+                <div></div>
+              </Button>
+            </Link>
           </Col>
         </Row>
 
@@ -55,24 +66,19 @@ const MyTurns = () => {
           </Card.Header>
           <Card.Body>
             <ul className="list-unstyled">
-              <li>
-                <Button href={'/shops'} variant="outline-success" size="lg">
-                  <div className="primary">Short Shop Name</div>
-                  <div className="secondary">
-                    <span className="number">A22</span>
-                    <FontAwesomeIcon icon={faArrowRight} fixedWidth />
-                  </div>
-                </Button>
-              </li>
-              <li>
-                <Button href={'/shops'} variant="outline-success" size="lg">
-                  <div className="primary">Shop With Two Lines Long Name</div>
-                  <div className="secondary">
-                    <span className="number">B300</span>
-                    <FontAwesomeIcon icon={faArrowRight} fixedWidth />
-                  </div>
-                </Button>
-              </li>
+              {turns.map((turn) => (
+                <li key={turn.id}>
+                  <Link href={'/turn/' + turn.id} passHref>
+                    <Button variant="outline-success" size="lg">
+                      <div className="primary">{turn.shopName}</div>
+                      <div className="secondary">
+                        <span className="number">{turn.turn}</span>
+                        <FontAwesomeIcon icon={faArrowRight} fixedWidth />
+                      </div>
+                    </Button>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </Card.Body>
         </Card>
@@ -86,6 +92,40 @@ const MyTurns = () => {
       `}</style>
     </Layout>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const token = getToken(context);
+  if (!token) {
+    return { props: { isLoggedIn: false } };
+  }
+
+  const clientId = token.clientId;
+  if (!clientId) {
+    return { props: { isLoggedIn: true } };
+  }
+
+  const issuedNumbers = await prismaClient.issuedNumber.findMany({
+    where: { clientId, status: 0 },
+    select: {
+      id: true,
+      issuedNumber: true,
+      shopDetails: { select: { name: true } },
+    },
+  });
+
+  const turns = issuedNumbers.map((issuedNumber) => ({
+    id: encodeId(issuedNumber.id),
+    turn: numberToTurn(issuedNumber.issuedNumber),
+    shopName: issuedNumber.shopDetails.name,
+  }));
+
+  return {
+    props: {
+      isLoggedIn: true,
+      turns,
+    },
+  };
 };
 
 export default MyTurns;

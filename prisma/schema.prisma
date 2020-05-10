@@ -30,6 +30,7 @@ model IssuedNumber {
   @@index([clientId], name: "fk_issuedNumbers_clienId_idx")
   @@index([shopId], name: "fk_issuedNumbers_shopId_idx")
   @@index([shopId], name: "fk_issuedNumbers_shopDetails")
+  @@index([clientId, status], name: "issuedNumbers_clientId_status")
 }
 
 model Shop {
