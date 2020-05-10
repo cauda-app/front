@@ -10,6 +10,7 @@ import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Layout from 'src/components/Layout';
+import EmptyLanding from 'src/components/Landing/EmptyLanding';
 import { getToken } from 'src/utils/next';
 import prismaClient from 'prisma/client';
 import { encodeId } from 'src/utils/hashids';
@@ -25,8 +26,12 @@ type Props = {
   turns: Array<Turn>;
 };
 
-const MyTurns = ({ turns }: Props) => {
+const MyTurns = ({ turns = [] }: Props) => {
   const { t } = useTranslation();
+
+  if (turns.length === 0) {
+    return <EmptyLanding />;
+  }
 
   return (
     <Layout>
