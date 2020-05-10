@@ -114,7 +114,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
     }
 
     if (status === 'CANCELLED') {
-      return 'warning';
+      return 'light';
     }
   };
 
