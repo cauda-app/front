@@ -23,7 +23,6 @@ const Home = () => {
             <Col xs="12">
               <Link href="/shops" passHref>
                 <Button
-                  as="a"
                   variant="primary"
                   size="lg"
                   className="mb-4 d-flex justify-content-between align-items-center py-4 p-sm-3"
@@ -38,7 +37,6 @@ const Home = () => {
             <Col xs="12">
               <Link href="/scan" passHref>
                 <Button
-                  as="a"
                   variant="secondary"
                   size="lg"
                   className="d-flex justify-content-between align-items-center py-4 p-sm-3"
