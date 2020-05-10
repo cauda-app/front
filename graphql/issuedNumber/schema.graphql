@@ -17,11 +17,8 @@ type IssuedNumber {
   updatedAt: DateTime!
 }
 
-type Query {
-  getTurns(clientId: Int!, shopId: String): [IssuedNumber!]!
-}
-
-type Mutation {
-  requestTurn(shopId: String!): IssuedNumber!
-  cancelTurn(shopId: String!, clientId: Int!): Boolean!
+type TurnInfo {
+  id: ID!
+  status: IssuedNumberStatus!
+  turn: String!
 }

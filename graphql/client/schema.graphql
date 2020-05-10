@@ -6,15 +6,17 @@ type Client {
   # issuedNumber: [IssuedNumber!]!
 }
 
+type PendingTurnInfo {
+  shopId: ID!
+  shopName: String
+  turnInfo: TurnInfo
+}
+
 type Query {
-  myTurn: Client!
-  client(id: ID): Client
+  myTurns: [PendingTurnInfo!]!
 }
 
 type Mutation {
-  signUp(client: ClientSignupInput!): Client!
-}
-
-input ClientSignupInput {
-  phone: String!
+  cancelTurn(turnId: ID!): Boolean!
+  requestTurn(shopId: String!): IssuedNumber!
 }

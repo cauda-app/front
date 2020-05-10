@@ -6,20 +6,15 @@ enum NextTurnOperation {
 type Shop {
   id: ID!
   isClosed: Boolean!
-  lastNumber: Int!
-  nextNumber: Int!
+  details: ShopDetails!
+  #lastNumber: Int!
+  #nextNumber: Int!
   nextTurn: String
-  lastTurns: [LastTurns!]!
+  lastTurns: [TurnInfo!]!
   pendingTurnsAmount: Int!
+  #issuedNumber: [IssuedNumber!]!
   createdAt: DateTime!
   updatedAt: DateTime!
-  details: ShopDetails!
-  issuedNumber: [IssuedNumber!]!
-}
-
-type LastTurns {
-  status: IssuedNumberStatus!
-  turn: String!
 }
 
 type ShopStatus {

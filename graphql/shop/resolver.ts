@@ -50,6 +50,18 @@ const shopResolver = {
       });
     },
     nearByShops: async (parent, args: QueryNearByShopsArgs, ctx: Context) => {
+      const pendingTurns = await ctx.prisma.issuedNumber.findMany({
+        where: {
+          clientId: ctx.tokenInfo?.clientId,
+          status: 0,
+        },
+      });
+
+      let notIn = '';
+      pendingTurns.forEach((t) => {
+        notIn = !!notIn ? `${notIn},"${t.shopId}"` : `"${t.shopId}"`;
+      });
+
       const MAX_DISTANCE_METERS = 2000;
       return await ctx.prisma.raw(`
         SELECT
@@ -59,6 +71,7 @@ const shopResolver = {
             point(lng, lat)
           ) AS distance
         FROM ShopDetails
+        WHERE shopId not in(${notIn})
         HAVING distance < ${MAX_DISTANCE_METERS}
         ORDER BY distance
         LIMIT 10
@@ -233,6 +246,7 @@ const shopResolver = {
       }
 
       return res.map((e) => ({
+        id: e.id,
         status: e.status,
         turn: numberToTurn(e.issuedNumber),
       }));

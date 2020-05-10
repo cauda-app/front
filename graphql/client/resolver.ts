@@ -1,62 +1,111 @@
 import { ApolloError } from 'apollo-server-core';
+
 import { Context } from '../../pages_/api/graphql';
-import { MutationSignUpArgs } from '../../graphql';
-// import { registerPhone } from '../utils/registerPhone';
+import {
+  Client,
+  MutationRequestTurnArgs,
+  MutationCancelTurnArgs,
+} from '../../graphql';
+import { numberToTurn } from '../utils/turn';
+//import { ar } from 'date-fns/locale';
+
+const getPendingTurns = (clientId: number, shopId: string, ctx: Context) =>
+  ctx.prisma.issuedNumber.findMany({
+    where: {
+      clientId: clientId,
+      shopId: shopId,
+      status: 0,
+    },
+  });
 
 const clientResolver = {
   Query: {
-    client: (parent, args, ctx: Context) => {
-      return ctx.prisma.client.findOne({
-        where: { id: Number(args.id) },
+    myTurns: async (parent: Client, args, ctx: Context) => {
+      const pendingTurns = await ctx.prisma.issuedNumber.findMany({
+        where: { clientId: ctx.tokenInfo?.clientId },
       });
-    },
-    myTurn: (parent, args, ctx: Context) => {
-      if (!ctx.tokenInfo) {
-        return new ApolloError('No Token provided', 'NO_TOKEN_PROVIDED');
+
+      if (!pendingTurns.length) {
+        return [];
       }
 
-      if (!ctx.tokenInfo.isValid) {
-        return new ApolloError('Client not verified', 'INVALID_TOKEN');
-      }
-
-      if (
-        !ctx.tokenInfo.isValid &&
-        ctx.tokenInfo.error.name === 'TokenExpiredError'
-      ) {
-        return new ApolloError('Expired Token', 'EXPIRED_TOKEN');
-      }
-
-      if (!ctx.tokenInfo.clientId) {
-        return new ApolloError('Client Id not provided', 'INVALID_CLIENT_ID');
-      }
-
-      return ctx.prisma.client.findOne({
-        where: { id: ctx.tokenInfo.clientId },
+      const shops = await ctx.prisma.shopDetails.findMany({
+        select: {
+          name: true,
+          shopId: true,
+        },
+        where: { shopId: { in: pendingTurns.map((e) => e.shopId) } },
       });
+
+      const res = shops.map((e) => {
+        const turn = pendingTurns.find((t) => e.shopId === t.shopId);
+
+        return {
+          shopId: e.shopId,
+          shopName: e.name,
+          turnInfo: {
+            id: turn!.id,
+            status: turn!.status,
+            turn: numberToTurn(turn!.issuedNumber),
+          },
+        };
+      });
+
+      return res;
     },
   },
   Mutation: {
-    signUp: async (parent, args: MutationSignUpArgs, ctx: Context) => {
-      const client = await ctx.prisma.client.findOne({
-        where: { phone: args.client.phone },
-      });
+    requestTurn: async (
+      parent,
+      args: MutationRequestTurnArgs,
+      ctx: Context
+    ) => {
+      if (!ctx.tokenInfo?.clientId) {
+        return new ApolloError('Client Id not provided', 'INVALID_CLIENT_ID');
+      }
 
-      if (client) {
+      let appointments = await getPendingTurns(
+        ctx.tokenInfo.clientId,
+        args.shopId,
+        ctx
+      );
+
+      if (appointments.length) {
         return new ApolloError(
-          'Phone entered is already registered',
-          'PHONE_ALREADY_EXISTS'
+          'There is already a pending turn',
+          'ACTIVE_TURN'
         );
       }
 
-      const newClient = await ctx.prisma.client.create({
+      const rawQuery = `CALL increaseShopCounter("${args.shopId}", ${ctx.tokenInfo.clientId});`;
+      await ctx.prisma.raw(rawQuery);
+
+      appointments = await getPendingTurns(
+        ctx.tokenInfo.clientId,
+        args.shopId,
+        ctx
+      );
+      if (!appointments.length) {
+        return new ApolloError(
+          'There was an error trying to set the appointment.',
+          'OP_ERROR'
+        );
+      }
+
+      return appointments[0];
+    },
+    cancelTurn: async (parent, args: MutationCancelTurnArgs, ctx: Context) => {
+      await ctx.prisma.issuedNumber.update({
+        where: {
+          id: Number(args.turnId),
+          clientId: ctx.tokenInfo?.clientId,
+        },
         data: {
-          phone: args.client.phone,
+          status: 3,
         },
       });
 
-      // await registerPhone(args.client.phone, ctx);
-
-      return newClient;
+      return true;
     },
   },
 };

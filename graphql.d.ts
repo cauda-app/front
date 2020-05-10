@@ -28,24 +28,20 @@ export type Client = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type PendingTurnInfo = {
+  __typename?: 'PendingTurnInfo';
+  shopId: Scalars['ID'];
+  shopName?: Maybe<Scalars['String']>;
+  turnInfo?: Maybe<TurnInfo>;
+};
+
 export type Query = {
   __typename?: 'Query';
-  client?: Maybe<Client>;
-  getTurns: Array<IssuedNumber>;
   myShop: Shop;
-  myTurn: Client;
+  myTurns: Array<PendingTurnInfo>;
   nearByShops: Array<ShopDetails>;
   shops: Array<Shop>;
   shopsDetail: Array<ShopDetails>;
-};
-
-export type QueryClientArgs = {
-  id?: Maybe<Scalars['ID']>;
-};
-
-export type QueryGetTurnsArgs = {
-  clientId: Scalars['Int'];
-  shopId?: Maybe<Scalars['String']>;
 };
 
 export type QueryNearByShopsArgs = {
@@ -65,15 +61,13 @@ export type Mutation = {
   nextTurn: Shop;
   registerShop: Shop;
   requestTurn: IssuedNumber;
-  signUp: Client;
   updateShop: Shop;
   verifyCode: Scalars['Boolean'];
   verifyPhone: Scalars['DateTime'];
 };
 
 export type MutationCancelTurnArgs = {
-  shopId: Scalars['String'];
-  clientId: Scalars['Int'];
+  turnId: Scalars['ID'];
 };
 
 export type MutationNextTurnArgs = {
@@ -88,10 +82,6 @@ export type MutationRequestTurnArgs = {
   shopId: Scalars['String'];
 };
 
-export type MutationSignUpArgs = {
-  client: ClientSignupInput;
-};
-
 export type MutationUpdateShopArgs = {
   shop: ShopInput;
 };
@@ -102,10 +92,6 @@ export type MutationVerifyCodeArgs = {
 };
 
 export type MutationVerifyPhoneArgs = {
-  phone: Scalars['String'];
-};
-
-export type ClientSignupInput = {
   phone: Scalars['String'];
 };
 
@@ -129,6 +115,13 @@ export type IssuedNumber = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type TurnInfo = {
+  __typename?: 'TurnInfo';
+  id: Scalars['ID'];
+  status: IssuedNumberStatus;
+  turn: Scalars['String'];
+};
+
 export enum NextTurnOperation {
   Attend = 'ATTEND',
   Skip = 'SKIP',
@@ -138,21 +131,12 @@ export type Shop = {
   __typename?: 'Shop';
   id: Scalars['ID'];
   isClosed: Scalars['Boolean'];
-  lastNumber: Scalars['Int'];
-  nextNumber: Scalars['Int'];
+  details: ShopDetails;
   nextTurn?: Maybe<Scalars['String']>;
-  lastTurns: Array<LastTurns>;
+  lastTurns: Array<TurnInfo>;
   pendingTurnsAmount: Scalars['Int'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
-  details: ShopDetails;
-  issuedNumber: Array<IssuedNumber>;
-};
-
-export type LastTurns = {
-  __typename?: 'LastTurns';
-  status: IssuedNumberStatus;
-  turn: Scalars['String'];
 };
 
 export type ShopStatus = {
@@ -328,19 +312,19 @@ export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Client: ResolverTypeWrapper<Client>;
   ID: ResolverTypeWrapper<Scalars['ID']>;
+  PendingTurnInfo: ResolverTypeWrapper<PendingTurnInfo>;
   Query: ResolverTypeWrapper<{}>;
-  Int: ResolverTypeWrapper<Scalars['Int']>;
   Float: ResolverTypeWrapper<Scalars['Float']>;
+  Int: ResolverTypeWrapper<Scalars['Int']>;
   Mutation: ResolverTypeWrapper<{}>;
-  ClientSignupInput: ClientSignupInput;
   Date: ResolverTypeWrapper<Scalars['Date']>;
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
   IssuedNumberStatus: IssuedNumberStatus;
   IssuedNumber: ResolverTypeWrapper<IssuedNumber>;
+  TurnInfo: ResolverTypeWrapper<TurnInfo>;
   NextTurnOperation: NextTurnOperation;
   Shop: ResolverTypeWrapper<Shop>;
-  LastTurns: ResolverTypeWrapper<LastTurns>;
   ShopStatus: ResolverTypeWrapper<ShopStatus>;
   ShopDetails: ResolverTypeWrapper<ShopDetails>;
   ShopInput: ShopInput;
@@ -352,19 +336,19 @@ export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'];
   Client: Client;
   ID: Scalars['ID'];
+  PendingTurnInfo: PendingTurnInfo;
   Query: {};
-  Int: Scalars['Int'];
   Float: Scalars['Float'];
+  Int: Scalars['Int'];
   Mutation: {};
-  ClientSignupInput: ClientSignupInput;
   Date: Scalars['Date'];
   DateTime: Scalars['DateTime'];
   Time: Scalars['Time'];
   IssuedNumberStatus: IssuedNumberStatus;
   IssuedNumber: IssuedNumber;
+  TurnInfo: TurnInfo;
   NextTurnOperation: NextTurnOperation;
   Shop: Shop;
-  LastTurns: LastTurns;
   ShopStatus: ShopStatus;
   ShopDetails: ShopDetails;
   ShopInput: ShopInput;
@@ -381,24 +365,30 @@ export type ClientResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
+export type PendingTurnInfoResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['PendingTurnInfo'] = ResolversParentTypes['PendingTurnInfo']
+> = ResolversObject<{
+  shopId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  shopName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  turnInfo?: Resolver<
+    Maybe<ResolversTypes['TurnInfo']>,
+    ParentType,
+    ContextType
+  >;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
 export type QueryResolvers<
   ContextType = any,
   ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']
 > = ResolversObject<{
-  client?: Resolver<
-    Maybe<ResolversTypes['Client']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryClientArgs, never>
-  >;
-  getTurns?: Resolver<
-    Array<ResolversTypes['IssuedNumber']>,
-    ParentType,
-    ContextType,
-    RequireFields<QueryGetTurnsArgs, 'clientId'>
-  >;
   myShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>;
-  myTurn?: Resolver<ResolversTypes['Client'], ParentType, ContextType>;
+  myTurns?: Resolver<
+    Array<ResolversTypes['PendingTurnInfo']>,
+    ParentType,
+    ContextType
+  >;
   nearByShops?: Resolver<
     Array<ResolversTypes['ShopDetails']>,
     ParentType,
@@ -422,7 +412,7 @@ export type MutationResolvers<
     ResolversTypes['Boolean'],
     ParentType,
     ContextType,
-    RequireFields<MutationCancelTurnArgs, 'shopId' | 'clientId'>
+    RequireFields<MutationCancelTurnArgs, 'turnId'>
   >;
   cancelTurns?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>;
   nextTurn?: Resolver<
@@ -442,12 +432,6 @@ export type MutationResolvers<
     ParentType,
     ContextType,
     RequireFields<MutationRequestTurnArgs, 'shopId'>
-  >;
-  signUp?: Resolver<
-    ResolversTypes['Client'],
-    ParentType,
-    ContextType,
-    RequireFields<MutationSignUpArgs, 'client'>
   >;
   updateShop?: Resolver<
     ResolversTypes['Shop'],
@@ -508,42 +492,36 @@ export type IssuedNumberResolvers<
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
-export type ShopResolvers<
+export type TurnInfoResolvers<
   ContextType = any,
-  ParentType extends ResolversParentTypes['Shop'] = ResolversParentTypes['Shop']
+  ParentType extends ResolversParentTypes['TurnInfo'] = ResolversParentTypes['TurnInfo']
 > = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
-  isClosed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
-  lastNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  nextNumber?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  nextTurn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  lastTurns?: Resolver<
-    Array<ResolversTypes['LastTurns']>,
-    ParentType,
-    ContextType
-  >;
-  pendingTurnsAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
-  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
-  details?: Resolver<ResolversTypes['ShopDetails'], ParentType, ContextType>;
-  issuedNumber?: Resolver<
-    Array<ResolversTypes['IssuedNumber']>,
-    ParentType,
-    ContextType
-  >;
-  __isTypeOf?: isTypeOfResolverFn<ParentType>;
-}>;
-
-export type LastTurnsResolvers<
-  ContextType = any,
-  ParentType extends ResolversParentTypes['LastTurns'] = ResolversParentTypes['LastTurns']
-> = ResolversObject<{
   status?: Resolver<
     ResolversTypes['IssuedNumberStatus'],
     ParentType,
     ContextType
   >;
   turn?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: isTypeOfResolverFn<ParentType>;
+}>;
+
+export type ShopResolvers<
+  ContextType = any,
+  ParentType extends ResolversParentTypes['Shop'] = ResolversParentTypes['Shop']
+> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+  isClosed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  details?: Resolver<ResolversTypes['ShopDetails'], ParentType, ContextType>;
+  nextTurn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  lastTurns?: Resolver<
+    Array<ResolversTypes['TurnInfo']>,
+    ParentType,
+    ContextType
+  >;
+  pendingTurnsAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
+  updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>;
   __isTypeOf?: isTypeOfResolverFn<ParentType>;
 }>;
 
@@ -654,14 +632,15 @@ export type ShopDetailsResolvers<
 
 export type Resolvers<ContextType = any> = ResolversObject<{
   Client?: ClientResolvers<ContextType>;
+  PendingTurnInfo?: PendingTurnInfoResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   Date?: GraphQLScalarType;
   DateTime?: GraphQLScalarType;
   Time?: GraphQLScalarType;
   IssuedNumber?: IssuedNumberResolvers<ContextType>;
+  TurnInfo?: TurnInfoResolvers<ContextType>;
   Shop?: ShopResolvers<ContextType>;
-  LastTurns?: LastTurnsResolvers<ContextType>;
   ShopStatus?: ShopStatusResolvers<ContextType>;
   ShopDetails?: ShopDetailsResolvers<ContextType>;
 }>;
