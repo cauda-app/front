@@ -22,6 +22,6 @@ type Query {
 }
 
 type Mutation {
-  requestTurn(shopId: String!): IssuedNumber!
-  cancelTurn(shopId: String!, clientId: Int!): Boolean!
+  requestTurn(shopId: ID!): IssuedNumber!
+  cancelTurn(turnId: ID!): Boolean!
 }
