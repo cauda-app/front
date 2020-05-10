@@ -254,7 +254,6 @@ const EditShop = ({ isLoggedIn, shop }: Props) => {
       await graphqlClient.request(mutation, {
         shop: shopInput,
       });
-      Router.push('/my-shop');
     } catch (error) {
       Router.push('/generic-error');
     }
@@ -269,7 +268,9 @@ const EditShop = ({ isLoggedIn, shop }: Props) => {
     const errors = await validate(state);
 
     if (isEmptyObject(errors)) {
-      upsertShop(state.id);
+      await upsertShop(state.id);
+      Router.push('/my-shop');
+      return;
     } else {
       setErrors(errors);
       setSubmitAttempt(true);
