@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import useTranslation from 'next-translate/useTranslation';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
@@ -13,11 +14,61 @@ import Router from 'next/router';
 import Layout from 'src/components/Layout';
 import graphqlClient from 'src/graphqlClient';
 import { getErrorCodeFromApollo } from 'src/utils';
+import Spinner from 'src/components/Spinner';
 
 // type Props = {};
 
 const MyTurns = () => {
   const { t } = useTranslation();
+
+  const [myTurns, setMyTurns] = useState<any>();
+  const [error, setError] = useState();
+
+  const getTurns = async () => {
+    const MY_TURNS = /* GraphQL */ `
+      query MyTurns {
+        myTurns {
+          shopId
+          shopName
+          turnInfo {
+            id
+            status
+            turn
+          }
+        }
+      }
+    `;
+
+    try {
+      const res = await graphqlClient.request(MY_TURNS);
+      setMyTurns(res.myTurns);
+    } catch (error) {
+      setError(error);
+    }
+  };
+
+  // fetch data
+  useEffect(() => {
+    getTurns();
+
+    const interval = setInterval(() => {
+      getTurns();
+    }, 10_000);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  if (error) {
+    return <Layout>{String(error)}</Layout>;
+  }
+
+  if (!myTurns) {
+    return (
+      <Layout>
+        <Spinner />
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -55,24 +106,21 @@ const MyTurns = () => {
           </Card.Header>
           <Card.Body>
             <ul className="list-unstyled">
-              <li>
-                <Button href={'/shops'} variant="outline-success" size="lg">
-                  <div className="primary">Short Shop Name</div>
-                  <div className="secondary">
-                    <span className="number">A22</span>
-                    <FontAwesomeIcon icon={faArrowRight} fixedWidth />
-                  </div>
-                </Button>
-              </li>
-              <li>
-                <Button href={'/shops'} variant="outline-success" size="lg">
-                  <div className="primary">Shop With Two Lines Long Name</div>
-                  <div className="secondary">
-                    <span className="number">B300</span>
-                    <FontAwesomeIcon icon={faArrowRight} fixedWidth />
-                  </div>
-                </Button>
-              </li>
+              {myTurns.map((pendingTurn, index) => {
+                return (
+                  <li key={index}>
+                    <Button href={'/shops'} variant="outline-success" size="lg">
+                      <div className="primary">{pendingTurn.shopName}</div>
+                      <div className="secondary">
+                        <span className="number">
+                          {pendingTurn.turnInfo.turn}
+                        </span>
+                        <FontAwesomeIcon icon={faArrowRight} fixedWidth />
+                      </div>
+                    </Button>
+                  </li>
+                );
+              })}
             </ul>
           </Card.Body>
         </Card>
