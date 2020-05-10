@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import Router from 'next/router';
 import '../src/assets/scss/app.scss';
 import Spinner from 'src/components/Spinner';
-import Layout from 'src/components/Layout';
 
 export default function App({ Component, pageProps }) {
   const [loading, setLoading] = useState(false);
@@ -21,9 +20,19 @@ export default function App({ Component, pageProps }) {
   }, []);
 
   return loading ? (
-    <Layout>
+    <div>
       <Spinner />
-    </Layout>
+      <style jsx>
+        {`
+          div {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+        `}
+      </style>
+    </div>
   ) : (
     <Component {...pageProps} />
   );
