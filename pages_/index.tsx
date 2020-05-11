@@ -74,7 +74,7 @@ const MyTurns = ({ turns = [] }: Props) => {
             <ul className="list-unstyled">
               {turns.map((turn) => (
                 <li key={turn.id}>
-                  <Link href={'/turn/' + turn.id} passHref>
+                  <Link href="/turn/[turnId]" as={'/turn/' + turn.id} passHref>
                     <Button variant="outline-success" size="lg">
                       <div className="primary">{turn.shopName}</div>
                       <div className="secondary">
