@@ -1,5 +1,6 @@
 const PNF = require('google-libphonenumber').PhoneNumberFormat;
 const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
+const PhoneNumberType = require('google-libphonenumber').PhoneNumberType;
 
 export const parsePhone = (rawNumber: string) => {
   try {
@@ -43,10 +44,22 @@ export const getNationalNumber = (rawNumber: string) => {
 };
 
 export const formatPhone = (countryCode: string, number: string): string => {
-  const parsedNumber = phoneUtil.parse(number, countryCode);
+  let parsedNumber = phoneUtil.parse(number, countryCode);
+
+  // https://github.com/google/libphonenumber/blob/master/FAQ.md#why-is-this-number-from-argentina-ar-or-mexico-mx-not-identified-as-the-right-number-type
+  if (!isMobilePhoneNumber(parsedNumber)) {
+    let nationalNumber = '9' + parsedNumber.getNationalNumber();
+    let newNumber = phoneUtil.parse(nationalNumber, countryCode);
+    if (isMobilePhoneNumber(newNumber)) {
+      parsedNumber = newNumber;
+    }
+  }
 
   return phoneUtil.format(parsedNumber, PNF.E164);
 };
+
+const isMobilePhoneNumber = (phoneNumber) =>
+  phoneUtil.getNumberType(phoneNumber) === PhoneNumberType.MOBILE;
 
 const isValid = (parsedNumber: string, region?: string): boolean => {
   if (!region) {
