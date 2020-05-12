@@ -16,7 +16,7 @@ import {
 } from '../../graphql';
 import { setCookieToken } from '../utils/jwt';
 import { numberToTurn } from '../utils/turn';
-import { isOpen, shopPhone, status } from './helpers';
+import { isOpen, shopPhone, status, lastTurns } from './helpers';
 
 const mapShop = (shop: ShopInput): ShopInput => {
   const updatedShop = { ...shop };
@@ -218,24 +218,12 @@ const shopResolver = {
         where: { shopId: parent.id, AND: { status: 0 } },
         first: 1,
         orderBy: { issuedNumber: 'asc' },
+        select: { issuedNumber: true },
       });
       return res.length > 0 ? numberToTurn(res[0].issuedNumber) : null;
     },
     lastTurns: async (parent: Shop, args, ctx: Context) => {
-      const res = await ctx.prisma.issuedNumber.findMany({
-        where: { shopId: parent.id, AND: { status: { in: [1, 2, 3] } } },
-        first: 5,
-        orderBy: { issuedNumber: 'desc' },
-      });
-
-      if (!res.length) {
-        return [];
-      }
-
-      return res.map((e) => ({
-        status: e.status,
-        turn: numberToTurn(e.issuedNumber),
-      }));
+      return await lastTurns(ctx.prisma, parent.id);
     },
     pendingTurnsAmount: (parent: Shop, args, ctx: Context) => {
       return ctx.prisma.issuedNumber.count({
