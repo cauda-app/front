@@ -1,4 +1,4 @@
-import React, { ComponentType } from 'react';
+import React, { ComponentType, useEffect } from 'react';
 import Router from 'next/router';
 import dynamic from 'next/dynamic';
 import useTranslation from 'next-translate/useTranslation';
@@ -52,6 +52,14 @@ const Scan = () => {
       });
     }
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      Router.push('/');
+    }, 10_000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <Layout>
