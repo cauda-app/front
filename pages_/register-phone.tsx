@@ -11,6 +11,7 @@ import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
 import parseISO from 'date-fns/parseISO';
 import Router, { useRouter } from 'next/router';
+import * as Sentry from '@sentry/browser';
 
 import Layout from 'src/components/Layout';
 import { validatePhoneRequest, getErrorCodeFromApollo } from 'src/utils';
@@ -83,6 +84,7 @@ const VerifyPhone = () => {
         setErrors({ ...errors, phone: t('common:mutation-error') });
       }
 
+      Sentry.captureException(error);
       setIsSubmitting(false);
     }
   };
@@ -117,6 +119,7 @@ const VerifyPhone = () => {
       }
 
       setIsSubmitting(false);
+      Sentry.captureException(error);
     }
   };
 

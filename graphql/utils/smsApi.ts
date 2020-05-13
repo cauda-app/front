@@ -2,6 +2,7 @@ import axios from 'axios';
 import addMinutes from 'date-fns/addMinutes';
 import { utcToZonedTime } from 'date-fns-tz';
 import format from 'date-fns/format';
+import * as Sentry from '@sentry/browser';
 
 import { PHONE_CODE_EXPIRY } from './constants';
 
@@ -38,6 +39,7 @@ export default async function sendSms(
     return res.data.status === 'success';
   } catch (error) {
     console.log(error);
+    Sentry.captureException(error);
     return false;
   }
 }
