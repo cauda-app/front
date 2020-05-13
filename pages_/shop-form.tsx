@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import Button from 'react-bootstrap/Button';
 
 import prismaClient from '../prisma/client';
 import { getToken } from 'src/utils/next';
@@ -495,6 +496,17 @@ const EditShop = ({ isLoggedIn, shop }: Props) => {
             >
               {t('common:save')}
             </LoadingButton>
+            <Button
+              block
+              href="/"
+              type="button"
+              disabled={isSubmitting}
+              variant="danger"
+              size="lg"
+              className="mt-4"
+            >
+              {t('common:cancel')}
+            </Button>
           </Form>
         </Card.Body>
       </Card>

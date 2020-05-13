@@ -4,12 +4,13 @@ import Layout from '../src/components/Layout';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Button from 'react-bootstrap/Button';
-import Spinner from '../src/components/Spinner';
-import useQuery from '../src/hooks/useQuery';
 
-import Location, { Coords } from '../src/components/Location';
-
+import Spinner from 'src/components/Spinner';
+import useQuery from 'src/hooks/useQuery';
+import Location, { Coords } from 'src/components/Location';
 import ShopCard from 'src/components/ShopCard';
+import GoBack from 'src/components/GoBack';
+
 const PAGE_ROWS = 10;
 
 const SHOPS = /* GraphQL */ `
@@ -74,6 +75,9 @@ const Shops = ({ coords: { lat, lng } }: Props) => {
     <Layout>
       <div className="content">
         <Row>
+          <Col xs="1">
+            <GoBack />
+          </Col>
           <Col>
             <h1 className="cauda_title">{t('common:nearby-shops')}</h1>
           </Col>

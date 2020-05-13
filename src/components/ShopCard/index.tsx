@@ -12,6 +12,7 @@ import { faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
 import Map from '../Map';
 import { formats, parseUTCTime } from 'src/utils/dates';
 import LoadingButton from '../LoadingButton';
+import GoBack from '../GoBack';
 
 type Props = {
   shop: any;
@@ -34,7 +35,10 @@ export default function ShopCard({ shop, onRequestTurn, ...rest }: Props) {
   return (
     <div {...rest}>
       <Card className="cauda_card cauda_shop">
-        <Card.Header>{shop.name}</Card.Header>
+        <Card.Header>
+          {onRequestTurn && <GoBack page="/shops" />}
+          {shop.name}
+        </Card.Header>
         <div className="shop_map">
           <Map lat={shop.lat} lng={shop.lng} />
         </div>
