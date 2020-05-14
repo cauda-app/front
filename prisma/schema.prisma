@@ -18,7 +18,7 @@ model Client {
 model IssuedNumber {
   id           Int         @default(autoincrement()) @id
   clientId     Int
-  shopId       String
+  shopId       Int
   issuedNumber Int
   status       Int
   client       Client      @relation(fields: [clientId], references: [id])
@@ -35,7 +35,7 @@ model IssuedNumber {
 }
 
 model Shop {
-  id            String         @id
+  id            Int            @default(autoincrement()) @id
   isClosed      Boolean        @default(false)
   numberCounter Int            @default(0)
   lastNumber    Int
@@ -47,7 +47,7 @@ model Shop {
 }
 
 model ShopDetails {
-  shopId             String         @id
+  shopId             Int            @id
   address            String
   lat                Float
   lng                Float

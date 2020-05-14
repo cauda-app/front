@@ -29,7 +29,6 @@ export type Query = {
   myTurn: Client;
   nearByShops: Array<ShopDetails>;
   shops: Array<Shop>;
-  shopsDetail: Array<ShopDetails>;
 };
 
 
@@ -48,65 +47,6 @@ export type QueryNearByShopsArgs = {
   lat: Scalars['Float'];
   lng: Scalars['Float'];
   offset?: Scalars['Int'];
-};
-
-
-export type QueryShopsDetailArgs = {
-  after?: Maybe<Scalars['String']>;
-};
-
-export type Mutation = {
-   __typename?: 'Mutation';
-  cancelTurn: Scalars['Boolean'];
-  cancelTurns: Shop;
-  nextTurn: Shop;
-  registerShop: Shop;
-  requestTurn: IssuedNumber;
-  signUp: Client;
-  updateShop: Shop;
-  verifyCode: Scalars['Boolean'];
-  verifyPhone: Scalars['DateTime'];
-};
-
-
-export type MutationCancelTurnArgs = {
-  turnId: Scalars['ID'];
-};
-
-
-export type MutationNextTurnArgs = {
-  op: NextTurnOperation;
-};
-
-
-export type MutationRegisterShopArgs = {
-  shop: ShopInput;
-};
-
-
-export type MutationRequestTurnArgs = {
-  shopId: Scalars['ID'];
-};
-
-
-export type MutationSignUpArgs = {
-  client: ClientSignupInput;
-};
-
-
-export type MutationUpdateShopArgs = {
-  shop: ShopInput;
-};
-
-
-export type MutationVerifyCodeArgs = {
-  phone: Scalars['String'];
-  code: Scalars['Int'];
-};
-
-
-export type MutationVerifyPhoneArgs = {
-  phone: Scalars['String'];
 };
 
 export type ClientSignupInput = {
@@ -134,6 +74,54 @@ export type IssuedNumber = {
   shop: Shop;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type Mutation = {
+   __typename?: 'Mutation';
+  cancelTurn: Scalars['Boolean'];
+  cancelTurns: Shop;
+  nextTurn: Shop;
+  registerShop: Shop;
+  requestTurn: IssuedNumber;
+  updateShop: Shop;
+  verifyCode: Scalars['Boolean'];
+  verifyPhone: Scalars['DateTime'];
+};
+
+
+export type MutationCancelTurnArgs = {
+  turnId: Scalars['ID'];
+};
+
+
+export type MutationNextTurnArgs = {
+  op: NextTurnOperation;
+};
+
+
+export type MutationRegisterShopArgs = {
+  shop: ShopInput;
+};
+
+
+export type MutationRequestTurnArgs = {
+  shopId: Scalars['ID'];
+};
+
+
+export type MutationUpdateShopArgs = {
+  shop: ShopInput;
+};
+
+
+export type MutationVerifyCodeArgs = {
+  phone: Scalars['String'];
+  code: Scalars['Int'];
+};
+
+
+export type MutationVerifyPhoneArgs = {
+  phone: Scalars['String'];
 };
 
 export enum NextTurnOperation {
@@ -170,7 +158,7 @@ export type ShopStatus = {
 
 export type ShopDetails = {
    __typename?: 'ShopDetails';
-  shopId: Scalars['String'];
+  shopId: Scalars['ID'];
   address: Scalars['String'];
   lat: Scalars['Float'];
   lng: Scalars['Float'];
@@ -301,13 +289,13 @@ export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
   Float: ResolverTypeWrapper<Scalars['Float']>,
-  Mutation: ResolverTypeWrapper<{}>,
   ClientSignupInput: ClientSignupInput,
   Date: ResolverTypeWrapper<Scalars['Date']>,
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>,
   Time: ResolverTypeWrapper<Scalars['Time']>,
   IssuedNumberStatus: IssuedNumberStatus,
   IssuedNumber: ResolverTypeWrapper<IssuedNumber>,
+  Mutation: ResolverTypeWrapper<{}>,
   NextTurnOperation: NextTurnOperation,
   Shop: ResolverTypeWrapper<Shop>,
   LastTurns: ResolverTypeWrapper<LastTurns>,
@@ -325,13 +313,13 @@ export type ResolversParentTypes = ResolversObject<{
   Query: {},
   Int: Scalars['Int'],
   Float: Scalars['Float'],
-  Mutation: {},
   ClientSignupInput: ClientSignupInput,
   Date: Scalars['Date'],
   DateTime: Scalars['DateTime'],
   Time: Scalars['Time'],
   IssuedNumberStatus: IssuedNumberStatus,
   IssuedNumber: IssuedNumber,
+  Mutation: {},
   NextTurnOperation: NextTurnOperation,
   Shop: Shop,
   LastTurns: LastTurns,
@@ -355,19 +343,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   myTurn?: Resolver<ResolversTypes['Client'], ParentType, ContextType>,
   nearByShops?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType, RequireFields<QueryNearByShopsArgs, 'lat' | 'lng' | 'offset'>>,
   shops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType>,
-  shopsDetail?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType, RequireFields<QueryShopsDetailArgs, never>>,
-}>;
-
-export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
-  cancelTurn?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCancelTurnArgs, 'turnId'>>,
-  cancelTurns?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
-  nextTurn?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationNextTurnArgs, 'op'>>,
-  registerShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationRegisterShopArgs, 'shop'>>,
-  requestTurn?: Resolver<ResolversTypes['IssuedNumber'], ParentType, ContextType, RequireFields<MutationRequestTurnArgs, 'shopId'>>,
-  signUp?: Resolver<ResolversTypes['Client'], ParentType, ContextType, RequireFields<MutationSignUpArgs, 'client'>>,
-  updateShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationUpdateShopArgs, 'shop'>>,
-  verifyCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVerifyCodeArgs, 'phone' | 'code'>>,
-  verifyPhone?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType, RequireFields<MutationVerifyPhoneArgs, 'phone'>>,
 }>;
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
@@ -393,6 +368,17 @@ export type IssuedNumberResolvers<ContextType = any, ParentType extends Resolver
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
+}>;
+
+export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  cancelTurn?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCancelTurnArgs, 'turnId'>>,
+  cancelTurns?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
+  nextTurn?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationNextTurnArgs, 'op'>>,
+  registerShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationRegisterShopArgs, 'shop'>>,
+  requestTurn?: Resolver<ResolversTypes['IssuedNumber'], ParentType, ContextType, RequireFields<MutationRequestTurnArgs, 'shopId'>>,
+  updateShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationUpdateShopArgs, 'shop'>>,
+  verifyCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVerifyCodeArgs, 'phone' | 'code'>>,
+  verifyPhone?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType, RequireFields<MutationVerifyPhoneArgs, 'phone'>>,
 }>;
 
 export type ShopResolvers<ContextType = any, ParentType extends ResolversParentTypes['Shop'] = ResolversParentTypes['Shop']> = ResolversObject<{
@@ -423,7 +409,7 @@ export type ShopStatusResolvers<ContextType = any, ParentType extends ResolversP
 }>;
 
 export type ShopDetailsResolvers<ContextType = any, ParentType extends ResolversParentTypes['ShopDetails'] = ResolversParentTypes['ShopDetails']> = ResolversObject<{
-  shopId?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  shopId?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   address?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   lat?: Resolver<ResolversTypes['Float'], ParentType, ContextType>,
   lng?: Resolver<ResolversTypes['Float'], ParentType, ContextType>,
@@ -454,11 +440,11 @@ export type ShopDetailsResolvers<ContextType = any, ParentType extends Resolvers
 export type Resolvers<ContextType = any> = ResolversObject<{
   Client?: ClientResolvers<ContextType>,
   Query?: QueryResolvers<ContextType>,
-  Mutation?: MutationResolvers<ContextType>,
   Date?: GraphQLScalarType,
   DateTime?: GraphQLScalarType,
   Time?: GraphQLScalarType,
   IssuedNumber?: IssuedNumberResolvers<ContextType>,
+  Mutation?: MutationResolvers<ContextType>,
   Shop?: ShopResolvers<ContextType>,
   LastTurns?: LastTurnsResolvers<ContextType>,
   ShopStatus?: ShopStatusResolvers<ContextType>,

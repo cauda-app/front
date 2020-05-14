@@ -7,7 +7,7 @@ import { TOKEN_EXPIRY } from '../utils/constants';
 export type TokenInfo = {
   isValid: boolean;
   clientId?: number;
-  shopId?: string;
+  shopId?: number;
   phone?: string;
   error?: any;
 };
@@ -20,7 +20,7 @@ export const setCookieToken = (
     phone,
   }: {
     clientId?: number;
-    shopId?: string;
+    shopId?: number;
     phone: string;
   }
 ) => {
