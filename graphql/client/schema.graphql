@@ -11,10 +11,6 @@ type Query {
   client(id: ID): Client
 }
 
-type Mutation {
-  signUp(client: ClientSignupInput!): Client!
-}
-
 input ClientSignupInput {
   phone: String!
 }
