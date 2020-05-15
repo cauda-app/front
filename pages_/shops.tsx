@@ -39,7 +39,15 @@ const Shops = ({ coords: { lat, lng } }: Props) => {
   const variables = React.useMemo(() => ({ lat, lng }), [lat, lng]);
   const [offset, setOffset] = React.useState(0);
   const { data, loading, error, fetchMore } = useQuery(SHOPS, { variables });
-  const [hasNextPage, setHasNextPage] = React.useState(true);
+  const [hasNextPage, setHasNextPage] = React.useState(false);
+
+  React.useEffect(() => {
+    if (data.nearByShops && data.nearByShops.length % PAGE_ROWS === 0) {
+      setHasNextPage(true);
+    } else {
+      setHasNextPage(false);
+    }
+  }, [data.nearByShops]);
 
   const handleFetchMore = () => {
     const newOffset = offset + PAGE_ROWS;
@@ -50,13 +58,12 @@ const Shops = ({ coords: { lat, lng } }: Props) => {
         offset: newOffset,
       },
       updateQuery: (prev, fetchMoreResult) => {
-        if (
-          !fetchMoreResult ||
-          !fetchMoreResult.nearByShops.length ||
-          fetchMoreResult.nearByShops.length < PAGE_ROWS
-        ) {
+        if (!fetchMoreResult || !fetchMoreResult.nearByShops.length) {
           setHasNextPage(false);
           return prev;
+        }
+        if (fetchMoreResult.nearByShops.length < PAGE_ROWS) {
+          setHasNextPage(false);
         }
         return {
           ...prev,
