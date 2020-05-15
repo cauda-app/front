@@ -209,7 +209,7 @@ const shopResolver = {
     },
     nextTurn: async (parent: Shop, args, ctx: Context) => {
       const res = await ctx.prisma.issuedNumber.findMany({
-        where: { shopId: decodeId(parent.id), AND: { status: 0 } },
+        where: { shopId: Number(parent.id), AND: { status: 0 } },
         first: 1,
         orderBy: { issuedNumber: 'asc' },
         select: { issuedNumber: true },
@@ -217,11 +217,11 @@ const shopResolver = {
       return res.length > 0 ? numberToTurn(res[0].issuedNumber) : null;
     },
     lastTurns: async (parent: Shop, args, ctx: Context) => {
-      return await lastTurns(ctx.prisma, parent.id);
+      return await lastTurns(ctx.prisma, Number(parent.id));
     },
     pendingTurnsAmount: (parent: Shop, args, ctx: Context) => {
       return ctx.prisma.issuedNumber.count({
-        where: { shopId: decodeId(parent.id), AND: { status: 0 } },
+        where: { shopId: Number(parent.id), AND: { status: 0 } },
       });
     },
   },
