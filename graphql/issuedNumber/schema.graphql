@@ -21,7 +21,12 @@ type Query {
   getTurns(clientId: Int!, shopId: String): [IssuedNumber!]!
 }
 
+type RequestTurnResponse {
+  id: ID!
+  pendingTurnsAmount: Int!
+}
+
 type Mutation {
-  requestTurn(shopId: ID!): IssuedNumber!
+  requestTurn(shopId: ID!): RequestTurnResponse!
   cancelTurn(turnId: ID!): Boolean!
 }

@@ -2,7 +2,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Link from 'next/link';
 
 import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
+const nextConfig = getConfig();
 
 export default function Footer(props) {
   const { t } = useTranslation();
@@ -23,7 +23,7 @@ export default function Footer(props) {
       </div>
 
       <div className="version text-center">
-        Version: {publicRuntimeConfig.version}
+        Version: {nextConfig?.publicRuntimeConfig?.version}
       </div>
 
       <style jsx>{`

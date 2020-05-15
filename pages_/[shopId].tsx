@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import Router, { useRouter } from 'next/router';
+import useTranslation from 'next-translate/useTranslation';
 
 import prismaClient from '../prisma/client';
 import ShopCard from 'src/components/ShopCard';
@@ -12,16 +13,24 @@ import { getToken } from 'src/utils/next';
 import graphqlClient from 'src/graphqlClient';
 import { getErrorCodeFromApollo } from 'src/utils';
 import { decodeId } from 'src/utils/hashids';
+import Notification from 'src/components/Notification';
+import getConfig from 'next/config';
+
+const nextConfig = getConfig();
 
 const REQUEST_TURN = /* GraphQL */ `
   mutation RequestTurn($shopId: ID!) {
     requestTurn(shopId: $shopId) {
       id
+      pendingTurnsAmount
     }
   }
 `;
 
 const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
+  const { t } = useTranslation();
+
+  const [showModal, setShowModal] = useState(false);
   const router = useRouter();
 
   React.useEffect(() => {
@@ -30,10 +39,20 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
     }
   }, [isLoggedIn]);
 
+  const goToHome = () => {
+    Router.push('/');
+  };
+
   const handleRequestTurn = async (shopId) => {
     try {
-      await graphqlClient.request(REQUEST_TURN, { shopId });
-      Router.push('/');
+      const res = await graphqlClient.request(REQUEST_TURN, { shopId });
+      const goToShopThreshold =
+        nextConfig?.publicRuntimeConfig?.goToShopThreshold;
+      if (res.requestTurn.pendingTurnsAmount <= goToShopThreshold) {
+        setShowModal(true);
+      } else {
+        goToHome();
+      }
     } catch (error) {
       console.log(error);
       const errorCode = getErrorCodeFromApollo(error);
@@ -58,6 +77,12 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
   return (
     <Layout>
       <ShopCard shop={shop} onRequestTurn={handleRequestTurn} />
+      {showModal && (
+        <Notification
+          message={t('common:queue-shop-is-empty')}
+          onConfirm={goToHome}
+        />
+      )}
     </Layout>
   );
 };

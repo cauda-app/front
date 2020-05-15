@@ -6,6 +6,7 @@ module.exports = withImages({
   env: result.parsed || {},
   publicRuntimeConfig: {
     version: packageJson.version,
+    goToShopThreshold: 5
   },
   experimental: {
     modern: true,
