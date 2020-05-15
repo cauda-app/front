@@ -7,5 +7,5 @@ const hashids = new Hashids(
 );
 
 export const encodeId = (id?: number): string => (id ? hashids.encode(id) : '');
-export const decodeId = (id?: string): number | bigint | null =>
-  id ? hashids.decode(id)[0] : null;
+export const decodeId = (id?: string): number | null =>
+  id ? (hashids.decode(id)[0] as number | null) : null;
