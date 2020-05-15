@@ -12,6 +12,7 @@ import { isOpen, shopPhone, status } from '../graphql/shop/helpers';
 import { getToken } from 'src/utils/next';
 import graphqlClient from 'src/graphqlClient';
 import { getErrorCodeFromApollo } from 'src/utils';
+import { decodeId } from 'src/utils/hashids';
 
 const REQUEST_TURN = /* GraphQL */ `
   mutation RequestTurn($shopId: ID!) {
@@ -70,7 +71,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { props: { isLoggedIn: false } };
   }
 
-  const shopId = context.params?.shopId as string | undefined;
+  const encodedShopId = context.params?.shopId as string | undefined;
+  const shopId = decodeId(encodedShopId) as number | undefined;
   let shop;
 
   if (shopId) {
@@ -79,7 +81,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     });
     if (dbShop) {
       shop = {
-        shopId: dbShop.shopId,
+        shopId: encodedShopId,
         name: dbShop.name,
         address: dbShop.address,
         lat: dbShop.lat,

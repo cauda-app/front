@@ -7,7 +7,7 @@ import {
 } from '../../graphql.d';
 import { decodeId } from 'src/utils/hashids';
 
-const getPendingTurns = (clientId: number, shopId: string, ctx: Context) =>
+const getPendingTurns = (clientId: number, shopId: number, ctx: Context) =>
   ctx.prisma.issuedNumber.findMany({
     where: {
       clientId: clientId,
@@ -21,7 +21,7 @@ const IssuedNumberResolver = {
     getTurns: (parent, args: QueryGetTurnsArgs, ctx: Context) => {
       const where: any = { clientId: args.clientId };
       if (args.shopId) {
-        where.shopId = args.shopId;
+        where.shopId = decodeId(args.shopId);
       }
       return ctx.prisma.issuedNumber.findMany({
         where,
@@ -37,10 +37,11 @@ const IssuedNumberResolver = {
       if (!ctx.tokenInfo?.clientId) {
         return new ApolloError('Client Id not provided', 'INVALID_CLIENT_ID');
       }
+      const shopId = decodeId(args.shopId) as number;
 
       let appointments = await getPendingTurns(
         ctx.tokenInfo.clientId,
-        args.shopId,
+        shopId,
         ctx
       );
 
@@ -51,14 +52,10 @@ const IssuedNumberResolver = {
         );
       }
 
-      const rawQuery = `CALL increaseShopCounter("${args.shopId}", ${ctx.tokenInfo.clientId});`;
+      const rawQuery = `CALL increaseShopCounter("${shopId}", ${ctx.tokenInfo.clientId});`;
       await ctx.prisma.raw(rawQuery);
 
-      appointments = await getPendingTurns(
-        ctx.tokenInfo.clientId,
-        args.shopId,
-        ctx
-      );
+      appointments = await getPendingTurns(ctx.tokenInfo.clientId, shopId, ctx);
       if (!appointments.length) {
         return new ApolloError(
           'There was an error trying to set the appointment.',

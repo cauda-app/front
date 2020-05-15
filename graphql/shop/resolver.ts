@@ -1,5 +1,4 @@
 import { ApolloError } from 'apollo-server-core';
-import crypto from 'crypto';
 
 import { days, serializeTime } from 'src/utils/dates';
 import { formatPhone } from 'src/utils/phone-utils';
@@ -8,7 +7,6 @@ import {
   Shop,
   ShopDetails,
   ShopInput,
-  QueryShopsDetailArgs,
   QueryNearByShopsArgs,
   MutationRegisterShopArgs,
   MutationUpdateShopArgs,
@@ -17,6 +15,7 @@ import {
 import { setCookieToken } from '../utils/jwt';
 import { numberToTurn } from '../utils/turn';
 import { isOpen, shopPhone, status, lastTurns } from './helpers';
+import { decodeId, encodeId } from 'src/utils/hashids';
 
 const mapShop = (shop: ShopInput): ShopInput => {
   const updatedShop = { ...shop };
@@ -41,13 +40,6 @@ const shopResolver = {
   Query: {
     shops: (parent, args, ctx: Context) => {
       return ctx.prisma.shop.findMany();
-    },
-    shopsDetail: (parent, args: QueryShopsDetailArgs, ctx: Context) => {
-      const after = args.after ? { after: { shopId: args.after } } : undefined;
-      return ctx.prisma.shopDetails.findMany({
-        first: 10,
-        ...after,
-      });
     },
     nearByShops: async (parent, args: QueryNearByShopsArgs, ctx: Context) => {
       const MAX_DISTANCE_METERS = 2000;
@@ -106,7 +98,6 @@ const shopResolver = {
 
       const newShop = await ctx.prisma.shop.create({
         data: {
-          id: crypto.randomBytes(20).toString('hex').substring(0, 19),
           isClosed: false,
           lastNumber: 0,
           nextNumber: 0,
@@ -208,14 +199,17 @@ const shopResolver = {
     },
   },
   Shop: {
+    id: (parent: Shop, args, ctx: Context) => {
+      return encodeId(Number(parent.id));
+    },
     details: (parent: Shop, args, ctx: Context) => {
       return ctx.prisma.shopDetails.findOne({
-        where: { shopId: parent.id },
+        where: { shopId: Number(parent.id) },
       });
     },
     nextTurn: async (parent: Shop, args, ctx: Context) => {
       const res = await ctx.prisma.issuedNumber.findMany({
-        where: { shopId: parent.id, AND: { status: 0 } },
+        where: { shopId: Number(parent.id), AND: { status: 0 } },
         first: 1,
         orderBy: { issuedNumber: 'asc' },
         select: { issuedNumber: true },
@@ -223,15 +217,18 @@ const shopResolver = {
       return res.length > 0 ? numberToTurn(res[0].issuedNumber) : null;
     },
     lastTurns: async (parent: Shop, args, ctx: Context) => {
-      return await lastTurns(ctx.prisma, parent.id);
+      return await lastTurns(ctx.prisma, Number(parent.id));
     },
     pendingTurnsAmount: (parent: Shop, args, ctx: Context) => {
       return ctx.prisma.issuedNumber.count({
-        where: { shopId: parent.id, AND: { status: 0 } },
+        where: { shopId: Number(parent.id), AND: { status: 0 } },
       });
     },
   },
   ShopDetails: {
+    shopId: (parent: ShopDetails, args, ctx: Context) => {
+      return encodeId(Number(parent.shopId));
+    },
     isOpen: (parent: ShopDetails, args, ctx: Context) => {
       return isOpen(parent);
     },
