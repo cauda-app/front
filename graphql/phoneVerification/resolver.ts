@@ -4,7 +4,7 @@ import compareAsc from 'date-fns/compareAsc';
 
 import { setCookieToken } from '../../graphql/utils/jwt';
 import { MutationVerifyCodeArgs, MutationVerifyPhoneArgs } from '../../graphql';
-import { Context } from '../../pages_/api/graphql';
+import { Context } from 'graphql/context';
 import randomCode from '../utils/randomCode';
 import { PHONE_CODE_EXPIRY } from '../utils/constants';
 import sendSms from '../utils/smsApi';

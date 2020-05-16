@@ -2,7 +2,7 @@ import { ApolloError } from 'apollo-server-core';
 
 import { days, serializeTime } from 'src/utils/dates';
 import { formatPhone } from 'src/utils/phone-utils';
-import { Context } from '../../pages_/api/graphql';
+import { Context } from 'graphql/context';
 import {
   Shop,
   ShopDetails,

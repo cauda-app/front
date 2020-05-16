@@ -11,6 +11,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
+import Button from 'react-bootstrap/Button';
+import Link from 'next/link';
 
 import prismaClient from '../prisma/client';
 import { getToken } from 'src/utils/next';
@@ -249,14 +251,10 @@ const EditShop = ({ isLoggedIn, shop }: Props) => {
       delete shopInput[day + 'IsOpen'];
     }
 
-    try {
-      const mutation = id ? EDIT : CREATE;
-      await graphqlClient.request(mutation, {
-        shop: shopInput,
-      });
-    } catch (error) {
-      Router.push('/generic-error');
-    }
+    const mutation = id ? EDIT : CREATE;
+    await graphqlClient.request(mutation, {
+      shop: shopInput,
+    });
   };
 
   const handleSubmit = async (event) => {
@@ -495,6 +493,18 @@ const EditShop = ({ isLoggedIn, shop }: Props) => {
             >
               {t('common:save')}
             </LoadingButton>
+            <Link href={'/'} passHref>
+              <Button
+                block
+                type="button"
+                disabled={isSubmitting}
+                variant="danger"
+                size="lg"
+                className="mt-4"
+              >
+                {t('common:cancel')}
+              </Button>
+            </Link>
           </Form>
         </Card.Body>
       </Card>

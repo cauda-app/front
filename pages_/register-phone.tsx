@@ -11,11 +11,13 @@ import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
 import parseISO from 'date-fns/parseISO';
 import Router, { useRouter } from 'next/router';
+import * as Sentry from '@sentry/browser';
 
 import Layout from 'src/components/Layout';
 import { validatePhoneRequest, getErrorCodeFromApollo } from 'src/utils';
 import graphqlClient from 'src/graphqlClient';
 import Spinner from 'src/components/Spinner';
+import GoBack from 'src/components/GoBack';
 
 const VERIFY_CODE = /* GraphQL */ `
   mutation VerifyCode($code: Int!, $phone: String!) {
@@ -83,6 +85,7 @@ const VerifyPhone = () => {
         setErrors({ ...errors, phone: t('common:mutation-error') });
       }
 
+      Sentry.captureException(error);
       setIsSubmitting(false);
     }
   };
@@ -117,6 +120,7 @@ const VerifyPhone = () => {
       }
 
       setIsSubmitting(false);
+      Sentry.captureException(error);
     }
   };
 
@@ -150,7 +154,10 @@ const VerifyPhone = () => {
   return (
     <Layout>
       <Card className="cauda_card mb-4 mx-auto text-center">
-        <Card.Header>{t('common:register')}</Card.Header>
+        <Card.Header className="text-left">
+          {sendCodeScreen && <GoBack />}
+          {t('common:register')}
+        </Card.Header>
         <Card.Body>
           <Form onSubmit={handleSubmit}>
             {sendCodeScreen && (

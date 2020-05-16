@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import Router, { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import * as Sentry from '@sentry/browser';
 
 import prismaClient from '../prisma/client';
 import ShopCard from 'src/components/ShopCard';
@@ -58,6 +59,8 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
       const errorCode = getErrorCodeFromApollo(error);
       if (errorCode === 'ACTIVE_TURN') {
         Router.push('/');
+      } else {
+        Sentry.captureException(error);
       }
     }
   };

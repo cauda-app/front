@@ -7,6 +7,7 @@ import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPen, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { GetServerSideProps } from 'next';
+import * as Sentry from '@sentry/browser';
 
 import { getToken } from 'src/utils/next';
 import Layout from 'src/components/Layout';
@@ -42,11 +43,12 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
 
     try {
       const res = await graphqlClient.request(NEXT_TURN, { op });
-      setMyShop({ ...myShop, ...res.attendNextTurn });
+      setMyShop({ ...myShop, ...res.nextTurn });
       setActionLoading(false);
     } catch (error) {
       setError(error);
       setActionLoading(false);
+      Sentry.captureException(error);
     }
   };
 
@@ -67,11 +69,12 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
 
     try {
       const res = await graphqlClient.request(CANCEL_TURNS);
-      setMyShop({ ...myShop, ...res.attendNextTurn });
+      setMyShop({ ...myShop, ...res.cancelTurns });
       setActionLoading(false);
     } catch (error) {
       setError(error);
       setActionLoading(false);
+      Sentry.captureException(error);
     }
   };
 
@@ -101,6 +104,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
       setMyShop(res.myShop);
     } catch (error) {
       setError(error);
+      Sentry.captureException(error);
     }
   };
 
@@ -138,7 +142,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
   }, [isLoggedIn, shopId]);
 
   if (error) {
-    return <Layout>{String(error)}</Layout>;
+    throw error;
   }
 
   if (!myShop) {
