@@ -42,7 +42,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
 
     try {
       const res = await graphqlClient.request(NEXT_TURN, { op });
-      setMyShop({ ...myShop, ...res.attendNextTurn });
+      setMyShop({ ...myShop, ...res.nextTurn });
       setActionLoading(false);
     } catch (error) {
       setError(error);
@@ -67,7 +67,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
 
     try {
       const res = await graphqlClient.request(CANCEL_TURNS);
-      setMyShop({ ...myShop, ...res.attendNextTurn });
+      setMyShop({ ...myShop, ...res.cancelTurns });
       setActionLoading(false);
     } catch (error) {
       setError(error);
