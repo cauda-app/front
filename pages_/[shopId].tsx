@@ -79,7 +79,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
       <ShopCard shop={shop} onRequestTurn={handleRequestTurn} />
       {showModal && (
         <Notification
-          message={t('common:queue-shop-is-empty')}
+          message={t('common:empty-shop-queue')}
           onConfirm={goToHome}
         />
       )}
