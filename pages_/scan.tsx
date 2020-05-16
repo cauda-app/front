@@ -8,6 +8,9 @@ import Layout from '../src/components/Layout';
 import { ReaderProps } from '../src/types/react-qr-reader';
 import img_templateUrl from '../public/cauda_qrcode@3x.png';
 import img_scanningUrl from '../public/cauda_scanqr@3x.png';
+import GoBack from 'src/components/GoBack';
+import Link from 'next/link';
+import Button from 'react-bootstrap/Button';
 
 const QrReader: ComponentType<ReaderProps> = dynamic(
   () => import('react-qr-reader'),
@@ -55,7 +58,7 @@ const Scan = () => {
 
   return (
     <Layout>
-      <div className="content d-flex flex-column justify-content-between h-100">
+      <div className="content d-flex flex-column justify-content-between">
         <Card className="cauda_card cauda_scan p-4 text-center">
           <Card.Body className="p-0">
             {error ? (
@@ -88,6 +91,19 @@ const Scan = () => {
             )}
           </Card.Body>
         </Card>
+      </div>
+      <div className="p-4">
+        <Link href={'/'} passHref>
+          <Button
+            block
+            type="button"
+            variant="danger"
+            size="lg"
+            className="mt-4"
+          >
+            {t('common:cancel')}
+          </Button>
+        </Link>
       </div>
       <style jsx>{`
         .cauda_scan {

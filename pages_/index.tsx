@@ -52,7 +52,7 @@ const MyTurns = ({ turns = [] }: Props) => {
             </Link>
           </Col>
           <Col xs="auto">
-            <Link href={'/shops'} passHref>
+            <Link href={'/scan'} passHref>
               <Button
                 variant="secondary"
                 size="sm"
