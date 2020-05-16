@@ -76,13 +76,19 @@ export type IssuedNumber = {
   updatedAt: Scalars['DateTime'];
 };
 
+export type RequestTurnResponse = {
+   __typename?: 'RequestTurnResponse';
+  id: Scalars['ID'];
+  pendingTurnsAmount: Scalars['Int'];
+};
+
 export type Mutation = {
    __typename?: 'Mutation';
   cancelTurn: Scalars['Boolean'];
   cancelTurns: Shop;
   nextTurn: Shop;
   registerShop: Shop;
-  requestTurn: IssuedNumber;
+  requestTurn: RequestTurnResponse;
   updateShop: Shop;
   verifyCode: Scalars['Boolean'];
   verifyPhone: Scalars['DateTime'];
@@ -295,6 +301,7 @@ export type ResolversTypes = ResolversObject<{
   Time: ResolverTypeWrapper<Scalars['Time']>,
   IssuedNumberStatus: IssuedNumberStatus,
   IssuedNumber: ResolverTypeWrapper<IssuedNumber>,
+  RequestTurnResponse: ResolverTypeWrapper<RequestTurnResponse>,
   Mutation: ResolverTypeWrapper<{}>,
   NextTurnOperation: NextTurnOperation,
   Shop: ResolverTypeWrapper<Shop>,
@@ -319,6 +326,7 @@ export type ResolversParentTypes = ResolversObject<{
   Time: Scalars['Time'],
   IssuedNumberStatus: IssuedNumberStatus,
   IssuedNumber: IssuedNumber,
+  RequestTurnResponse: RequestTurnResponse,
   Mutation: {},
   NextTurnOperation: NextTurnOperation,
   Shop: Shop,
@@ -370,12 +378,18 @@ export type IssuedNumberResolvers<ContextType = any, ParentType extends Resolver
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
+export type RequestTurnResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['RequestTurnResponse'] = ResolversParentTypes['RequestTurnResponse']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  pendingTurnsAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
+}>;
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   cancelTurn?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationCancelTurnArgs, 'turnId'>>,
   cancelTurns?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
   nextTurn?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationNextTurnArgs, 'op'>>,
   registerShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationRegisterShopArgs, 'shop'>>,
-  requestTurn?: Resolver<ResolversTypes['IssuedNumber'], ParentType, ContextType, RequireFields<MutationRequestTurnArgs, 'shopId'>>,
+  requestTurn?: Resolver<ResolversTypes['RequestTurnResponse'], ParentType, ContextType, RequireFields<MutationRequestTurnArgs, 'shopId'>>,
   updateShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationUpdateShopArgs, 'shop'>>,
   verifyCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVerifyCodeArgs, 'phone' | 'code'>>,
   verifyPhone?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType, RequireFields<MutationVerifyPhoneArgs, 'phone'>>,
@@ -444,6 +458,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   DateTime?: GraphQLScalarType,
   Time?: GraphQLScalarType,
   IssuedNumber?: IssuedNumberResolvers<ContextType>,
+  RequestTurnResponse?: RequestTurnResponseResolvers<ContextType>,
   Mutation?: MutationResolvers<ContextType>,
   Shop?: ShopResolvers<ContextType>,
   LastTurns?: LastTurnsResolvers<ContextType>,

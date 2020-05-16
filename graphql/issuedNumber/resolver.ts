@@ -63,7 +63,10 @@ const IssuedNumberResolver = {
         );
       }
 
-      return appointments[0];
+      return {
+        id: appointments[0].id,
+        pendingTurnsAmount: appointments.length++,
+      };
     },
     cancelTurn: async (parent, args: MutationCancelTurnArgs, ctx: Context) => {
       if (!ctx.tokenInfo?.isValid) {
