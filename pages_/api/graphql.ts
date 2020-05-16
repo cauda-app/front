@@ -1,19 +1,29 @@
 import { ApolloServer } from 'apollo-server-micro';
 import { makeExecutableSchema } from 'graphql-tools';
+import * as Sentry from '@sentry/node';
 
-import prismaInstance from '../../graphql/context';
-import typeDefs from '../../graphql/typeDefs';
-import resolvers from '../../graphql/resolvers';
-import { TokenInfo } from '../../graphql/utils/jwt';
+import { Context } from 'graphql/context';
+import prisma from 'prisma/client';
+import typeDefs from 'graphql/typeDefs';
+import resolvers from 'graphql/resolvers';
 import { processCookie } from 'src/utils/next';
-import { Main } from 'next/document';
+import { apolloServerSentryPlugin } from 'graphql/plugins';
 
-export type Context = {
-  res: any;
-  req: any;
-  tokenInfo?: TokenInfo;
-  prisma: typeof prismaInstance;
-};
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+});
+
+function sentryHandler(handler) {
+  return async (req, res) => {
+    try {
+      return await handler(req, res);
+    } catch (error) {
+      Sentry.captureException(error);
+      await Sentry.flush(2000);
+      return error;
+    }
+  };
+}
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
 
@@ -24,9 +34,10 @@ const server = new ApolloServer({
       tokenInfo: processCookie(req),
       req,
       res,
-      prisma: prismaInstance,
+      prisma,
     };
   },
+  plugins: [apolloServerSentryPlugin],
 });
 
 export const config = {
@@ -36,7 +47,7 @@ export const config = {
 };
 
 process.on('exit', async () => {
-  await prismaInstance.disconnect;
+  await prisma.disconnect;
 });
 
-export default server.createHandler({ path: '/api/graphql' });
+export default sentryHandler(server.createHandler({ path: '/api/graphql' }));

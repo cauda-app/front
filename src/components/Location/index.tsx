@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import * as Sentry from '@sentry/browser';
 
 import step1 from './assets/step1.jpeg';
 import step2 from './assets/step2.jpeg';
@@ -44,6 +45,7 @@ const RequestGPSNotification = ({ render }: Props) => {
         setNotificationAccepted(false);
         setLoading(false);
         setErrorCode(error.code);
+        Sentry.captureException(error);
       }
     );
   };

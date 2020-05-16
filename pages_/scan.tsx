@@ -1,5 +1,4 @@
 import React, { ComponentType } from 'react';
-import Router from 'next/router';
 import dynamic from 'next/dynamic';
 import useTranslation from 'next-translate/useTranslation';
 import Card from 'react-bootstrap/Card';
@@ -49,10 +48,6 @@ const Scan = () => {
     if (result) {
       setProcessing(true);
       setResult(result);
-      fetch('/api/qr').then(async (response) => {
-        const { url } = await response.json();
-        Router.push(url);
-      });
     }
   };
 

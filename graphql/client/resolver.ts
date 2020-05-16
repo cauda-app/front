@@ -1,5 +1,5 @@
 import { ApolloError } from 'apollo-server-core';
-import { Context } from '../../pages_/api/graphql';
+import { Context } from 'graphql/context';
 
 const clientResolver = {
   Query: {

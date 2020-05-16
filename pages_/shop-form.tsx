@@ -251,14 +251,10 @@ const EditShop = ({ isLoggedIn, shop }: Props) => {
       delete shopInput[day + 'IsOpen'];
     }
 
-    try {
-      const mutation = id ? EDIT : CREATE;
-      await graphqlClient.request(mutation, {
-        shop: shopInput,
-      });
-    } catch (error) {
-      Router.push('/generic-error');
-    }
+    const mutation = id ? EDIT : CREATE;
+    await graphqlClient.request(mutation, {
+      shop: shopInput,
+    });
   };
 
   const handleSubmit = async (event) => {
