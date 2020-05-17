@@ -5,18 +5,22 @@ import Router, { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import * as Sentry from '@sentry/browser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRedo } from '@fortawesome/free-solid-svg-icons';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import prismaClient from 'prisma/client';
 import Layout from 'src/components/Layout';
 import { getToken } from 'src/utils/next';
-import { decodeId } from 'src/utils/hashids';
+import { decodeId, encodeId } from 'src/utils/hashids';
 import { numberToTurn } from 'graphql/utils/turn';
 import { lastTurns } from 'graphql/shop/helpers';
 import NotFound from 'src/components/NotFound';
 import Spinner from 'src/components/Spinner';
 import graphQLClient from 'src/graphqlClient';
+import useSWR from 'swr';
+import LoadingButton from 'src/components/LoadingButton';
+import { TO_ISSUED_NUMBER_STATUS } from 'graphql/issuedNumber/helpers';
 
 const reload = () => Router.reload();
 
@@ -24,14 +28,44 @@ const MyTurn = ({
   isLoggedIn,
   statusCode,
   turn,
-  status,
-  lastTurns,
-  shopName,
+  lastTurns: initialLastTurns,
 }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const [cancelling, setCancelling] = useState(false);
-  const [error, setError] = useState();
+  const [cancelError, setCancelError] = useState();
+  const { data, error } = useSWR(
+    [
+      /* GraphQL */ `
+        query Turn($turnId: ID!) {
+          turn(turnId: $turnId) {
+            id
+            turn
+            shopName
+            status
+          }
+        }
+      `,
+      router.query.turnId,
+    ],
+    (query, turnId) => graphQLClient.request(query, { turnId }),
+    { initialData: { turn } }
+  );
+  const { data: lastTurnsResponse, error: lastTurnsError } = useSWR(
+    [
+      /* GraphQL */ `
+        query LastTurns($shopId: ID!) {
+          lastTurns(shopId: $shopId) {
+            status
+            turn
+          }
+        }
+      `,
+      turn.shopId,
+    ],
+    (query, shopId) => graphQLClient.request(query, { shopId }),
+    { initialData: { lastTurns: initialLastTurns }, refreshInterval: 10_000 }
+  );
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -68,9 +102,10 @@ const MyTurn = ({
       }
       setCancelling(false);
     } catch (error) {
-      setError(error);
+      setCancelError(error);
       console.log(error);
       setCancelling(false);
+      Sentry.captureException(error);
     }
   };
 
@@ -78,7 +113,7 @@ const MyTurn = ({
     <Layout>
       <Card className="cauda_card myturn__card mb-4 mx-auto">
         <Card.Header className="d-flex justify-content-between align-items-center">
-          {shopName}
+          {turn.shopName}
 
           <Link href="/" passHref>
             <Button variant="danger" size="sm">
@@ -92,7 +127,7 @@ const MyTurn = ({
             {t('common:my-turn')}
           </Button>
 
-          <p className="myturn__number display-3">{turn}</p>
+          <p className="myturn__number display-3">{turn.turn}</p>
 
           {/* <p className="myturn__timebox h2 font-weight-light mb-1">
             <span className="myturn__time font-weight-bold">25</span>{' '}
@@ -110,12 +145,14 @@ const MyTurn = ({
               </p>
 
               <ul className="list-unstyled list-inline h4 mb-0">
-                {lastTurns.length > 0
-                  ? lastTurns.map(({ turn, status }) => (
+                {lastTurnsResponse?.lastTurns.length > 0
+                  ? lastTurnsResponse?.lastTurns.map(({ turn, status }) => (
                       <li
                         key={turn}
                         className={`list-inline-item text-${
-                          [2, 3].includes(status) ? 'danger' : 'success'
+                          ['SKIPPED', 'CANCELLED'].includes(status)
+                            ? 'danger'
+                            : 'success'
                         }`}
                       >
                         {turn}
@@ -126,9 +163,10 @@ const MyTurn = ({
             </Card.Body>
           </Card>
 
-          <Button
+          <LoadingButton
+            disabled={turn.status !== 'PENDING'}
+            isLoading={cancelling}
             onClick={cancelTurn}
-            disabled={status !== 0 || cancelling}
             variant="danger"
             size="lg"
             className="d-flex justify-content-between align-items-center"
@@ -137,7 +175,7 @@ const MyTurn = ({
             <FontAwesomeIcon icon={faTimes} />
             {t('common:cancel-turn')}
             <div></div>
-          </Button>
+          </LoadingButton>
         </Card.Body>
       </Card>
     </Layout>
@@ -175,13 +213,21 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   const turns = await lastTurns(prismaClient, issuedNumber.shopId);
 
+  context.res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
+
   return {
     props: {
       isLoggedIn: true,
-      shopName: issuedNumber.shopDetails.name,
-      turn: numberToTurn(issuedNumber.issuedNumber),
-      status: issuedNumber.status,
-      lastTurns: turns,
+      turn: {
+        shopId: encodeId(issuedNumber.shopId),
+        shopName: issuedNumber.shopDetails.name,
+        turn: numberToTurn(issuedNumber.issuedNumber),
+        status: TO_ISSUED_NUMBER_STATUS[issuedNumber.status],
+      },
+      lastTurns: turns.map((turn) => ({
+        turn: turn.turn,
+        status: TO_ISSUED_NUMBER_STATUS[turn.status],
+      })),
     },
   };
 };

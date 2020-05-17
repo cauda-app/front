@@ -18,6 +18,16 @@ import prismaClient from 'prisma/client';
 import graphqlClient from 'src/graphqlClient';
 import { myTurns } from 'graphql/issuedNumber/helpers';
 
+export const MY_TURNS = /* GraphQL */ `
+  query MyTurns {
+    myTurns {
+      id
+      turn
+      shopName
+    }
+  }
+`;
+
 type Turn = {
   id: string;
   turn: string;
@@ -32,19 +42,9 @@ const fetcher = (query) => graphqlClient.request(query);
 
 const MyTurns = ({ myTurns = [] }: Props) => {
   const { t } = useTranslation();
-  const { data, error } = useSWR(
-    /* GraphQL */ `
-      {
-        myTurns {
-          id
-          turn
-          shopName
-        }
-      }
-    `,
-    fetcher,
-    { initialData: { myTurns } }
-  );
+  const { data, error } = useSWR(MY_TURNS, fetcher, {
+    initialData: { myTurns },
+  });
 
   if (data.myTurns.length === 0) {
     return <EmptyLanding />;
@@ -148,6 +148,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const turns = await myTurns(clientId, prismaClient);
+
+  context.res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
 
   return {
     props: {

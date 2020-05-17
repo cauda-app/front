@@ -19,3 +19,17 @@ export const myTurns = async (clientId, prisma) => {
 
   return turns;
 };
+
+export const ISSUED_NUMBER_STATUS = {
+  PENDING: 0,
+  ATTENDED: 1,
+  SKIPPED: 2,
+  CANCELLED: 3,
+};
+
+export const TO_ISSUED_NUMBER_STATUS = {
+  0: 'PENDING',
+  1: 'ATTENDED',
+  2: 'SKIPPED',
+  3: 'CANCELLED',
+};

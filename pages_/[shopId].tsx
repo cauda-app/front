@@ -3,6 +3,7 @@ import { GetServerSideProps } from 'next';
 import Router, { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import * as Sentry from '@sentry/browser';
+import { mutate } from 'swr';
 
 import prismaClient from '../prisma/client';
 import ShopCard from 'src/components/ShopCard';
@@ -16,6 +17,7 @@ import { getErrorCodeFromApollo } from 'src/utils';
 import { decodeId } from 'src/utils/hashids';
 import Notification from 'src/components/Notification';
 import getConfig from 'next/config';
+import { MY_TURNS } from 'pages_';
 
 const nextConfig = getConfig();
 
@@ -53,6 +55,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
         setShowModal(true);
       } else {
         goToHome();
+        mutate(MY_TURNS); // trigger an update if data is already cached
       }
     } catch (error) {
       console.log(error);

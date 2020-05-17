@@ -17,14 +17,17 @@ type IssuedNumber {
   updatedAt: DateTime!
 }
 
-type MyTurnsResponse {
+type TurnResponse {
   id: ID!
   turn: String!
+  shopId: String!
   shopName: String!
+  status: IssuedNumberStatus!
 }
 
 type Query {
-  myTurns: [MyTurnsResponse!]!
+  myTurns: [TurnResponse!]!
+  turn(turnId: ID!): TurnResponse!
 }
 
 type RequestTurnResponse {

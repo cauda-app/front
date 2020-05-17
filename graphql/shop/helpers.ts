@@ -9,6 +9,7 @@ import {
 import { parseUTCTime } from 'src/utils/dates';
 import { parsePhone } from 'src/utils/phone-utils';
 import { numberToTurn } from 'graphql/utils/turn';
+import { TO_ISSUED_NUMBER_STATUS } from 'graphql/issuedNumber/helpers';
 
 const todaysStatus = (shopDetails: ShopDetails | PrismaShopDetails) => {
   const now = nowFromCoordinates(shopDetails.lat, shopDetails.lng);

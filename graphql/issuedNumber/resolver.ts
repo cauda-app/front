@@ -3,9 +3,11 @@ import { Context } from 'graphql/context';
 import {
   MutationRequestTurnArgs,
   MutationCancelTurnArgs,
+  QueryTurnArgs,
 } from '../../graphql.d';
 import { decodeId } from 'src/utils/hashids';
-import { myTurns } from './helpers';
+import { myTurns, ISSUED_NUMBER_STATUS } from './helpers';
+import { numberToTurn } from 'graphql/utils/turn';
 
 const getPendingTurns = (clientId: number, shopId: number, ctx: Context) =>
   ctx.prisma.issuedNumber.findMany({
@@ -24,6 +26,38 @@ const IssuedNumberResolver = {
       }
 
       return myTurns(ctx.tokenInfo.clientId, ctx.prisma);
+    },
+    turn: async (parent, args: QueryTurnArgs, ctx: Context) => {
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
+
+      const turnId = decodeId(args.turnId);
+
+      if (!turnId) {
+        return new ApolloError('Invalid turn id', 'INVALID_TURN_ID');
+      }
+
+      const issuedNumber = await ctx.prisma.issuedNumber.findOne({
+        where: { id: turnId as number },
+        select: {
+          issuedNumber: true,
+          clientId: true,
+          status: true,
+          shopDetails: { select: { name: true } },
+        },
+      });
+
+      if (!issuedNumber || issuedNumber.clientId !== ctx.tokenInfo.clientId) {
+        return new ApolloError('Turn not found', 'TURN_NOT_FOUND');
+      }
+
+      return {
+        id: args.turnId,
+        shopName: issuedNumber.shopDetails.name,
+        turn: numberToTurn(issuedNumber.issuedNumber),
+        status: issuedNumber.status,
+      };
     },
   },
   Mutation: {
@@ -112,12 +146,7 @@ const IssuedNumberResolver = {
     },
   },
   IssuedNumber: {},
-  IssuedNumberStatus: {
-    PENDING: 0,
-    ATTENDED: 1,
-    SKIPPED: 2,
-    CANCELLED: 3,
-  },
+  IssuedNumberStatus: ISSUED_NUMBER_STATUS,
 };
 
 export default IssuedNumberResolver;

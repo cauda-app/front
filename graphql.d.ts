@@ -24,11 +24,13 @@ export type Client = {
 export type Query = {
    __typename?: 'Query';
   client?: Maybe<Client>;
+  lastTurns: Array<LastTurns>;
   myShop: Shop;
   myTurn: Client;
-  myTurns: Array<MyTurnsResponse>;
+  myTurns: Array<TurnResponse>;
   nearByShops: Array<ShopDetails>;
   shops: Array<Shop>;
+  turn: TurnResponse;
 };
 
 
@@ -37,10 +39,20 @@ export type QueryClientArgs = {
 };
 
 
+export type QueryLastTurnsArgs = {
+  shopId: Scalars['ID'];
+};
+
+
 export type QueryNearByShopsArgs = {
   lat: Scalars['Float'];
   lng: Scalars['Float'];
   offset?: Scalars['Int'];
+};
+
+
+export type QueryTurnArgs = {
+  turnId: Scalars['ID'];
 };
 
 export type ClientSignupInput = {
@@ -70,11 +82,13 @@ export type IssuedNumber = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type MyTurnsResponse = {
-   __typename?: 'MyTurnsResponse';
+export type TurnResponse = {
+   __typename?: 'TurnResponse';
   id: Scalars['ID'];
   turn: Scalars['String'];
+  shopId: Scalars['String'];
   shopName: Scalars['String'];
+  status: IssuedNumberStatus;
 };
 
 export type RequestTurnResponse = {
@@ -302,7 +316,7 @@ export type ResolversTypes = ResolversObject<{
   Time: ResolverTypeWrapper<Scalars['Time']>,
   IssuedNumberStatus: IssuedNumberStatus,
   IssuedNumber: ResolverTypeWrapper<IssuedNumber>,
-  MyTurnsResponse: ResolverTypeWrapper<MyTurnsResponse>,
+  TurnResponse: ResolverTypeWrapper<TurnResponse>,
   RequestTurnResponse: ResolverTypeWrapper<RequestTurnResponse>,
   Mutation: ResolverTypeWrapper<{}>,
   NextTurnOperation: NextTurnOperation,
@@ -328,7 +342,7 @@ export type ResolversParentTypes = ResolversObject<{
   Time: Scalars['Time'],
   IssuedNumberStatus: IssuedNumberStatus,
   IssuedNumber: IssuedNumber,
-  MyTurnsResponse: MyTurnsResponse,
+  TurnResponse: TurnResponse,
   RequestTurnResponse: RequestTurnResponse,
   Mutation: {},
   NextTurnOperation: NextTurnOperation,
@@ -349,11 +363,13 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryClientArgs, never>>,
+  lastTurns?: Resolver<Array<ResolversTypes['LastTurns']>, ParentType, ContextType, RequireFields<QueryLastTurnsArgs, 'shopId'>>,
   myShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
   myTurn?: Resolver<ResolversTypes['Client'], ParentType, ContextType>,
-  myTurns?: Resolver<Array<ResolversTypes['MyTurnsResponse']>, ParentType, ContextType>,
+  myTurns?: Resolver<Array<ResolversTypes['TurnResponse']>, ParentType, ContextType>,
   nearByShops?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType, RequireFields<QueryNearByShopsArgs, 'lat' | 'lng' | 'offset'>>,
   shops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType>,
+  turn?: Resolver<ResolversTypes['TurnResponse'], ParentType, ContextType, RequireFields<QueryTurnArgs, 'turnId'>>,
 }>;
 
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
@@ -381,10 +397,12 @@ export type IssuedNumberResolvers<ContextType = any, ParentType extends Resolver
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
-export type MyTurnsResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['MyTurnsResponse'] = ResolversParentTypes['MyTurnsResponse']> = ResolversObject<{
+export type TurnResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['TurnResponse'] = ResolversParentTypes['TurnResponse']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   turn?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  shopId?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   shopName?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  status?: Resolver<ResolversTypes['IssuedNumberStatus'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
@@ -468,7 +486,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   DateTime?: GraphQLScalarType,
   Time?: GraphQLScalarType,
   IssuedNumber?: IssuedNumberResolvers<ContextType>,
-  MyTurnsResponse?: MyTurnsResponseResolvers<ContextType>,
+  TurnResponse?: TurnResponseResolvers<ContextType>,
   RequestTurnResponse?: RequestTurnResponseResolvers<ContextType>,
   Mutation?: MutationResolvers<ContextType>,
   Shop?: ShopResolvers<ContextType>,
