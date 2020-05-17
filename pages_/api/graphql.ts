@@ -38,6 +38,7 @@ const server = new ApolloServer({
     };
   },
   plugins: [apolloServerSentryPlugin],
+  engine: { apiKey: process.env.APOLLO_ENGINE_KEY },
 });
 
 export const config = {

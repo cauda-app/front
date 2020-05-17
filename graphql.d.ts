@@ -24,9 +24,9 @@ export type Client = {
 export type Query = {
    __typename?: 'Query';
   client?: Maybe<Client>;
-  getTurns: Array<IssuedNumber>;
   myShop: Shop;
   myTurn: Client;
+  myTurns: Array<MyTurnsResponse>;
   nearByShops: Array<ShopDetails>;
   shops: Array<Shop>;
 };
@@ -34,12 +34,6 @@ export type Query = {
 
 export type QueryClientArgs = {
   id?: Maybe<Scalars['ID']>;
-};
-
-
-export type QueryGetTurnsArgs = {
-  clientId: Scalars['Int'];
-  shopId?: Maybe<Scalars['String']>;
 };
 
 
@@ -74,6 +68,13 @@ export type IssuedNumber = {
   shop: Shop;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+};
+
+export type MyTurnsResponse = {
+   __typename?: 'MyTurnsResponse';
+  id: Scalars['ID'];
+  turn: Scalars['String'];
+  shopName: Scalars['String'];
 };
 
 export type RequestTurnResponse = {
@@ -293,14 +294,15 @@ export type ResolversTypes = ResolversObject<{
   Client: ResolverTypeWrapper<Client>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
   Query: ResolverTypeWrapper<{}>,
-  Int: ResolverTypeWrapper<Scalars['Int']>,
   Float: ResolverTypeWrapper<Scalars['Float']>,
+  Int: ResolverTypeWrapper<Scalars['Int']>,
   ClientSignupInput: ClientSignupInput,
   Date: ResolverTypeWrapper<Scalars['Date']>,
   DateTime: ResolverTypeWrapper<Scalars['DateTime']>,
   Time: ResolverTypeWrapper<Scalars['Time']>,
   IssuedNumberStatus: IssuedNumberStatus,
   IssuedNumber: ResolverTypeWrapper<IssuedNumber>,
+  MyTurnsResponse: ResolverTypeWrapper<MyTurnsResponse>,
   RequestTurnResponse: ResolverTypeWrapper<RequestTurnResponse>,
   Mutation: ResolverTypeWrapper<{}>,
   NextTurnOperation: NextTurnOperation,
@@ -318,14 +320,15 @@ export type ResolversParentTypes = ResolversObject<{
   Client: Client,
   ID: Scalars['ID'],
   Query: {},
-  Int: Scalars['Int'],
   Float: Scalars['Float'],
+  Int: Scalars['Int'],
   ClientSignupInput: ClientSignupInput,
   Date: Scalars['Date'],
   DateTime: Scalars['DateTime'],
   Time: Scalars['Time'],
   IssuedNumberStatus: IssuedNumberStatus,
   IssuedNumber: IssuedNumber,
+  MyTurnsResponse: MyTurnsResponse,
   RequestTurnResponse: RequestTurnResponse,
   Mutation: {},
   NextTurnOperation: NextTurnOperation,
@@ -346,9 +349,9 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryClientArgs, never>>,
-  getTurns?: Resolver<Array<ResolversTypes['IssuedNumber']>, ParentType, ContextType, RequireFields<QueryGetTurnsArgs, 'clientId'>>,
   myShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
   myTurn?: Resolver<ResolversTypes['Client'], ParentType, ContextType>,
+  myTurns?: Resolver<Array<ResolversTypes['MyTurnsResponse']>, ParentType, ContextType>,
   nearByShops?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType, RequireFields<QueryNearByShopsArgs, 'lat' | 'lng' | 'offset'>>,
   shops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType>,
 }>;
@@ -375,6 +378,13 @@ export type IssuedNumberResolvers<ContextType = any, ParentType extends Resolver
   shop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
   createdAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
   updatedAt?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
+}>;
+
+export type MyTurnsResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['MyTurnsResponse'] = ResolversParentTypes['MyTurnsResponse']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  turn?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  shopName?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
@@ -458,6 +468,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   DateTime?: GraphQLScalarType,
   Time?: GraphQLScalarType,
   IssuedNumber?: IssuedNumberResolvers<ContextType>,
+  MyTurnsResponse?: MyTurnsResponseResolvers<ContextType>,
   RequestTurnResponse?: RequestTurnResponseResolvers<ContextType>,
   Mutation?: MutationResolvers<ContextType>,
   Shop?: ShopResolvers<ContextType>,

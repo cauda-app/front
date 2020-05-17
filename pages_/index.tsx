@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next';
 import Link from 'next/link';
+import useSWR from 'swr';
 import useTranslation from 'next-translate/useTranslation';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
@@ -14,8 +15,8 @@ import Layout from 'src/components/Layout';
 import EmptyLanding from 'src/components/Landing/EmptyLanding';
 import { getToken } from 'src/utils/next';
 import prismaClient from 'prisma/client';
-import { encodeId } from 'src/utils/hashids';
-import { numberToTurn } from 'graphql/utils/turn';
+import graphqlClient from 'src/graphqlClient';
+import { myTurns } from 'graphql/issuedNumber/helpers';
 
 type Turn = {
   id: string;
@@ -24,14 +25,33 @@ type Turn = {
 };
 
 type Props = {
-  turns: Array<Turn>;
+  myTurns: Array<Turn>;
 };
 
-const MyTurns = ({ turns = [] }: Props) => {
-  const { t } = useTranslation();
+const fetcher = (query) => graphqlClient.request(query);
 
-  if (turns.length === 0) {
+const MyTurns = ({ myTurns = [] }: Props) => {
+  const { t } = useTranslation();
+  const { data, error } = useSWR(
+    /* GraphQL */ `
+      {
+        myTurns {
+          id
+          turn
+          shopName
+        }
+      }
+    `,
+    fetcher,
+    { initialData: { myTurns } }
+  );
+
+  if (data.myTurns.length === 0) {
     return <EmptyLanding />;
+  }
+
+  if (error) {
+    throw error;
   }
 
   return (
@@ -72,7 +92,7 @@ const MyTurns = ({ turns = [] }: Props) => {
           </Card.Header>
           <Card.Body>
             <ul className="list-unstyled">
-              {turns.map((turn) => (
+              {data.myTurns.map((turn) => (
                 <li key={turn.id}>
                   <Link href="/turn/[turnId]" as={'/turn/' + turn.id} passHref>
                     <Button variant="outline-success" size="lg">
@@ -127,25 +147,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { props: { isLoggedIn: true } };
   }
 
-  const issuedNumbers = await prismaClient.issuedNumber.findMany({
-    where: { clientId, status: 0 },
-    select: {
-      id: true,
-      issuedNumber: true,
-      shopDetails: { select: { name: true } },
-    },
-  });
-
-  const turns = issuedNumbers.map((issuedNumber) => ({
-    id: encodeId(issuedNumber.id),
-    turn: numberToTurn(issuedNumber.issuedNumber),
-    shopName: issuedNumber.shopDetails.name,
-  }));
+  const turns = await myTurns(clientId, prismaClient);
 
   return {
     props: {
       isLoggedIn: true,
-      turns,
+      myTurns: turns,
     },
   };
 };
