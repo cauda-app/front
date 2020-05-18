@@ -26,6 +26,7 @@ type TurnResponse {
 }
 
 type Query {
+  myPastTurns: [TurnResponse!]!
   myTurns: [TurnResponse!]!
   turn(turnId: ID!): TurnResponse!
 }

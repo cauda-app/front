@@ -1,7 +1,34 @@
+import { PrismaClient } from '@prisma/client';
 import { encodeId } from 'src/utils/hashids';
 import { numberToTurn } from 'graphql/utils/turn';
+import startOfToday from 'date-fns/startOfToday';
 
-export const myTurns = async (clientId, prisma) => {
+export const myPastTurns = async (clientId, prisma: PrismaClient) => {
+  const issuedNumbers = await prisma.issuedNumber.findMany({
+    where: {
+      clientId: clientId,
+      status: { in: [1, 2, 3] },
+      updatedAt: { gte: startOfToday() },
+    },
+    orderBy: { updatedAt: 'desc' },
+    first: 3,
+    select: {
+      id: true,
+      issuedNumber: true,
+      shopDetails: { select: { name: true } },
+    },
+  });
+
+  const turns = issuedNumbers.map((issuedNumber) => ({
+    id: encodeId(issuedNumber.id),
+    turn: numberToTurn(issuedNumber.issuedNumber),
+    shopName: issuedNumber.shopDetails.name,
+  }));
+
+  return turns;
+};
+
+export const myTurns = async (clientId, prisma: PrismaClient) => {
   const issuedNumbers = await prisma.issuedNumber.findMany({
     where: { clientId: clientId, status: 0 },
     select: {

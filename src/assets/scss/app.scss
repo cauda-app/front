@@ -18,7 +18,7 @@ $theme-colors: (
   'primary': #007aff,
   'secondary': #ff2d55,
   'info': #ff9500,
-  'light': #BF5AF2
+  'light': #bf5af2,
 );
 
 $font-family-sans-serif: 'Roboto', -apple-system, system-ui, BlinkMacSystemFont,
@@ -119,9 +119,9 @@ main {
         opacity: 0.2;
       }
     }
-    &:hover{
+    &:hover {
       color: var(--color_white) !important;
-      .numberbox {
+      .secondary {
         color: var(--color_white) !important;
       }
     }
@@ -160,6 +160,22 @@ main {
   margin-bottom: 1rem;
   font-size: 1.2rem;
   text-align: center;
+}
+.cauda_card + .inactive {
+  background-color: transparent !important;
+  box-shadow: none;
+  backdrop-filter: none;
+
+  .primary {
+    opacity: 0.7;
+  }
+
+  .btn {
+    .secondary {
+      color: var(--color_black);
+      opacity: 0.2;
+    }
+  }
 }
 
 // SCAN
@@ -222,8 +238,6 @@ main {
   }
 }
 
-
-
 // MY TURN
 
 .myturn__number {
@@ -239,7 +253,6 @@ main {
   text-align: center;
 }
 
-
 // MY TURNS
 
 .home_nav {
@@ -253,4 +266,3 @@ main {
     }
   }
 }
-

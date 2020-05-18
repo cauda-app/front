@@ -6,7 +6,7 @@ import {
   QueryTurnArgs,
 } from '../../graphql.d';
 import { decodeId } from 'src/utils/hashids';
-import { myTurns, ISSUED_NUMBER_STATUS } from './helpers';
+import { myTurns, ISSUED_NUMBER_STATUS, myPastTurns } from './helpers';
 import { numberToTurn } from 'graphql/utils/turn';
 
 const getPendingTurns = (clientId: number, shopId: number, ctx: Context) =>
@@ -20,6 +20,13 @@ const getPendingTurns = (clientId: number, shopId: number, ctx: Context) =>
 
 const IssuedNumberResolver = {
   Query: {
+    myPastTurns: async (parent, args: any, ctx: Context) => {
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
+
+      return myPastTurns(ctx.tokenInfo.clientId, ctx.prisma);
+    },
     myTurns: async (parent, args: any, ctx: Context) => {
       if (!ctx.tokenInfo?.isValid) {
         return new ApolloError('Invalid token', 'INVALID_TOKEN');

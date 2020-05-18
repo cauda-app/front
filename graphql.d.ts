@@ -25,6 +25,7 @@ export type Query = {
    __typename?: 'Query';
   client?: Maybe<Client>;
   lastTurns: Array<LastTurns>;
+  myPastTurns: Array<TurnResponse>;
   myShop: Shop;
   myTurn: Client;
   myTurns: Array<TurnResponse>;
@@ -364,6 +365,7 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   client?: Resolver<Maybe<ResolversTypes['Client']>, ParentType, ContextType, RequireFields<QueryClientArgs, never>>,
   lastTurns?: Resolver<Array<ResolversTypes['LastTurns']>, ParentType, ContextType, RequireFields<QueryLastTurnsArgs, 'shopId'>>,
+  myPastTurns?: Resolver<Array<ResolversTypes['TurnResponse']>, ParentType, ContextType>,
   myShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
   myTurn?: Resolver<ResolversTypes['Client'], ParentType, ContextType>,
   myTurns?: Resolver<Array<ResolversTypes['TurnResponse']>, ParentType, ContextType>,

@@ -16,11 +16,21 @@ import EmptyLanding from 'src/components/Landing/EmptyLanding';
 import { getToken } from 'src/utils/next';
 import prismaClient from 'prisma/client';
 import graphqlClient from 'src/graphqlClient';
-import { myTurns } from 'graphql/issuedNumber/helpers';
+import { myTurns, myPastTurns } from 'graphql/issuedNumber/helpers';
 
 export const MY_TURNS = /* GraphQL */ `
   query MyTurns {
     myTurns {
+      id
+      turn
+      shopName
+    }
+  }
+`;
+
+export const MY_PAST_TURNS = /* GraphQL */ `
+  query MyPastTurns {
+    myPastTurns {
       id
       turn
       shopName
@@ -35,23 +45,34 @@ type Turn = {
 };
 
 type Props = {
-  myTurns: Array<Turn>;
+  activeTurns: Array<Turn>;
+  pastTurns: Array<Turn>;
 };
 
 const fetcher = (query) => graphqlClient.request(query);
 
-const MyTurns = ({ myTurns = [] }: Props) => {
+const MyTurns = ({ activeTurns = [], pastTurns = [] }: Props) => {
   const { t } = useTranslation();
-  const { data, error } = useSWR(MY_TURNS, fetcher, {
-    initialData: { myTurns },
+  const { data: myTurnsData, error: myTurnsError } = useSWR(MY_TURNS, fetcher, {
+    initialData: { myTurns: activeTurns },
   });
+  const { data: myPastTurnsData, error: myPastTurnsError } = useSWR(
+    MY_PAST_TURNS,
+    fetcher,
+    {
+      initialData: { myPastTurns: pastTurns },
+    }
+  );
 
-  if (data.myTurns.length === 0) {
+  if (
+    myTurnsData.myTurns.length === 0 ||
+    myPastTurnsData.myPastTurns.length === 0
+  ) {
     return <EmptyLanding />;
   }
 
-  if (error) {
-    throw error;
+  if (myTurnsError || myPastTurnsError) {
+    throw myTurnsError || myPastTurnsError;
   }
 
   return (
@@ -92,13 +113,33 @@ const MyTurns = ({ myTurns = [] }: Props) => {
           </Card.Header>
           <Card.Body>
             <ul className="list-unstyled">
-              {data.myTurns.map((turn) => (
+              {myTurnsData.myTurns.map((turn) => (
                 <li key={turn.id}>
                   <Link href="/turn/[turnId]" as={'/turn/' + turn.id} passHref>
                     <Button variant="outline-success" size="lg">
                       <div className="primary">{turn.shopName}</div>
                       <div className="secondary">
                         <span className="number">{turn.turn}</span>
+                        <FontAwesomeIcon icon={faArrowRight} fixedWidth />
+                      </div>
+                    </Button>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Card.Body>
+        </Card>
+
+        <Card className="cauda_card cauda_shop mt-3 my_turns inactive">
+          <Card.Body>
+            <ul className="list-unstyled">
+              {myPastTurnsData.myPastTurns.map((turn) => (
+                <li key={turn.id}>
+                  <Link href="/turn/[turnId]" as={'/turn/' + turn.id} passHref>
+                    <Button variant="outline-dark" size="lg">
+                      <div className="primary">{turn.shopName}</div>
+                      <div className="secondary">
+                        <span className="numberbox">{turn.turn}</span>
                         <FontAwesomeIcon icon={faArrowRight} fixedWidth />
                       </div>
                     </Button>
@@ -147,14 +188,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { props: { isLoggedIn: true } };
   }
 
-  const turns = await myTurns(clientId, prismaClient);
+  const activeTurns = await myTurns(clientId, prismaClient);
+  const pastTurns = await myPastTurns(clientId, prismaClient);
 
   context.res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
 
   return {
     props: {
       isLoggedIn: true,
-      myTurns: turns,
+      activeTurns,
+      pastTurns,
     },
   };
 };
