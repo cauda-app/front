@@ -20,7 +20,7 @@
     "saturday": "Sábado",
     "sunday": "Domingo"
   },
-  "empty-shop-queue": "No hay personas esperando a ser atendidas, te sugerimos que vayas ahora.",
+  "empty-shop-queue": "Hay poca gente esperando, ya podés ir saliendo que en cualquier momento te toca!",
   "enter-cellphone": "Ingresa tu celular",
   "enter-code": "Ingresa el código",
   "expired-code": "El código que te enviamos expiró, por favor verificá tu numero e intentá nuevamente.",

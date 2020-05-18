@@ -28,14 +28,18 @@ export default function Notification({ message, onConfirm }: Props) {
           width: 100%;
           height: 100%;
           overflow: auto;
-          background-color: rgba(0, 0, 255, 0.3);
+          background-color: rgba(29, 29, 31, 0.74);
           display: flex;
           justify-content: center;
           align-items: center;
         }
 
         .content {
+          margin: 15px;
+          padding: 15px;
+          text-align: center;
           background-color: white;
+          border-radius: 4px;
         }
       `}</style>
     </div>
