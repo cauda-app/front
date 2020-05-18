@@ -54,8 +54,8 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
       if (res.requestTurn.pendingTurnsAmount <= goToShopThreshold) {
         setShowModal(true);
       } else {
+        await mutate(MY_TURNS); // invalidate cached data
         goToHome();
-        mutate(MY_TURNS); // trigger an update if data is already cached
       }
     } catch (error) {
       console.log(error);

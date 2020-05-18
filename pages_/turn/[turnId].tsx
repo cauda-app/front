@@ -18,9 +18,10 @@ import { lastTurns } from 'graphql/shop/helpers';
 import NotFound from 'src/components/NotFound';
 import Spinner from 'src/components/Spinner';
 import graphQLClient from 'src/graphqlClient';
-import useSWR from 'swr';
+import useSWR, { mutate } from 'swr';
 import LoadingButton from 'src/components/LoadingButton';
 import { TO_ISSUED_NUMBER_STATUS } from 'graphql/issuedNumber/helpers';
+import { MY_PAST_TURNS, MY_TURNS } from 'pages_';
 
 const reload = () => Router.reload();
 
@@ -98,6 +99,8 @@ const MyTurn = ({
         turnId: router.query.turnId,
       });
       if (cancelTurn) {
+        await mutate(MY_TURNS);
+        await mutate(MY_PAST_TURNS);
         Router.push('/');
       }
       setCancelling(false);
