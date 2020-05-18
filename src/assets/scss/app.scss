@@ -161,7 +161,7 @@ main {
   font-size: 1.2rem;
   text-align: center;
 }
-.cauda_card + .inactive {
+.cauda_card.inactive {
   background-color: transparent !important;
   box-shadow: none;
   backdrop-filter: none;

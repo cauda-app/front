@@ -65,7 +65,7 @@ const MyTurns = ({ activeTurns = [], pastTurns = [] }: Props) => {
   );
 
   if (
-    myTurnsData.myTurns.length === 0 ||
+    myTurnsData.myTurns.length === 0 &&
     myPastTurnsData.myPastTurns.length === 0
   ) {
     return <EmptyLanding />;
@@ -107,48 +107,60 @@ const MyTurns = ({ activeTurns = [], pastTurns = [] }: Props) => {
           </Col>
         </Row>
 
-        <Card className="cauda_card cauda_shop mt-3 my_turns">
-          <Card.Header className="text-center">
-            {t('common:my-active-turns')}
-          </Card.Header>
-          <Card.Body>
-            <ul className="list-unstyled">
-              {myTurnsData.myTurns.map((turn) => (
-                <li key={turn.id}>
-                  <Link href="/turn/[turnId]" as={'/turn/' + turn.id} passHref>
-                    <Button variant="outline-success" size="lg">
-                      <div className="primary">{turn.shopName}</div>
-                      <div className="secondary">
-                        <span className="number">{turn.turn}</span>
-                        <FontAwesomeIcon icon={faArrowRight} fixedWidth />
-                      </div>
-                    </Button>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </Card.Body>
-        </Card>
+        {myTurnsData.myTurns.length === 0 ? null : (
+          <Card className="cauda_card cauda_shop mt-3 my_turns">
+            <Card.Header className="text-center">
+              {t('common:my-active-turns')}
+            </Card.Header>
+            <Card.Body>
+              <ul className="list-unstyled">
+                {myTurnsData.myTurns.map((turn) => (
+                  <li key={turn.id}>
+                    <Link
+                      href="/turn/[turnId]"
+                      as={'/turn/' + turn.id}
+                      passHref
+                    >
+                      <Button variant="outline-success" size="lg">
+                        <div className="primary">{turn.shopName}</div>
+                        <div className="secondary">
+                          <span className="number">{turn.turn}</span>
+                          <FontAwesomeIcon icon={faArrowRight} fixedWidth />
+                        </div>
+                      </Button>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Card.Body>
+          </Card>
+        )}
 
-        <Card className="cauda_card cauda_shop mt-3 my_turns inactive">
-          <Card.Body>
-            <ul className="list-unstyled">
-              {myPastTurnsData.myPastTurns.map((turn) => (
-                <li key={turn.id}>
-                  <Link href="/turn/[turnId]" as={'/turn/' + turn.id} passHref>
-                    <Button variant="outline-dark" size="lg">
-                      <div className="primary">{turn.shopName}</div>
-                      <div className="secondary">
-                        <span className="numberbox">{turn.turn}</span>
-                        <FontAwesomeIcon icon={faArrowRight} fixedWidth />
-                      </div>
-                    </Button>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </Card.Body>
-        </Card>
+        {myPastTurnsData.myPastTurns.length === 0 ? null : (
+          <Card className="cauda_card cauda_shop mt-3 my_turns inactive">
+            <Card.Body>
+              <ul className="list-unstyled">
+                {myPastTurnsData.myPastTurns.map((turn) => (
+                  <li key={turn.id}>
+                    <Link
+                      href="/turn/[turnId]"
+                      as={'/turn/' + turn.id}
+                      passHref
+                    >
+                      <Button variant="outline-dark" size="lg">
+                        <div className="primary">{turn.shopName}</div>
+                        <div className="secondary">
+                          <span className="numberbox">{turn.turn}</span>
+                          <FontAwesomeIcon icon={faArrowRight} fixedWidth />
+                        </div>
+                      </Button>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </Card.Body>
+          </Card>
+        )}
 
         <Row className="w-100">
           <Col className="d-flex justify-content-center align-items-center mx-auto">
@@ -188,10 +200,10 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { props: { isLoggedIn: true } };
   }
 
-  const activeTurns = await myTurns(clientId, prismaClient);
-  const pastTurns = await myPastTurns(clientId, prismaClient);
-
-  context.res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
+  const [activeTurns, pastTurns] = await Promise.all([
+    myTurns(clientId, prismaClient),
+    myPastTurns(clientId, prismaClient),
+  ]);
 
   return {
     props: {
