@@ -43,7 +43,7 @@ const Shops = ({ coords: { lat, lng } }: Props) => {
   const [hasNextPage, setHasNextPage] = React.useState(false);
 
   React.useEffect(() => {
-    if (data.nearByShops && data.nearByShops.length % PAGE_ROWS === 0) {
+    if (data.nearByShops?.length && data.nearByShops.length % PAGE_ROWS === 0) {
       setHasNextPage(true);
     } else {
       setHasNextPage(false);
@@ -75,12 +75,12 @@ const Shops = ({ coords: { lat, lng } }: Props) => {
   };
 
   if (error) {
-    return <div>{String(error)}</div>;
+    throw error;
   }
 
   return (
     <Layout>
-      <div className="content">
+      <div className="content h-100">
         <Row>
           <Col xs="1">
             <GoBack />
@@ -90,11 +90,21 @@ const Shops = ({ coords: { lat, lng } }: Props) => {
           </Col>
         </Row>
 
+        {data.nearByShops?.length === 0 ? (
+          <div className="text-center m-auto p-3">
+            <span>{t('common:no-shops')}</span>
+          </div>
+        ) : null}
+
         {data.nearByShops?.map((shop) => (
           <ShopCard key={shop.id} shop={shop} />
         ))}
 
-        {loading ? <Spinner /> : null}
+        {loading ? (
+          <Spinner
+            className={!data.nearByShops ? 'h-100 align-items-center' : ''}
+          />
+        ) : null}
 
         {data.nearByShops && hasNextPage ? (
           <Button
