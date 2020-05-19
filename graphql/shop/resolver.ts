@@ -7,6 +7,7 @@ import {
   Shop,
   ShopDetails,
   ShopInput,
+  QueryLastTurnsArgs,
   QueryNearByShopsArgs,
   MutationRegisterShopArgs,
   MutationUpdateShopArgs,
@@ -38,6 +39,9 @@ const mapShop = (shop: ShopInput): ShopInput => {
 
 const shopResolver = {
   Query: {
+    lastTurns: (parent, args: QueryLastTurnsArgs, ctx: Context) => {
+      return lastTurns(ctx.prisma, decodeId(args.shopId) as number);
+    },
     shops: (parent, args, ctx: Context) => {
       return ctx.prisma.shop.findMany();
     },

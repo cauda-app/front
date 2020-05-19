@@ -56,9 +56,10 @@ type ShopDetails {
 }
 
 type Query {
+  lastTurns(shopId: ID!): [LastTurns!]!
   myShop: Shop!
-  shops: [Shop!]!
   nearByShops(lat: Float!, lng: Float!, offset: Int! = 0): [ShopDetails!]!
+  shops: [Shop!]!
 }
 
 type Mutation {

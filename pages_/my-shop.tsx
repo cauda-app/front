@@ -16,7 +16,7 @@ import graphqlClient from 'src/graphqlClient';
 
 type Props = {
   isLoggedIn: boolean;
-  shopId?: string;
+  shopId?: number;
 };
 
 const MyShop = ({ isLoggedIn, shopId }: Props) => {
@@ -262,7 +262,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { props: { isLoggedIn: false } };
   }
 
-  return { props: { isLoggedIn: true, shopId: token?.shopId || '' } };
+  return { props: { isLoggedIn: true, shopId: token.shopId || '' } };
 };
 
 export default MyShop;

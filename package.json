@@ -73,6 +73,7 @@
     "react-qr-reader": "^2.2.1",
     "react-ssr-prepass": "npm:preact-ssr-prepass@^1.0.1",
     "sass": "^1.26.3",
+    "swr": "^0.2.0",
     "tz-lookup": "^6.1.25"
   },
   "devDependencies": {

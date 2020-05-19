@@ -3,9 +3,11 @@ import { Context } from 'graphql/context';
 import {
   MutationRequestTurnArgs,
   MutationCancelTurnArgs,
-  QueryGetTurnsArgs,
+  QueryTurnArgs,
 } from '../../graphql.d';
 import { decodeId } from 'src/utils/hashids';
+import { myTurns, ISSUED_NUMBER_STATUS, myPastTurns } from './helpers';
+import { numberToTurn } from 'graphql/utils/turn';
 
 const getPendingTurns = (clientId: number, shopId: number, ctx: Context) =>
   ctx.prisma.issuedNumber.findMany({
@@ -18,14 +20,51 @@ const getPendingTurns = (clientId: number, shopId: number, ctx: Context) =>
 
 const IssuedNumberResolver = {
   Query: {
-    getTurns: (parent, args: QueryGetTurnsArgs, ctx: Context) => {
-      const where: any = { clientId: args.clientId };
-      if (args.shopId) {
-        where.shopId = decodeId(args.shopId);
+    myPastTurns: async (parent, args: any, ctx: Context) => {
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
       }
-      return ctx.prisma.issuedNumber.findMany({
-        where,
+
+      return myPastTurns(ctx.tokenInfo.clientId, ctx.prisma);
+    },
+    myTurns: async (parent, args: any, ctx: Context) => {
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
+
+      return myTurns(ctx.tokenInfo.clientId, ctx.prisma);
+    },
+    turn: async (parent, args: QueryTurnArgs, ctx: Context) => {
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
+
+      const turnId = decodeId(args.turnId);
+
+      if (!turnId) {
+        return new ApolloError('Invalid turn id', 'INVALID_TURN_ID');
+      }
+
+      const issuedNumber = await ctx.prisma.issuedNumber.findOne({
+        where: { id: turnId as number },
+        select: {
+          issuedNumber: true,
+          clientId: true,
+          status: true,
+          shopDetails: { select: { name: true } },
+        },
       });
+
+      if (!issuedNumber || issuedNumber.clientId !== ctx.tokenInfo.clientId) {
+        return new ApolloError('Turn not found', 'TURN_NOT_FOUND');
+      }
+
+      return {
+        id: args.turnId,
+        shopName: issuedNumber.shopDetails.name,
+        turn: numberToTurn(issuedNumber.issuedNumber),
+        status: issuedNumber.status,
+      };
     },
   },
   Mutation: {
@@ -38,6 +77,10 @@ const IssuedNumberResolver = {
         return new ApolloError('Client Id not provided', 'INVALID_CLIENT_ID');
       }
       const shopId = decodeId(args.shopId) as number;
+
+      if (!shopId) {
+        return new ApolloError('Invalid shop id', 'INVALID_SHOP_ID');
+      }
 
       let appointments = await getPendingTurns(
         ctx.tokenInfo.clientId,
@@ -52,7 +95,7 @@ const IssuedNumberResolver = {
         );
       }
 
-      const rawQuery = `CALL increaseShopCounter("${shopId}", ${ctx.tokenInfo.clientId});`;
+      const rawQuery = `CALL increaseShopCounter(${shopId}, ${ctx.tokenInfo.clientId});`;
       await ctx.prisma.raw(rawQuery);
 
       appointments = await getPendingTurns(ctx.tokenInfo.clientId, shopId, ctx);
@@ -110,12 +153,7 @@ const IssuedNumberResolver = {
     },
   },
   IssuedNumber: {},
-  IssuedNumberStatus: {
-    PENDING: 0,
-    ATTENDED: 1,
-    SKIPPED: 2,
-    CANCELLED: 3,
-  },
+  IssuedNumberStatus: ISSUED_NUMBER_STATUS,
 };
 
 export default IssuedNumberResolver;

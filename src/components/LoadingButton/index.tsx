@@ -3,6 +3,7 @@ import Spinner from 'react-bootstrap/Spinner';
 import useTranslation from 'next-translate/useTranslation';
 
 type Props = {
+  className?: any;
   isLoading: boolean;
   children: React.ReactNode;
 };
@@ -10,12 +11,18 @@ type Props = {
 export default function LoadingButton({
   isLoading,
   children,
+  className,
   ...props
 }: Props & any) {
   const { t } = useTranslation();
 
   return (
-    <Button block disabled={isLoading} {...props}>
+    <Button
+      block
+      disabled={isLoading}
+      className={isLoading ? '' : className}
+      {...props}
+    >
       {isLoading ? (
         <Spinner
           as="span"
