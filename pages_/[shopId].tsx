@@ -100,15 +100,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const encodedShopId = context.params?.shopId as string | undefined;
-  const shopId = decodeId(encodedShopId) as number | undefined;
-  let shop;
+  const shopId = decodeId(encodedShopId) as number | null;
 
   if (shopId) {
     const dbShop = await prismaClient.shopDetails.findOne({
       where: { shopId },
     });
     if (dbShop) {
-      shop = {
+      const shop = {
         shopId: encodedShopId,
         name: dbShop.name,
         address: dbShop.address,
@@ -118,13 +117,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         isOpen: isOpen(dbShop),
         status: status(dbShop),
       };
-    } else {
-      context.res.statusCode = 404;
-      return { props: { isLoggedIn: true, statusCode: 404 } };
+
+      return { props: { isLoggedIn: true, shop } };
     }
   }
 
-  return { props: { isLoggedIn: true, shop } };
+  context.res.statusCode = 404;
+  return { props: { isLoggedIn: true, statusCode: 404 } };
 };
 
 export default RequestTurn;
