@@ -50,6 +50,7 @@
   "phone": "Teléfono",
   "phone-invalid": "El número ingresado es inválido",
   "phone-required": "Requerido, ingrese un Teléfono válido",
+  "qr-reader-error": "Ocurrio un error al activar el lector QR",
   "register": "Registrate",
   "register-cellphone": "Registro de Teléfono",
   "request-turn": "Solicitar Turno",

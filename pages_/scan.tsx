@@ -18,7 +18,6 @@ const QrReader: ComponentType<ReaderProps> = dynamic(
   }
 );
 
-const Error = ({ error }) => <div>ERROR: {error}</div>;
 const QrTemplate = () => (
   <div>
     <img className="img-fluid" src={img_templateUrl}></img>
@@ -57,7 +56,7 @@ const Scan = () => {
         <Card className="cauda_card cauda_scan p-4 text-center">
           <Card.Body className="p-0">
             {error ? (
-              <Error error={error} />
+              t('common:qr-reader-error')
             ) : (
               <>
                 <div className="scanning_bar">
