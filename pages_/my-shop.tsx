@@ -210,18 +210,18 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
         </Card.Body>
       </Card>
 
-      <Card className="Xcauda_card mb-4 mx-auto">
+      <Card className="cauda_card mb-4 mx-auto">
         <Card.Body className="p-2 text-center">
           <div className="d-flex justify-content-center align-items-center mb-1">
-            <span className="h6 text-uppercase font-weight-light mr-1 text-light">
+            <span className="h6 text-uppercase font-weight-light mr-1 mb-0 text-light">
               {t('common:pending-turns')}
             </span>
-            <span className="h2 text-uppercase font-weight-light ml-2 text-light">
+            <span className="h2 text-uppercase font-weight-light ml-2 mb-0 text-light">
               {myShop!.pendingTurnsAmount}
             </span>
           </div>
 
-          <Button
+          {/* <Button
             disabled={myShop.pendingTurnsAmount === 0 || actionLoading}
             onClick={cancelTurns}
             variant="light"
@@ -229,7 +229,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
             block
           >
             {t('common:cancel-pending')}
-          </Button>
+          </Button> */}
         </Card.Body>
       </Card>
 
