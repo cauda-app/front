@@ -14,6 +14,7 @@ import { getToken } from 'src/utils/next';
 import Layout from 'src/components/Layout';
 import Spinner from 'src/components/Spinner';
 import graphqlClient from 'src/graphqlClient';
+import LoadingButton from 'src/components/LoadingButton';
 
 type Props = {
   isLoggedIn: boolean;
@@ -25,10 +26,10 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
 
   const [myShop, setMyShop] = useState<any>();
   const [error, setError] = useState();
-  const [actionLoading, setActionLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState('');
 
   const nextTurn = async (op: 'ATTEND' | 'SKIP') => {
-    setActionLoading(true);
+    setActionLoading(op);
     const NEXT_TURN = /* GraphQL */ `
       mutation NextTurn($op: NextTurnOperation!) {
         nextTurn(op: $op) {
@@ -45,39 +46,39 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
     try {
       const res = await graphqlClient.request(NEXT_TURN, { op });
       setMyShop({ ...myShop, ...res.nextTurn });
-      setActionLoading(false);
+      setActionLoading('');
     } catch (error) {
       setError(error);
-      setActionLoading(false);
+      setActionLoading('');
       Sentry.captureException(error);
     }
   };
 
-  const cancelTurns = async () => {
-    setActionLoading(true);
-    const CANCEL_TURNS = /* GraphQL */ `
-      mutation CancelTurns {
-        cancelTurns {
-          nextTurn
-          lastTurns {
-            status
-            turn
-          }
-          pendingTurnsAmount
-        }
-      }
-    `;
+  // const cancelTurns = async () => {
+  //   setActionLoading(true);
+  //   const CANCEL_TURNS = /* GraphQL */ `
+  //     mutation CancelTurns {
+  //       cancelTurns {
+  //         nextTurn
+  //         lastTurns {
+  //           status
+  //           turn
+  //         }
+  //         pendingTurnsAmount
+  //       }
+  //     }
+  //   `;
 
-    try {
-      const res = await graphqlClient.request(CANCEL_TURNS);
-      setMyShop({ ...myShop, ...res.cancelTurns });
-      setActionLoading(false);
-    } catch (error) {
-      setError(error);
-      setActionLoading(false);
-      Sentry.captureException(error);
-    }
-  };
+  //   try {
+  //     const res = await graphqlClient.request(CANCEL_TURNS);
+  //     setMyShop({ ...myShop, ...res.cancelTurns });
+  //     setActionLoading(false);
+  //   } catch (error) {
+  //     setError(error);
+  //     setActionLoading(false);
+  //     Sentry.captureException(error);
+  //   }
+  // };
 
   const getShopData = async () => {
     if (!shopId) {
@@ -180,8 +181,9 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
               <p className="myturn__number display-1">{myShop!.nextTurn}</p>
 
               <div className="pl-4 pr-4">
-                <Button
-                  disabled={actionLoading}
+                <LoadingButton
+                  isLoading={actionLoading === 'ATTEND'}
+                  disabled={!!actionLoading}
                   onClick={() => nextTurn('ATTEND')}
                   variant="success"
                   size="lg"
@@ -189,10 +191,11 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
                   block
                 >
                   {t('common:attend-turn')}
-                </Button>
+                </LoadingButton>
 
-                <Button
-                  disabled={actionLoading}
+                <LoadingButton
+                  isLoading={actionLoading === 'SKIP'}
+                  disabled={!!actionLoading}
                   onClick={() => nextTurn('SKIP')}
                   variant="danger"
                   size="lg"
@@ -200,7 +203,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
                   block
                 >
                   {t('common:turn-missed')}
-                </Button>
+                </LoadingButton>
               </div>
             </>
           ) : (
