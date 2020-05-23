@@ -1,7 +1,8 @@
 import { ApolloError } from 'apollo-server-core';
+import getConfig from 'next/config';
 
 import { days, serializeTime } from 'src/utils/dates';
-import { formatPhone } from 'src/utils/phone-utils';
+import { formatPhone, getNationalNumber } from 'src/utils/phone-utils';
 import { Context } from 'graphql/context';
 import {
   Shop,
@@ -17,6 +18,10 @@ import { setCookieToken } from '../utils/jwt';
 import { numberToTurn } from '../utils/turn';
 import { isOpen, shopPhone, status, lastTurns } from './helpers';
 import { decodeId, encodeId } from 'src/utils/hashids';
+import sendSms from 'graphql/utils/smsApi';
+
+const { publicRuntimeConfig } = getConfig();
+const threshold = Number(publicRuntimeConfig.goToShopThreshold);
 
 const mapShop = (shop: ShopInput): ShopInput => {
   const updatedShop = { ...shop };
@@ -160,21 +165,53 @@ const shopResolver = {
       const getShop = () =>
         ctx.prisma.shop.findOne({
           where: { id: ctx.tokenInfo!.shopId },
+          include: {
+            shopDetails: true,
+          },
         });
 
       // TODO: this won't work for multiple employees attending in parallel
-      const nextTurn = await ctx.prisma.issuedNumber.findMany({
+      const nextTurns = await ctx.prisma.issuedNumber.findMany({
         where: { shopId: ctx.tokenInfo!.shopId, AND: { status: 0 } },
         orderBy: { issuedNumber: 'asc' },
-        first: 1,
+        first: threshold + 1,
       });
 
-      if (!nextTurn.length) {
-        return getShop();
+      const shop = await getShop();
+
+      if (!nextTurns.length) {
+        return shop;
+      }
+
+      // If there is a turn after threshold, send a notification
+      const nextTurnToNotify = nextTurns[threshold];
+      if (nextTurnToNotify && nextTurnToNotify.shouldNotify) {
+        const client = await ctx.prisma.client.findOne({
+          where: { id: nextTurnToNotify.clientId },
+          select: {
+            phone: true,
+          },
+        });
+
+        if (!client) {
+          return new ApolloError(
+            'Not possible to attend turn, No clientId not found',
+            'CLIENT_ID_NOT_FOUND'
+          );
+        }
+
+        const message = `Tu turno en ${shop?.shopDetails.name} está próximo a ser atendido. Solo hay ${threshold} personas por delante.`;
+        const localPhone = getNationalNumber(client.phone);
+        if (process.env.SMS_ENABLED === '1') {
+          sendSms(localPhone, message);
+          console.log(`SMS-(${localPhone}): ${message}`);
+        } else {
+          console.log(`SMS-MOCK-(${localPhone}): ${message}`);
+        }
       }
 
       await ctx.prisma.issuedNumber.update({
-        where: { id: nextTurn[0].id },
+        where: { id: nextTurns[0].id },
         data: { status: args.op === 'ATTEND' ? 1 : 2 },
       });
 

@@ -27,6 +27,9 @@ export default function ShopCard({ shop, onRequestTurn, ...rest }: Props) {
     try {
       setIsLoading(true);
       await onRequestTurn!(shop.shopId);
+    } catch (error) {
+      // TODO: show error
+      console.log(error);
     } finally {
       setIsLoading(false);
     }

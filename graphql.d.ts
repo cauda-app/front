@@ -75,6 +75,7 @@ export type IssuedNumber = {
   id: Scalars['ID'];
   issuedNumber?: Maybe<Scalars['Int']>;
   status: IssuedNumberStatus;
+  shouldNotify: Scalars['Boolean'];
   clientId: Scalars['Int'];
   shopId: Scalars['String'];
   client: Client;
@@ -390,6 +391,7 @@ export type IssuedNumberResolvers<ContextType = any, ParentType extends Resolver
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   issuedNumber?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
   status?: Resolver<ResolversTypes['IssuedNumberStatus'], ParentType, ContextType>,
+  shouldNotify?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
   clientId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   shopId?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   client?: Resolver<ResolversTypes['Client'], ParentType, ContextType>,

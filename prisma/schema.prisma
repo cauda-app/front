@@ -21,6 +21,7 @@ model IssuedNumber {
   shopId       Int
   issuedNumber Int
   status       Int
+  shouldNotify Boolean     @default(false)
   client       Client      @relation(fields: [clientId], references: [id])
   shop         Shop        @relation(fields: [shopId], references: [id])
   shopDetails  ShopDetails @relation(fields: [shopId], references: [shopId])
