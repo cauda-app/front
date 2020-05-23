@@ -263,12 +263,14 @@ const VerifyPhone = () => {
   );
 };
 
-const VerifyProneWithCaptcha = () => {
+const VerifyPhoneWithCaptcha = () => {
   return (
-    <GoogleReCaptchaProvider reCaptchaKey={process.env.RE_CAPTCHA_KEY}>
+    <GoogleReCaptchaProvider
+      reCaptchaKey={process.env.NEXT_PUBLIC_RE_CAPTCHA_KEY}
+    >
       <VerifyPhone />
     </GoogleReCaptchaProvider>
   );
 };
 
-export default VerifyProneWithCaptcha;
+export default VerifyPhoneWithCaptcha;
