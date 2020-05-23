@@ -11,7 +11,12 @@ import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
 import parseISO from 'date-fns/parseISO';
 import Router, { useRouter } from 'next/router';
+import getConfig from 'next/config';
 import * as Sentry from '@sentry/browser';
+import {
+  GoogleReCaptchaProvider,
+  useGoogleReCaptcha,
+} from 'react-google-recaptcha-v3';
 
 import Layout from 'src/components/Layout';
 import { validatePhoneRequest, getErrorCodeFromApollo } from 'src/utils';
@@ -26,8 +31,8 @@ const VERIFY_CODE = /* GraphQL */ `
 `;
 
 const VERIFY_PHONE = /* GraphQL */ `
-  mutation VerifyPhone($phone: String!) {
-    verifyPhone(phone: $phone)
+  mutation VerifyPhone($phone: String!, $token: String!) {
+    verifyPhone(phone: $phone, token: $token)
   }
 `;
 
@@ -35,6 +40,7 @@ const VerifyPhone = () => {
   const { t } = useTranslation();
   const router = useRouter();
 
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [sendCodeScreen, setSendCodeScreen] = useState(true);
   const [phone, setPhone] = useState<string>('');
   const [code, setCode] = useState<number>();
@@ -62,17 +68,25 @@ const VerifyPhone = () => {
   };
 
   const onSendCode = async () => {
+    setIsSubmitting(true);
+
     const isValid = await validatePhoneRequest(phone);
 
     if (!isValid) {
       setErrors({ ...errors, phone: t('common:phone-invalid') });
+      setIsSubmitting(false);
       return;
     }
 
-    setIsSubmitting(true);
+    if (!executeRecaptcha) {
+      setIsSubmitting(false);
+      return;
+    }
+
+    const token = await executeRecaptcha('register');
 
     try {
-      const res = await graphqlClient.request(VERIFY_PHONE, { phone });
+      const res = await graphqlClient.request(VERIFY_PHONE, { phone, token });
       setExpiresIn(parseISO(res.verifyPhone));
       setIsSubmitting(false);
       setSendCodeScreen(false);
@@ -250,4 +264,15 @@ const VerifyPhone = () => {
   );
 };
 
-export default VerifyPhone;
+const VerifyProneWithCaptcha = () => {
+  const nextConfig = getConfig();
+  const reCaptchaKey = nextConfig?.publicRuntimeConfig?.reCaptchaKey;
+
+  return (
+    <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey}>
+      <VerifyPhone />
+    </GoogleReCaptchaProvider>
+  );
+};
+
+export default VerifyProneWithCaptcha;
