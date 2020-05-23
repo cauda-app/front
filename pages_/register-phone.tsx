@@ -264,7 +264,6 @@ const VerifyPhone = () => {
 };
 
 const VerifyProneWithCaptcha = () => {
-  console.log('process.env.RE_CAPTCHA_KEY: ', process.env.RE_CAPTCHA_KEY);
   return (
     <GoogleReCaptchaProvider reCaptchaKey={process.env.RE_CAPTCHA_KEY}>
       <VerifyPhone />
