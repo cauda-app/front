@@ -11,7 +11,6 @@ import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import differenceInSeconds from 'date-fns/differenceInSeconds';
 import parseISO from 'date-fns/parseISO';
 import Router, { useRouter } from 'next/router';
-import getConfig from 'next/config';
 import * as Sentry from '@sentry/browser';
 import {
   GoogleReCaptchaProvider,
@@ -265,11 +264,8 @@ const VerifyPhone = () => {
 };
 
 const VerifyProneWithCaptcha = () => {
-  const nextConfig = getConfig();
-  const reCaptchaKey = nextConfig?.publicRuntimeConfig?.reCaptchaKey;
-
   return (
-    <GoogleReCaptchaProvider reCaptchaKey={reCaptchaKey}>
+    <GoogleReCaptchaProvider reCaptchaKey={process.env.RE_CAPTCHA_KEY}>
       <VerifyPhone />
     </GoogleReCaptchaProvider>
   );

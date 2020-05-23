@@ -8,8 +8,7 @@ module.exports = withSourceMaps(
     env: result.parsed || {},
     publicRuntimeConfig: {
       version: packageJson.version,
-      goToShopThreshold: 5,
-      reCaptchaKey: result.parsed.RE_CAPTCHA_KEY,
+      goToShopThreshold: 5      
     },
     experimental: {
       modern: true,
