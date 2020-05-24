@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+
+    <title>Shop QR Poster</title>
+    <style>
+      .poster {
+        margin: 0 auto;
+        position: relative;
+        max-width: 1190px;
+      }
+      .qr_target {
+        position: absolute;
+        top: 40%;
+        width: 100%;
+      }
+      .qr_target img {
+        width: 38%;
+      }
+      .url_target {
+        position: absolute;
+        bottom: 8.8%;
+        width: 100%;
+        font-size: 3.5vw;
+        font-weight: bold;
+      }
+      @media (min-width: 1190px) {
+        .url_target {
+          font-size: 42px;
+        }
+      }
+      @media print {
+        @page { margin: 0; }
+        body { margin: 1.6cm; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="poster text-center">
+      <img src="/cauda_poster_empty.png" class="img-fluid" />
+      <div class="qr_target"><img src="/cauda_qrcode@3x.png" class="img-fluid" /></div>
+      <div class="url_target">cauda.app/abc123</div>
+    </div>
+  </body>
+</html>
