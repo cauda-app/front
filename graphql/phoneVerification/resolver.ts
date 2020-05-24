@@ -1,5 +1,6 @@
 import { ApolloError } from 'apollo-server-core';
 import addMinutes from 'date-fns/addMinutes';
+import addHours from 'date-fns/addHours';
 import compareAsc from 'date-fns/compareAsc';
 
 import { setCookieToken } from '../../graphql/utils/jwt';
@@ -75,6 +76,18 @@ const phoneVerificationResolver = {
         where: { phone },
       });
 
+      // If three codes were already sent, wait for 4h before sending another.
+      if (
+        phoneVerification &&
+        phoneVerification.attempts >= 3 &&
+        compareAsc(new Date(), addHours(phoneVerification.updatedAt, 4)) === -1
+      ) {
+        return new ApolloError(
+          'Limit code sent exceeded',
+          'LIMIT_CODE_SENT_EXCEEDED'
+        );
+      }
+
       // Do not send before PHONE_CODE_EXPIRY
       if (
         phoneVerification &&
@@ -99,9 +112,11 @@ const phoneVerificationResolver = {
           phone,
           code,
           expiry,
+          attempts: 1,
         },
         update: {
           code,
+          attempts: (phoneVerification?.attempts || 0) + 1,
           expiry,
         },
       });

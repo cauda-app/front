@@ -80,6 +80,7 @@ model PhoneVerification {
   id        Int       @default(autoincrement()) @id
   phone     String    @unique
   code      Int
+  attempts  Int
   expiry    DateTime
   verified  DateTime?
   createdAt DateTime  @default(now())
