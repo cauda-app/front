@@ -4,14 +4,31 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-
     <title>Shop QR Poster</title>
     <style>
+      body {
+        margin: 0;
+        font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: #000;
+        text-align: left;
+        background-color: #fff;
+      }
       .poster {
         margin: 0 auto;
         position: relative;
         max-width: 1190px;
+        text-align: center;
+      }
+      .poster > img {
+        user-select: none;
+        pointer-events: none;
+      }
+      .img-fluid {
+        max-width: 100%;
+        height: auto;
       }
       .qr_target {
         position: absolute;
@@ -23,7 +40,7 @@
       }
       .url_target {
         position: absolute;
-        bottom: 8.8%;
+        bottom: 9%;
         width: 100%;
         font-size: 3.5vw;
         font-weight: bold;
@@ -40,7 +57,7 @@
     </style>
   </head>
   <body>
-    <div class="poster text-center">
+    <div class="poster">
       <img src="/cauda_poster_empty.png" class="img-fluid" />
       <div class="qr_target"><img src="/cauda_qrcode@3x.png" class="img-fluid" /></div>
       <div class="url_target">cauda.app/abc123</div>
