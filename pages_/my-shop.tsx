@@ -5,6 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPrint } from '@fortawesome/free-solid-svg-icons';
 import { faPen, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { GetServerSideProps } from 'next';
 import * as Sentry from '@sentry/browser';
@@ -203,7 +204,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
               </div>
             </>
           ) : (
-            <p className="myturn__number display-5 text-uppercase">
+            <p className="myturn__number display-5 p-4 text-uppercase text-dark">
               {t('common:no-turns')}
             </p>
           )}
@@ -251,6 +252,19 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
           </ul>
         </div>
       ) : null}
+
+      <Card className="cauda_card cauda_card--clean mb-4 mx-auto">
+        <Card.Body className="p-0 text-center d-flex justify-content-center align-items-center">
+          <Button
+            variant="primary"
+            className="d-flex justify-content-between align-items-center py-2"
+          >
+            <FontAwesomeIcon icon={faPrint} fixedWidth className="mr-2" />
+            {t('common:print-poster')}
+            <div></div>
+          </Button>
+        </Card.Body>
+      </Card>
     </Layout>
   );
 };

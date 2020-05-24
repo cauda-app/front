@@ -149,6 +149,11 @@ main {
     max-width: 16px;
   }
 }
+.cauda_card--clean {
+  box-shadow: none !important;
+  background: none !important;
+  backdrop-filter: none !important;
+}
 .cauda_card .card-body {
   padding: 0.9rem;
 }
