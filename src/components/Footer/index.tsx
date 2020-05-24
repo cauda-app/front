@@ -1,5 +1,6 @@
 import useTranslation from 'next-translate/useTranslation';
 import Link from 'next/link';
+import Image from 'react-bootstrap/Image';
 
 import getConfig from 'next/config';
 const nextConfig = getConfig();
@@ -26,12 +27,16 @@ export default function Footer(props) {
         Version: {nextConfig?.publicRuntimeConfig?.version}
       </div>
 
+      <Image src="/footer_cityscapes.png" fluid />
+
       <style jsx>{`
         .root {
-          padding: 20px;
+          padding: 20px 0 0;
         }
         ul  {
+          margin-right: 15px;
           margin-bottom: 5px;
+          margin-left: 15px;
           font-size: 0.8rem;
         }
         ul li {

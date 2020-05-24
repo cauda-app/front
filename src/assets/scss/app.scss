@@ -60,10 +60,11 @@ body {
   flex-direction: column;
   height: 100%;
   max-width: 768px;
-  padding: 0 5px;
+  padding: 0;
 }
 main {
   flex: 1;
+  padding: 0 5px;
 }
 
 .input-group > .form-control {
@@ -237,6 +238,20 @@ main {
     opacity: 0.5;
   }
 }
+
+
+
+
+
+// FOOTER
+
+footer img {
+  // max-width: 375px;
+}
+
+
+
+
 
 // MY TURN
 
