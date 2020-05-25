@@ -13,10 +13,14 @@ export default function Footer(props) {
       <ul className="list-inline text-center">
         <li className="list-inline-item">{t('common:add-shop')}</li>
         <li className="list-inline-item">
-          <Link href="/about">{t('common:about')}</Link>
+          <Link href="/about">
+            <a>{t('common:about')}</a>
+          </Link>
         </li>
         <li className="list-inline-item">
-          <Link href="/contact">{t('common:contact')}</Link>
+          <Link href="/contact">
+            <a>{t('common:contact')}</a>
+          </Link>
         </li>
       </ul>
 

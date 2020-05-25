@@ -258,14 +258,18 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
 
       <Card className="cauda_card cauda_card--clean mb-4 mx-auto">
         <Card.Body className="p-0 text-center d-flex justify-content-center align-items-center">
-          <Button
-            variant="primary"
-            className="d-flex justify-content-between align-items-center py-2"
-          >
-            <FontAwesomeIcon icon={faPrint} fixedWidth className="mr-2" />
-            {t('common:print-poster')}
-            <div></div>
-          </Button>
+          <Link href="/shop-poster" passHref>
+            <Button
+              as="a"
+              target="blank"
+              variant="primary"
+              className="d-flex justify-content-between align-items-center py-2"
+            >
+              <FontAwesomeIcon icon={faPrint} fixedWidth className="mr-2" />
+              {t('common:print-poster')}
+              <div></div>
+            </Button>
+          </Link>
         </Card.Body>
       </Card>
     </Layout>
