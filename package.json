@@ -49,6 +49,7 @@
     "date-fns": "^2.12.0",
     "date-fns-tz": "^1.0.10",
     "dotenv": "^8.2.0",
+    "easyqrcodejs": "^3.6.0",
     "google-libphonenumber": "^3.2.8",
     "google-map-react": "^1.1.7",
     "graphql": "^15.0.0",

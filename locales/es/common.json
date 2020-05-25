@@ -53,6 +53,8 @@
   "phone-invalid": "El número ingresado es inválido",
   "phone-required": "Requerido, ingrese un Teléfono válido",
   "phone": "Teléfono",
+  "print-poster": "Imprimir Poster QR",
+  "print": "Imprimir",
   "qr-reader-error": "Ocurrio un error al activar el lector QR",
   "register-cellphone": "Registro de Teléfono",
   "register": "Registrate",
