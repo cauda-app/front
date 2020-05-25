@@ -207,7 +207,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
               </div>
             </>
           ) : (
-            <p className="myturn__number display-5 p-4 text-uppercase text-dark">
+            <p className="myturn__number display-5 p-5 text-uppercase text-dark">
               {t('common:no-turns')}
             </p>
           )}
