@@ -5,6 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPrint } from '@fortawesome/free-solid-svg-icons';
 import { faPen, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { GetServerSideProps } from 'next';
 import * as Sentry from '@sentry/browser';
@@ -13,6 +14,7 @@ import { getToken } from 'src/utils/next';
 import Layout from 'src/components/Layout';
 import Spinner from 'src/components/Spinner';
 import graphqlClient from 'src/graphqlClient';
+import LoadingButton from 'src/components/LoadingButton';
 
 type Props = {
   isLoggedIn: boolean;
@@ -24,10 +26,10 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
 
   const [myShop, setMyShop] = useState<any>();
   const [error, setError] = useState();
-  const [actionLoading, setActionLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState('');
 
   const nextTurn = async (op: 'ATTEND' | 'SKIP') => {
-    setActionLoading(true);
+    setActionLoading(op);
     const NEXT_TURN = /* GraphQL */ `
       mutation NextTurn($op: NextTurnOperation!) {
         nextTurn(op: $op) {
@@ -44,39 +46,39 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
     try {
       const res = await graphqlClient.request(NEXT_TURN, { op });
       setMyShop({ ...myShop, ...res.nextTurn });
-      setActionLoading(false);
+      setActionLoading('');
     } catch (error) {
       setError(error);
-      setActionLoading(false);
+      setActionLoading('');
       Sentry.captureException(error);
     }
   };
 
-  const cancelTurns = async () => {
-    setActionLoading(true);
-    const CANCEL_TURNS = /* GraphQL */ `
-      mutation CancelTurns {
-        cancelTurns {
-          nextTurn
-          lastTurns {
-            status
-            turn
-          }
-          pendingTurnsAmount
-        }
-      }
-    `;
+  // const cancelTurns = async () => {
+  //   setActionLoading(true);
+  //   const CANCEL_TURNS = /* GraphQL */ `
+  //     mutation CancelTurns {
+  //       cancelTurns {
+  //         nextTurn
+  //         lastTurns {
+  //           status
+  //           turn
+  //         }
+  //         pendingTurnsAmount
+  //       }
+  //     }
+  //   `;
 
-    try {
-      const res = await graphqlClient.request(CANCEL_TURNS);
-      setMyShop({ ...myShop, ...res.cancelTurns });
-      setActionLoading(false);
-    } catch (error) {
-      setError(error);
-      setActionLoading(false);
-      Sentry.captureException(error);
-    }
-  };
+  //   try {
+  //     const res = await graphqlClient.request(CANCEL_TURNS);
+  //     setMyShop({ ...myShop, ...res.cancelTurns });
+  //     setActionLoading(false);
+  //   } catch (error) {
+  //     setError(error);
+  //     setActionLoading(false);
+  //     Sentry.captureException(error);
+  //   }
+  // };
 
   const getShopData = async () => {
     if (!shopId) {
@@ -179,8 +181,9 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
               <p className="myturn__number display-1">{myShop!.nextTurn}</p>
 
               <div className="pl-4 pr-4">
-                <Button
-                  disabled={actionLoading}
+                <LoadingButton
+                  isLoading={actionLoading === 'ATTEND'}
+                  disabled={!!actionLoading}
                   onClick={() => nextTurn('ATTEND')}
                   variant="success"
                   size="lg"
@@ -188,10 +191,11 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
                   block
                 >
                   {t('common:attend-turn')}
-                </Button>
+                </LoadingButton>
 
-                <Button
-                  disabled={actionLoading}
+                <LoadingButton
+                  isLoading={actionLoading === 'SKIP'}
+                  disabled={!!actionLoading}
                   onClick={() => nextTurn('SKIP')}
                   variant="danger"
                   size="lg"
@@ -199,11 +203,11 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
                   block
                 >
                   {t('common:turn-missed')}
-                </Button>
+                </LoadingButton>
               </div>
             </>
           ) : (
-            <p className="myturn__number display-5 text-uppercase">
+            <p className="myturn__number display-5 p-4 text-uppercase text-dark">
               {t('common:no-turns')}
             </p>
           )}
@@ -251,6 +255,23 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
           </ul>
         </div>
       ) : null}
+
+      <Card className="cauda_card cauda_card--clean mb-4 mx-auto">
+        <Card.Body className="p-0 text-center d-flex justify-content-center align-items-center">
+          <Link href="/shop-poster" passHref>
+            <Button
+              as="a"
+              target="blank"
+              variant="primary"
+              className="d-flex justify-content-between align-items-center py-2"
+            >
+              <FontAwesomeIcon icon={faPrint} fixedWidth className="mr-2" />
+              {t('common:print-poster')}
+              <div></div>
+            </Button>
+          </Link>
+        </Card.Body>
+      </Card>
     </Layout>
   );
 };
