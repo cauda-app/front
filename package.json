@@ -70,6 +70,7 @@
     "react-dom": "github:preact-compat/react-dom#1.0.0",
     "react-geolocated": "^3.0.1",
     "react-geosuggest": "^2.12.1",
+    "react-google-recaptcha-v3": "^1.5.1",
     "react-qr-reader": "^2.2.1",
     "react-ssr-prepass": "npm:preact-ssr-prepass@^1.0.1",
     "sass": "^1.26.3",

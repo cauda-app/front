@@ -8,7 +8,12 @@ import { Context } from 'graphql/context';
 import randomCode from '../utils/randomCode';
 import { PHONE_CODE_EXPIRY } from '../utils/constants';
 import sendSms from '../utils/smsApi';
-import { formatPhone, getNationalNumber } from 'src/utils/phone-utils';
+import {
+  formatPhone,
+  getNationalNumber,
+  parsePhone,
+} from 'src/utils/phone-utils';
+import validateCaptcha from 'graphql/utils/captcha';
 
 const phoneVerificationResolver = {
   Mutation: {
@@ -70,6 +75,19 @@ const phoneVerificationResolver = {
       args: MutationVerifyPhoneArgs,
       ctx: Context
     ) => {
+      // verify captcha
+      const isCaptchaValid = await validateCaptcha(args.token);
+      if (!isCaptchaValid) {
+        return new ApolloError('Invalid captcha', 'NO_VALID_CAPTCHA');
+      }
+
+      // verify phone
+      try {
+        parsePhone(args.phone);
+      } catch (error) {
+        return new ApolloError('Invalid phone', 'INVALID_PHONE');
+      }
+
       const phone = formatPhone('AR', args.phone);
       const phoneVerification = await ctx.prisma.phoneVerification.findOne({
         where: { phone },
