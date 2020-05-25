@@ -130,7 +130,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
 
     const interval = setInterval(() => {
       getShopData();
-    }, 10_000);
+    }, 15_000);
 
     return () => clearInterval(interval);
   }, []);

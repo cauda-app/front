@@ -9,6 +9,7 @@ type IssuedNumber {
   id: ID!
   issuedNumber: Int
   status: IssuedNumberStatus!
+  shouldNotify: Boolean!
   clientId: Int!
   shopId: String!
   client: Client!

@@ -12,6 +12,10 @@ import differenceInSeconds from 'date-fns/differenceInSeconds';
 import parseISO from 'date-fns/parseISO';
 import Router, { useRouter } from 'next/router';
 import * as Sentry from '@sentry/browser';
+import {
+  GoogleReCaptchaProvider,
+  useGoogleReCaptcha,
+} from 'react-google-recaptcha-v3';
 
 import Layout from 'src/components/Layout';
 import { validatePhoneRequest, getErrorCodeFromApollo } from 'src/utils';
@@ -26,8 +30,8 @@ const VERIFY_CODE = /* GraphQL */ `
 `;
 
 const VERIFY_PHONE = /* GraphQL */ `
-  mutation VerifyPhone($phone: String!) {
-    verifyPhone(phone: $phone)
+  mutation VerifyPhone($phone: String!, $token: String!) {
+    verifyPhone(phone: $phone, token: $token)
   }
 `;
 
@@ -35,6 +39,7 @@ const VerifyPhone = () => {
   const { t } = useTranslation();
   const router = useRouter();
 
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [sendCodeScreen, setSendCodeScreen] = useState(true);
   const [phone, setPhone] = useState<string>('');
   const [code, setCode] = useState<number>();
@@ -62,27 +67,41 @@ const VerifyPhone = () => {
   };
 
   const onSendCode = async () => {
+    setIsSubmitting(true);
+
     const isValid = await validatePhoneRequest(phone);
 
     if (!isValid) {
       setErrors({ ...errors, phone: t('common:phone-invalid') });
+      setIsSubmitting(false);
       return;
     }
 
-    setIsSubmitting(true);
+    if (!executeRecaptcha) {
+      setIsSubmitting(false);
+      return;
+    }
+
+    const token = await executeRecaptcha('register');
 
     try {
-      const res = await graphqlClient.request(VERIFY_PHONE, { phone });
+      const res = await graphqlClient.request(VERIFY_PHONE, { phone, token });
       setExpiresIn(parseISO(res.verifyPhone));
       setIsSubmitting(false);
       setSendCodeScreen(false);
     } catch (error) {
       const code = getErrorCodeFromApollo(error);
 
-      if (code === 'IN_PROGRESS_VERIFICATION') {
-        setErrors({ ...errors, phone: t('common:in-progress-verification') });
-      } else {
-        setErrors({ ...errors, phone: t('common:mutation-error') });
+      switch (code) {
+        case 'LIMIT_CODE_SENT_EXCEEDED':
+          setErrors({ ...errors, phone: t('common:limit-code-sent-exceeded') });
+          break;
+        case 'IN_PROGRESS_VERIFICATION':
+          setErrors({ ...errors, phone: t('common:in-progress-verification') });
+          break;
+        default:
+          setErrors({ ...errors, phone: t('common:mutation-error') });
+          break;
       }
 
       Sentry.captureException(error);
@@ -254,4 +273,14 @@ const VerifyPhone = () => {
   );
 };
 
-export default VerifyPhone;
+const VerifyPhoneWithCaptcha = () => {
+  return (
+    <GoogleReCaptchaProvider
+      reCaptchaKey={process.env.NEXT_PUBLIC_RE_CAPTCHA_KEY}
+    >
+      <VerifyPhone />
+    </GoogleReCaptchaProvider>
+  );
+};
+
+export default VerifyPhoneWithCaptcha;

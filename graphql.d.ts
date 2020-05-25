@@ -75,6 +75,7 @@ export type IssuedNumber = {
   id: Scalars['ID'];
   issuedNumber?: Maybe<Scalars['Int']>;
   status: IssuedNumberStatus;
+  shouldNotify: Scalars['Boolean'];
   clientId: Scalars['Int'];
   shopId: Scalars['String'];
   client: Client;
@@ -144,6 +145,7 @@ export type MutationVerifyCodeArgs = {
 
 export type MutationVerifyPhoneArgs = {
   phone: Scalars['String'];
+  token: Scalars['String'];
 };
 
 export enum NextTurnOperation {
@@ -390,6 +392,7 @@ export type IssuedNumberResolvers<ContextType = any, ParentType extends Resolver
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   issuedNumber?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
   status?: Resolver<ResolversTypes['IssuedNumberStatus'], ParentType, ContextType>,
+  shouldNotify?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
   clientId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   shopId?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   client?: Resolver<ResolversTypes['Client'], ParentType, ContextType>,
@@ -422,7 +425,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   requestTurn?: Resolver<ResolversTypes['RequestTurnResponse'], ParentType, ContextType, RequireFields<MutationRequestTurnArgs, 'shopId'>>,
   updateShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationUpdateShopArgs, 'shop'>>,
   verifyCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVerifyCodeArgs, 'phone' | 'code'>>,
-  verifyPhone?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType, RequireFields<MutationVerifyPhoneArgs, 'phone'>>,
+  verifyPhone?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType, RequireFields<MutationVerifyPhoneArgs, 'phone' | 'token'>>,
 }>;
 
 export type ShopResolvers<ContextType = any, ParentType extends ResolversParentTypes['Shop'] = ResolversParentTypes['Shop']> = ResolversObject<{

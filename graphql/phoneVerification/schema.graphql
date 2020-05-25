@@ -1,4 +1,4 @@
 type Mutation {
-  verifyPhone(phone: String!): DateTime!
+  verifyPhone(phone: String!, token: String!): DateTime!
   verifyCode(phone: String!, code: Int!): Boolean!
 }
