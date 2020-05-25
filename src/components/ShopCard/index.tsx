@@ -39,7 +39,7 @@ export default function ShopCard({ shop, onRequestTurn, ...rest }: Props) {
           {onRequestTurn && <GoBack page="/shops" />}
           {shop.name}
         </Card.Header>
-        <div className="shop_map">
+        <div className="shop_map mb-3">
           <Map lat={shop.lat} lng={shop.lng} />
         </div>
         <ListGroup variant="flush">
@@ -75,12 +75,18 @@ export default function ShopCard({ shop, onRequestTurn, ...rest }: Props) {
             <LoadingButton
               isLoading={isLoading}
               variant="success"
+              size="lg"
               block
               disabled={!shop.isOpen}
               onClick={handleConfirm}
+              className="py-2"
             >
-              <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}
-              {t('common:confirm-turn')}{' '}
+              <FontAwesomeIcon
+                icon={faCalendarCheck}
+                fixedWidth
+                className="mr-2"
+              />{' '}
+              {t('common:request-turn')}{' '}
               {!shop.isOpen ? `(${t('common:close-now')})` : ''}
             </LoadingButton>
           ) : (
