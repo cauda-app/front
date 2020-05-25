@@ -271,6 +271,10 @@ footer {
   overflow: hidden;
   color: var(--color_primary);
 }
+.myturn__number--disabled {
+  color: var(--color_divider);
+  font-weight: 300;
+}
 .myturn__qrcode {
   border: 2px solid var(--color_primary);
   max-width: 200px;
