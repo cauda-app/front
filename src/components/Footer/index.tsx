@@ -1,5 +1,6 @@
 import useTranslation from 'next-translate/useTranslation';
 import Link from 'next/link';
+import Image from 'react-bootstrap/Image';
 
 import getConfig from 'next/config';
 const nextConfig = getConfig();
@@ -11,8 +12,16 @@ export default function Footer(props) {
     <footer className="root">
       <ul className="list-inline text-center">
         <li className="list-inline-item">{t('common:add-shop')}</li>
-        <li className="list-inline-item">{t('common:about')}</li>
-        <li className="list-inline-item">{t('common:contact')}</li>
+        <li className="list-inline-item">
+          <Link href="/about">
+            <a>{t('common:about')}</a>
+          </Link>
+        </li>
+        <li className="list-inline-item">
+          <Link href="/contact">
+            <a>{t('common:contact')}</a>
+          </Link>
+        </li>
       </ul>
 
       <div className="devlinks text-center">
@@ -26,12 +35,16 @@ export default function Footer(props) {
         Version: {nextConfig?.publicRuntimeConfig?.version}
       </div>
 
+      <Image src="/footer_cityscapes.png" fluid />
+
       <style jsx>{`
         .root {
-          padding: 20px;
+          padding: 20px 0 0 0;
         }
-        ul  {
+        ul {
+          margin-right: 15px;
           margin-bottom: 5px;
+          margin-left: 15px;
           font-size: 0.8rem;
         }
         ul li {

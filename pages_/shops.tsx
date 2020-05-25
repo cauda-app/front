@@ -3,8 +3,8 @@ import useTranslation from 'next-translate/useTranslation';
 import Layout from '../src/components/Layout';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
 import Button from 'react-bootstrap/Button';
-
 import Spinner from 'src/components/Spinner';
 import useQuery from 'src/hooks/useQuery';
 import Location, { Coords } from 'src/components/Location';
@@ -81,20 +81,22 @@ const Shops = ({ coords: { lat, lng } }: Props) => {
   return (
     <Layout>
       <div className="content h-100">
-        <Row>
-          <Col xs="1">
-            <GoBack />
-          </Col>
-          <Col>
-            <h1 className="cauda_title">{t('common:nearby-shops')}</h1>
-          </Col>
-        </Row>
+        <Card className="cauda_card cauda_card--clean mb-4 mx-auto">
+          <Card.Body className="p-0 text-center d-flex flex-column justify-content-center align-items-center">
+            <Row noGutters className="w-100">
+              <Col className="d-flex justify-content-center align-items-center">
+                <GoBack />
+                <h1 className="cauda_title mb-0">{t('common:nearby-shops')}</h1>
+              </Col>
+            </Row>
 
-        {data.nearByShops?.length === 0 ? (
-          <div className="text-center m-auto p-3">
-            <span>{t('common:no-shops')}</span>
-          </div>
-        ) : null}
+            {data.nearByShops?.length === 0 ? (
+              <div className="text-center m-auto p-3">
+                <span>{t('common:no-shops')}</span>
+              </div>
+            ) : null}
+          </Card.Body>
+        </Card>
 
         {data.nearByShops?.map((shop) => (
           <ShopCard key={shop.id} shop={shop} />
