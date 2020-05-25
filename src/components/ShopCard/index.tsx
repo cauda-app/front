@@ -16,10 +16,16 @@ import GoBack from '../GoBack';
 
 type Props = {
   shop: any;
+  error?: string;
   onRequestTurn?: (shopId: String) => Promise<any>;
 };
 
-export default function ShopCard({ shop, onRequestTurn, ...rest }: Props) {
+export default function ShopCard({
+  shop,
+  onRequestTurn,
+  error,
+  ...rest
+}: Props) {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -95,6 +101,7 @@ export default function ShopCard({ shop, onRequestTurn, ...rest }: Props) {
               </Button>
             </Link>
           )}
+          {error && <p className="mt-3 text-center text-secondary">{error}</p>}
         </Card.Body>
       </Card>
     </div>
