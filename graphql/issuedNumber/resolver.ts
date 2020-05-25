@@ -1,5 +1,7 @@
 import { ApolloError } from 'apollo-server-core';
 import { Context } from 'graphql/context';
+import getConfig from 'next/config';
+
 import {
   MutationRequestTurnArgs,
   MutationCancelTurnArgs,
@@ -8,6 +10,8 @@ import {
 import { decodeId } from 'src/utils/hashids';
 import { myTurns, ISSUED_NUMBER_STATUS, myPastTurns } from './helpers';
 import { numberToTurn } from 'graphql/utils/turn';
+
+const { publicRuntimeConfig } = getConfig();
 
 const getPendingTurns = (clientId: number, shopId: number, ctx: Context) =>
   ctx.prisma.issuedNumber.findMany({
@@ -82,24 +86,27 @@ const IssuedNumberResolver = {
         return new ApolloError('Invalid shop id', 'INVALID_SHOP_ID');
       }
 
-      let appointments = await getPendingTurns(
-        ctx.tokenInfo.clientId,
-        shopId,
-        ctx
-      );
+      let turns = await getPendingTurns(ctx.tokenInfo.clientId, shopId, ctx);
 
-      if (appointments.length) {
+      const turnsLength = turns.length;
+
+      if (turnsLength) {
         return new ApolloError(
           'There is already a pending turn',
           'ACTIVE_TURN'
         );
       }
 
-      const rawQuery = `CALL increaseShopCounter(${shopId}, ${ctx.tokenInfo.clientId});`;
+      const rawQuery = `CALL increaseShopCounter(
+        ${shopId}, 
+        ${ctx.tokenInfo.clientId}, 
+        ${Number(publicRuntimeConfig.goToShopThreshold)}
+      );`;
+
       await ctx.prisma.raw(rawQuery);
 
-      appointments = await getPendingTurns(ctx.tokenInfo.clientId, shopId, ctx);
-      if (!appointments.length) {
+      turns = await getPendingTurns(ctx.tokenInfo.clientId, shopId, ctx);
+      if (!turns.length) {
         return new ApolloError(
           'There was an error trying to set the appointment.',
           'OP_ERROR'
@@ -107,8 +114,8 @@ const IssuedNumberResolver = {
       }
 
       return {
-        id: appointments[0].id,
-        pendingTurnsAmount: appointments.length++,
+        id: turns[0].id,
+        pendingTurnsAmount: turns.length + 1,
       };
     },
     cancelTurn: async (parent, args: MutationCancelTurnArgs, ctx: Context) => {

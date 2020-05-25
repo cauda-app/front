@@ -89,8 +89,7 @@ const phoneVerificationResolver = {
         );
       }
 
-      const code =
-        process.env.SMS_VERIFICATION_ENABLED === '1' ? randomCode() : 1234;
+      const code = process.env.SMS_ENABLED === '1' ? randomCode() : 1234;
       const expiry = addMinutes(new Date(), PHONE_CODE_EXPIRY).toISOString();
 
       await ctx.prisma.phoneVerification.upsert({
@@ -106,9 +105,13 @@ const phoneVerificationResolver = {
         },
       });
 
-      if (process.env.SMS_VERIFICATION_ENABLED === '1') {
-        const localPhone = getNationalNumber(phone);
-        await sendSms(localPhone, code.toString());
+      const message = `${code} es tu código de verificación CAUDA.`;
+      const localPhone = getNationalNumber(phone);
+      if (process.env.SMS_ENABLED === '1') {
+        sendSms(localPhone, message);
+        console.log(`SMS-(${localPhone}): ${message}`);
+      } else {
+        console.log(`SMS-MOCK-(${localPhone}): ${message}`);
       }
 
       return expiry;
