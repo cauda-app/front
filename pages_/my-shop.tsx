@@ -158,16 +158,17 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
   return (
     <Layout>
       <Card className="cauda_card mb-4 mx-auto">
-        <Card.Header className="d-flex justify-content-between align-items-center px-0">
-          <Link href="/" passHref>
+        <Card.Header className="d-flex justify-content-between align-items-center px-2 pl-3">
+          {/* <Link href="/" passHref>
             <Button variant="link" className="py-0 text-dark">
               <FontAwesomeIcon icon={faChevronLeft} className="mr-2" />
             </Button>
-          </Link>
+          </Link> */}
           <span className="text-truncate">{myShop!.details.name}</span>
           <Link href="/shop-form" passHref>
-            <Button variant="link" size="sm">
+            <Button variant="outline-primary" size="sm">
               <FontAwesomeIcon icon={faPen} className="mr-2" />
+              {t('common:edit')}
             </Button>
           </Link>
         </Card.Header>
