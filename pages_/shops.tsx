@@ -83,12 +83,10 @@ const Shops = ({ coords: { lat, lng } }: Props) => {
       <div className="content h-100">
         <Card className="cauda_card cauda_card--clean mb-4 mx-auto">
           <Card.Body className="p-0 text-center d-flex flex-column justify-content-center align-items-center">
-            <Row>
-              <Col xs="1">
+            <Row noGutters className="w-100">
+              <Col className="d-flex justify-content-center align-items-center">
                 <GoBack />
-              </Col>
-              <Col>
-                <h1 className="cauda_title">{t('common:nearby-shops')}</h1>
+                <h1 className="cauda_title mb-0">{t('common:nearby-shops')}</h1>
               </Col>
             </Row>
 
