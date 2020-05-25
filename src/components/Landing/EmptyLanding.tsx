@@ -17,14 +17,23 @@ const Home = () => {
     <Layout>
       <div className="content d-flex flex-column justify-content-between align-items-center h-100">
         <div></div>
-        <Card className="cauda_card mt-3 px-3 py-4 p-sm-5 mb-5">
-          <Row>
-            <Col xs="12">
+        <Card className="cauda_card mt-2 mb-5 p-0 text-center">
+          <Row noGutters>
+            <Col xs="12" className="p-4">
+              <h1 className="h3 mb-3">
+                ¡Hacé la fila virtual gratis desde tu casa!
+              </h1>
+              <p className="mb-4">
+                Con Cauda evitás estar en la calle
+                <br />
+                más de lo necesario, ahorrás tiempo
+                <br />y no te ponés en riesgo.
+              </p>
+
               <Link href="/shops" passHref>
                 <Button
                   variant="primary"
-                  size="lg"
-                  className="mb-4 d-flex justify-content-between align-items-center py-4 p-sm-3"
+                  className="d-flex justify-content-between align-items-center py-2"
                   block
                 >
                   <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth />
@@ -33,12 +42,17 @@ const Home = () => {
                 </Button>
               </Link>
             </Col>
-            <Col xs="12">
+            <Col xs="12" className="p-4 bg_gray rounded_bottom">
+              <h2 className="h4">¿Estás en la calle?</h2>
+              <p>
+                Si ves un código QR en un negocio, escanealo, saca turno y
+                esperá desde tu casa.
+              </p>
+
               <Link href="/scan" passHref>
                 <Button
                   variant="secondary"
-                  size="lg"
-                  className="d-flex justify-content-between align-items-center py-4 p-sm-3"
+                  className="d-flex justify-content-between align-items-center py-2"
                   block
                 >
                   <FontAwesomeIcon icon={faCamera} fixedWidth />
@@ -50,21 +64,81 @@ const Home = () => {
           </Row>
         </Card>
 
-        <Row className="w-100">
-          <Col className="d-flex justify-content-center align-items-center mx-auto">
+        <ul className="cauda_steps list-unstyled px-1 p-sm-0 w-sm-100 d-sm-flex mb-5">
+          <li className="media col-12 col-sm-4">
+            <img src="..." className="mr-3" alt="..." />
+            <div className="media-body">
+              <h5 className="h6 mb-4">
+                Buscá un comercio o escaneá un código QR.
+              </h5>
+            </div>
+          </li>
+          <li className="media col-12 col-sm-4">
+            <img src="..." className="mr-3" alt="..." />
+            <div className="media-body">
+              <h5 className="h6 mb-4">Hacé la fila tranquilo desde tu casa.</h5>
+            </div>
+          </li>
+          <li className="media col-12 col-sm-4">
+            <img src="..." className="mr-3" alt="..." />
+            <div className="media-body">
+              <h5 className="h6 mb-4">Te avisamos cuando llegue tu turno.</h5>
+            </div>
+          </li>
+        </ul>
+
+        <Row className="w-100 text-center mb-5">
+          <Col className="d-flex flex-column justify-content-center align-items-center mx-auto">
+            <h3>¿Querés usar Cauda gratis en tu negocio?</h3>
+            <p>
+              Usando Cauda contribuís a cuidar a tus clientes y entre todos
+              podemos lograr reducir el riesgo de contagio. Es rapidísimo.
+            </p>
+
             <Link href="/my-shop" passHref>
               <Button
                 variant="info"
-                size="lg"
                 className="btn_myshop tertiary d-flex justify-content-between align-items-center py-2"
               >
                 <FontAwesomeIcon icon={faStoreAlt} fixedWidth />
-                {t('common:my-shop')}
+                {t('common:add-my-shop')}
                 <div></div>
               </Button>
             </Link>
           </Col>
         </Row>
+
+        <h3 className="mb-3 text-center">Los usuarios comentan...</h3>
+
+        <ul className="cauda_testimonials list-unstyled px-1 p-sm-0 w-sm-100 d-sm-flex justify-content-center align-items-center">
+          <li className="media col-12 col-sm-4 mb-3">
+            <img src="..." className="mr-3" alt="..." />
+            <div className="media-body">
+              <p className="mb-0">
+                “Desde que uso Cauda paso mucho menos tiempo en la calle, me
+                siento más seguro. Cuido a mi familia y a todo mi barrio”
+              </p>
+              <strong>Javier, vecino</strong>
+            </div>
+          </li>
+
+          <li className="media col-12 col-sm-4 mb-3">
+            <img src="..." className="mr-3" alt="..." />
+            <div className="media-body">
+              <p className="mb-0">
+                “Desde que uso Cauda paso mucho menos tiempo en la calle, me
+                siento más seguro. Cuido a mi familia y a todo mi barrio”
+              </p>
+              <strong>Laura, dietética Moni</strong>
+            </div>
+          </li>
+        </ul>
+
+        <div className="cauda_sponsors">
+          <h3 className="mb-3 text-center">
+            Estas empresas nos ayudan a hacer esta app realidad:
+          </h3>
+        </div>
       </div>
 
       <style jsx global>{`

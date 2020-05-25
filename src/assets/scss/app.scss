@@ -7,6 +7,7 @@
   --color_secondary: #ff2d55;
   --color_tertiary: #ff9500;
   --color_divider: #dddddd;
+  --color_gray: #EEEEEE;
   --app_maxwidth: 420px;
 }
 
@@ -65,6 +66,10 @@ body {
 main {
   flex: 1;
   padding: 0 5px;
+}
+
+.bg_gray {
+  background: var(--color_gray);
 }
 
 .input-group > .form-control {
@@ -145,6 +150,7 @@ main {
   box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1),
     inset 0 0 0 1px rgba(255, 255, 255, 0.5);
   backdrop-filter: saturate(50%) blur(20px);
+  overflow: hidden;
   svg {
     max-width: 16px;
   }
