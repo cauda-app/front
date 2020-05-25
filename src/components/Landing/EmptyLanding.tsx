@@ -150,7 +150,7 @@ const Home = () => {
         <div className="cauda_sponsors">
           <h3 className="h4 mb-3 text-center">Nos apoyan</h3>
           <p>
-            Google, AQS, Conciencia, Helpers, Wingu, Beccar Varela, Notimation
+            Google, AWS, Conciencia, Helpers, Wingu, Beccar Varela, Notimation
           </p>
         </div>
       </div>
