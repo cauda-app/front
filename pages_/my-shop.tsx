@@ -257,7 +257,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
       ) : null}
 
       <Card className="cauda_card cauda_card--clean mb-4 mx-auto">
-        <Card.Body className="p-0 text-center d-flex justify-content-center align-items-center">
+        <Card.Body className="p-0 text-center d-flex flex-column justify-content-center align-items-center">
           <Link href="/shop-poster" passHref>
             <Button
               as="a"
@@ -270,6 +270,10 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
               <div></div>
             </Button>
           </Link>
+
+          <p className="mt-2 mb-0">
+            <small>https://cauda.app/{shopId}</small>
+          </p>
         </Card.Body>
       </Card>
     </Layout>
