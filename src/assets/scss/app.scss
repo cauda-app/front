@@ -65,7 +65,7 @@ body {
 }
 main {
   flex: 1;
-  padding: 0 5px;
+  padding: 0;
 }
 
 .bg_gray {
@@ -142,8 +142,8 @@ main {
 // GLOBAL COMPONENTS
 
 .cauda_card {
-  width: 100%;
-  max-width: var(--app_maxwidth);
+  width: calc(100% - 12px) !important;
+  max-width: calc(var(--app_maxwidth) - 10px);
   background: none;
   background-color: rgba(255, 255, 255, 0.8) !important;
   border: none;

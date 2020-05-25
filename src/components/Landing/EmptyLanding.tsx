@@ -20,9 +20,7 @@ const Home = () => {
         <Card className="cauda_card mt-2 mb-5 p-0 text-center">
           <Row noGutters>
             <Col xs="12" className="p-4">
-              <h1 className="h3 mb-3">
-                ¡Hacé la fila virtual gratis desde tu casa!
-              </h1>
+              <h1 className="h3 mb-3">Fila virtual desde tu casa. ¡Gratis!</h1>
               <p className="mb-4">
                 Con Cauda evitás estar en la calle
                 <br />
@@ -37,7 +35,7 @@ const Home = () => {
                   block
                 >
                   <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth />
-                  {t('common:nearby-shops')}
+                  {t('common:view-nearby-shops')}
                   <div></div>
                 </Button>
               </Link>
@@ -64,7 +62,7 @@ const Home = () => {
           </Row>
         </Card>
 
-        <ul className="cauda_steps list-unstyled px-1 p-sm-0 w-sm-100 d-sm-flex mb-5">
+        <ul className="cauda_steps list-unstyled px-1 p-sm-0 w-sm-100 d-sm-flex mb-4">
           <li className="media col-12 col-sm-4">
             <img src="..." className="mr-3" alt="..." />
             <div className="media-body">
@@ -82,14 +80,22 @@ const Home = () => {
           <li className="media col-12 col-sm-4">
             <img src="..." className="mr-3" alt="..." />
             <div className="media-body">
-              <h5 className="h6 mb-4">Te avisamos cuando llegue tu turno.</h5>
+              <h5 className="h6 mb-4">
+                Te avisaremos antes de que llegue tu turno.
+              </h5>
             </div>
           </li>
         </ul>
 
-        <Row className="w-100 text-center mb-5">
+        <Row className="w-100 text-center py-5 mb-5 bg-white">
           <Col className="d-flex flex-column justify-content-center align-items-center mx-auto">
-            <h3>¿Querés usar Cauda gratis en tu negocio?</h3>
+            <h3 className="h4 mb-3 text-center">
+              ¿Querés usar Cauda en tu comercio? ¡Es gratis!{' '}
+              <small>
+                <small>(*)</small>
+              </small>
+            </h3>
+
             <p>
               Usando Cauda contribuís a cuidar a tus clientes y entre todos
               podemos lograr reducir el riesgo de contagio. Es rapidísimo.
@@ -105,39 +111,47 @@ const Home = () => {
                 <div></div>
               </Button>
             </Link>
+
+            <small className="mt-3 text-muted">
+              (*) para altos volúmenes de uso, Cauda se reserva el derecho a
+              requerir una contribución
+            </small>
           </Col>
         </Row>
 
-        <h3 className="mb-3 text-center">Los usuarios comentan...</h3>
+        <div className="cauda_testimonials d-none">
+          <h3 className="h4 mb-3 text-center">Los usuarios comentan...</h3>
 
-        <ul className="cauda_testimonials list-unstyled px-1 p-sm-0 w-sm-100 d-sm-flex justify-content-center align-items-center">
-          <li className="media col-12 col-sm-4 mb-3">
-            <img src="..." className="mr-3" alt="..." />
-            <div className="media-body">
-              <p className="mb-0">
-                “Desde que uso Cauda paso mucho menos tiempo en la calle, me
-                siento más seguro. Cuido a mi familia y a todo mi barrio”
-              </p>
-              <strong>Javier, vecino</strong>
-            </div>
-          </li>
+          <ul className="list-unstyled px-1 p-sm-0 w-sm-100 d-sm-flex justify-content-center align-items-center">
+            <li className="media col-12 col-sm-4 mb-3">
+              <img src="..." className="mr-3" alt="..." />
+              <div className="media-body">
+                <p className="mb-0">
+                  “Desde que uso Cauda paso mucho menos tiempo en la calle, me
+                  siento más seguro. Cuido a mi familia y a todo mi barrio”
+                </p>
+                <strong>Javier, vecino</strong>
+              </div>
+            </li>
 
-          <li className="media col-12 col-sm-4 mb-3">
-            <img src="..." className="mr-3" alt="..." />
-            <div className="media-body">
-              <p className="mb-0">
-                “Desde que uso Cauda paso mucho menos tiempo en la calle, me
-                siento más seguro. Cuido a mi familia y a todo mi barrio”
-              </p>
-              <strong>Laura, dietética Moni</strong>
-            </div>
-          </li>
-        </ul>
+            <li className="media col-12 col-sm-4 mb-3">
+              <img src="..." className="mr-3" alt="..." />
+              <div className="media-body">
+                <p className="mb-0">
+                  “Desde que uso Cauda paso mucho menos tiempo en la calle, me
+                  siento más seguro. Cuido a mi familia y a todo mi barrio”
+                </p>
+                <strong>Laura, dietética Moni</strong>
+              </div>
+            </li>
+          </ul>
+        </div>
 
         <div className="cauda_sponsors">
-          <h3 className="mb-3 text-center">
-            Estas empresas nos ayudan a hacer esta app realidad:
-          </h3>
+          <h3 className="h4 mb-3 text-center">Nos apoyan</h3>
+          <p>
+            Google, AQS, Conciencia, Helpers, Wingu, Beccar Varela, Notimation
+          </p>
         </div>
       </div>
 
