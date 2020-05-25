@@ -32,6 +32,7 @@
   "go-home": "Ir al Home",
   "invalid-code-error": "El código QR no pertenece a un comercio válido de Cauda",
   "last-numbers": "Últimos Números",
+  "limit-code-sent-exceeded": "Has excedido el límite de envíos, por favor esperá 4 horas antes de volver a intentar.",
   "load-more": "Cargar Más",
   "loading": "Cargando...",
   "message": "Mensaje",

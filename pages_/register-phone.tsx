@@ -92,10 +92,16 @@ const VerifyPhone = () => {
     } catch (error) {
       const code = getErrorCodeFromApollo(error);
 
-      if (code === 'IN_PROGRESS_VERIFICATION') {
-        setErrors({ ...errors, phone: t('common:in-progress-verification') });
-      } else {
-        setErrors({ ...errors, phone: t('common:mutation-error') });
+      switch (code) {
+        case 'LIMIT_CODE_SENT_EXCEEDED':
+          setErrors({ ...errors, phone: t('common:limit-code-sent-exceeded') });
+          break;
+        case 'IN_PROGRESS_VERIFICATION':
+          setErrors({ ...errors, phone: t('common:in-progress-verification') });
+          break;
+        default:
+          setErrors({ ...errors, phone: t('common:mutation-error') });
+          break;
       }
 
       Sentry.captureException(error);
