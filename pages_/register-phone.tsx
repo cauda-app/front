@@ -188,6 +188,10 @@ const VerifyPhone = () => {
                   </InputGroup>
                 </Form.Group>
 
+                {/* <p>Ingresá tu número de celular para que podamos notificarte cuando sea tu turno.</p> */}
+
+                {/* <p>Ingresá tu número de celular para que podamos validar tu comercio.</p> */}
+
                 <Button
                   onClick={onSendCode}
                   variant="primary"
