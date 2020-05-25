@@ -7,6 +7,7 @@
   --color_secondary: #ff2d55;
   --color_tertiary: #ff9500;
   --color_divider: #dddddd;
+  --color_gray: #EEEEEE;
   --app_maxwidth: 420px;
 }
 
@@ -59,12 +60,20 @@ body {
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-width: 768px;
+  // max-width: 768px;
   padding: 0;
 }
 main {
   flex: 1;
-  padding: 0 5px;
+  padding: 0;
+}
+footer {
+  margin: 0 auto;
+  max-width: 768px;
+}
+
+.bg_gray {
+  background: var(--color_gray);
 }
 
 .input-group > .form-control {
@@ -137,14 +146,15 @@ main {
 // GLOBAL COMPONENTS
 
 .cauda_card {
-  width: 100%;
-  max-width: var(--app_maxwidth);
+  width: calc(100% - 12px) !important;
+  max-width: calc(var(--app_maxwidth) - 10px);
   background: none;
   background-color: rgba(255, 255, 255, 0.8) !important;
   border: none;
   box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1),
     inset 0 0 0 1px rgba(255, 255, 255, 0.5);
   backdrop-filter: saturate(50%) blur(20px);
+  overflow: hidden;
   svg {
     max-width: 16px;
   }
@@ -152,6 +162,10 @@ main {
 .cauda_card--clean {
   box-shadow: none !important;
   background: none !important;
+  backdrop-filter: none !important;
+}
+.cauda_card--flat {
+  box-shadow: none !important;
   backdrop-filter: none !important;
 }
 .cauda_card .card-body {

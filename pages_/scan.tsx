@@ -42,41 +42,43 @@ const Scan = () => {
 
   return (
     <Layout>
-      <div className="content d-flex flex-column justify-content-between">
-        <Card className="cauda_card cauda_scan p-4 text-center mb-3">
-          <Card.Body className="p-0">
-            {readerError ? (
-              t('common:qr-reader-error')
-            ) : (
-              <>
-                <div className="scanning_bar">
-                  <img className="img-fluid" src={img_scanningUrl}></img>
-                </div>
-                <QrReader
-                  delay={300}
-                  onError={handleError}
-                  onScan={handleScan}
-                  onLoad={handleLoad}
-                  showViewFinder={false}
-                />
-                {loaded ? null : <Spinner />}
-              </>
-            )}
-          </Card.Body>
-        </Card>
+      <Card className="cauda_card cauda_scan p-4 text-center mb-3">
+        <Card.Body className="p-0">
+          {readerError ? (
+            t('common:qr-reader-error')
+          ) : (
+            <>
+              <div className="scanning_bar">
+                <img className="img-fluid" src={img_scanningUrl}></img>
+              </div>
+              <QrReader
+                delay={300}
+                onError={handleError}
+                onScan={handleScan}
+                onLoad={handleLoad}
+                showViewFinder={false}
+              />
+              {loaded ? null : <Spinner />}
+            </>
+          )}
+        </Card.Body>
+      </Card>
 
-        {codeError ? (
-          <p className="alert alert-secondary">
-            {t('common:invalid-code-error')}
-          </p>
-        ) : null}
+      <Card className="cauda_card cauda_card--clean mb-4 mx-auto">
+        <Card.Body className="p-0 text-center d-flex flex-column justify-content-center align-items-center">
+          {codeError ? (
+            <p className="alert alert-secondary">
+              {t('common:invalid-code-error')}
+            </p>
+          ) : null}
 
-        <Link href="/" passHref>
-          <Button block type="button" variant="danger" size="lg">
-            {t('common:cancel')}
-          </Button>
-        </Link>
-      </div>
+          <Link href="/" passHref>
+            <Button block type="button" variant="danger" size="lg">
+              {t('common:cancel')}
+            </Button>
+          </Link>
+        </Card.Body>
+      </Card>
     </Layout>
   );
 };
