@@ -22,10 +22,8 @@ const Home = () => {
             <Col xs="12" className="p-4">
               <h1 className="h3 mb-3">Fila virtual desde tu casa. ¡Gratis!</h1>
               <p className="mb-4">
-                Con Cauda evitás estar en la calle
-                <br />
-                más de lo necesario, ahorrás tiempo
-                <br />y no te ponés en riesgo.
+                Con Cauda evitás estar en la calle más de lo necesario, ahorrás
+                tiempo y no te ponés en riesgo.
               </p>
 
               <Link href="/shops" passHref>
@@ -40,7 +38,7 @@ const Home = () => {
                 </Button>
               </Link>
             </Col>
-            <Col xs="12" className="p-4 bg_gray rounded_bottom">
+            <Col xs="12" className="p-4 bg_gray rounded_bottom d-md-none">
               <h2 className="h4">¿Estás en la calle?</h2>
               <p>
                 Si ves un código QR en un negocio, escanealo, saca turno y
@@ -62,35 +60,41 @@ const Home = () => {
           </Row>
         </Card>
 
-        <ul className="cauda_steps list-unstyled px-1 p-sm-0 w-sm-100 d-sm-flex mb-4">
-          <li className="media col-12 col-sm-4">
-            <img src="..." className="mr-3" alt="..." />
-            <div className="media-body">
-              <h5 className="h6 mb-4">
-                Buscá un comercio o escaneá un código QR.
-              </h5>
-            </div>
-          </li>
-          <li className="media col-12 col-sm-4">
-            <img src="..." className="mr-3" alt="..." />
-            <div className="media-body">
-              <h5 className="h6 mb-4">Hacé la fila tranquilo desde tu casa.</h5>
-            </div>
-          </li>
-          <li className="media col-12 col-sm-4">
-            <img src="..." className="mr-3" alt="..." />
-            <div className="media-body">
-              <h5 className="h6 mb-4">
-                Te avisaremos antes de que llegue tu turno.
-              </h5>
-            </div>
-          </li>
-        </ul>
+        <div className="container">
+          <ul className="cauda_steps list-unstyled px-1 p-sm-0 w-sm-100 d-sm-flex mb-4">
+            <li className="media col-12 col-sm-4">
+              <img src="..." className="mr-3" alt="..." />
+              <div className="media-body">
+                <h5 className="h6 mb-4">
+                  Buscá un comercio o escaneá un código QR.
+                </h5>
+              </div>
+            </li>
+            <li className="media col-12 col-sm-4">
+              <img src="..." className="mr-3" alt="..." />
+              <div className="media-body">
+                <h5 className="h6 mb-4">
+                  Hacé la fila tranquilo desde tu casa.
+                </h5>
+              </div>
+            </li>
+            <li className="media col-12 col-sm-4">
+              <img src="..." className="mr-3" alt="..." />
+              <div className="media-body">
+                <h5 className="h6 mb-4">
+                  Te avisaremos antes de que llegue tu turno.
+                </h5>
+              </div>
+            </li>
+          </ul>
+        </div>
 
-        <Row className="w-100 text-center py-5 mb-5 bg-white">
+        <Row className="w-100 text-center py-5 mb-5 bg-white" noGutters>
           <Col className="d-flex flex-column justify-content-center align-items-center mx-auto">
-            <h3 className="h4 mb-3 text-center">
-              ¿Querés usar Cauda en tu comercio? ¡Es gratis!{' '}
+            <h3 className="h4 mb-4 text-center">
+              ¿Querés usar Cauda en tu comercio?
+              <br />
+              ¡Es gratis!{' '}
               <small>
                 <small>(*)</small>
               </small>
@@ -104,6 +108,7 @@ const Home = () => {
             <Link href="/my-shop" passHref>
               <Button
                 variant="info"
+                block
                 className="btn_myshop tertiary d-flex justify-content-between align-items-center py-2"
               >
                 <FontAwesomeIcon icon={faStoreAlt} fixedWidth />
@@ -119,37 +124,40 @@ const Home = () => {
           </Col>
         </Row>
 
-        <div className="cauda_testimonials d-none">
-          <h3 className="h4 mb-3 text-center">Los usuarios comentan...</h3>
+        <div className="container">
+          <div className="cauda_testimonials d-none">
+            <h3 className="h4 mb-3 text-center">Los usuarios comentan...</h3>
 
-          <ul className="list-unstyled px-1 p-sm-0 w-sm-100 d-sm-flex justify-content-center align-items-center">
-            <li className="media col-12 col-sm-4 mb-3">
-              <img src="..." className="mr-3" alt="..." />
-              <div className="media-body">
-                <p className="mb-0">
-                  “Desde que uso Cauda paso mucho menos tiempo en la calle, me
-                  siento más seguro. Cuido a mi familia y a todo mi barrio”
-                </p>
-                <strong>Javier, vecino</strong>
-              </div>
-            </li>
+            <ul className="list-unstyled px-1 p-sm-0 w-sm-100 d-sm-flex justify-content-center align-items-center">
+              <li className="media col-12 col-sm-4 mb-3">
+                <img src="..." className="mr-3" alt="..." />
+                <div className="media-body">
+                  <p className="mb-0">
+                    “Desde que uso Cauda paso mucho menos tiempo en la calle, me
+                    siento más seguro. Cuido a mi familia y a todo mi barrio”
+                  </p>
+                  <strong>Javier, vecino</strong>
+                </div>
+              </li>
 
-            <li className="media col-12 col-sm-4 mb-3">
-              <img src="..." className="mr-3" alt="..." />
-              <div className="media-body">
-                <p className="mb-0">
-                  “Desde que uso Cauda paso mucho menos tiempo en la calle, me
-                  siento más seguro. Cuido a mi familia y a todo mi barrio”
-                </p>
-                <strong>Laura, dietética Moni</strong>
-              </div>
-            </li>
-          </ul>
+              <li className="media col-12 col-sm-4 mb-3">
+                <img src="..." className="mr-3" alt="..." />
+                <div className="media-body">
+                  <p className="mb-0">
+                    “Desde que uso Cauda paso mucho menos tiempo en la calle, me
+                    siento más seguro. Cuido a mi familia y a todo mi barrio”
+                  </p>
+                  <strong>Laura, dietética Moni</strong>
+                </div>
+              </li>
+            </ul>
+          </div>
         </div>
 
-        <div className="cauda_sponsors">
+        <div className="container mb-5">
           <h3 className="h4 mb-3 text-center">Nos apoyan</h3>
-          <p>
+
+          <p className="text-center">
             Google, AWS, Conciencia, Helpers, Wingu, Beccar Varela, Notimation
           </p>
         </div>
