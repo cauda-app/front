@@ -1,6 +1,7 @@
 import { ApolloError } from 'apollo-server-core';
-import { Context } from 'graphql/context';
 import getConfig from 'next/config';
+import compareAsc from 'date-fns/compareAsc';
+import startOfDay from 'date-fns/startOfDay';
 
 import {
   MutationRequestTurnArgs,
@@ -10,17 +11,21 @@ import {
 import { decodeId } from 'src/utils/hashids';
 import { myTurns, ISSUED_NUMBER_STATUS, myPastTurns } from './helpers';
 import { numberToTurn } from 'graphql/utils/turn';
+import { Context } from 'graphql/context';
 
 const { publicRuntimeConfig } = getConfig();
-
-const getPendingTurns = (clientId: number, shopId: number, ctx: Context) =>
-  ctx.prisma.issuedNumber.findMany({
+const getTurns = (clientId: number, ctx: Context) => {
+  return ctx.prisma.issuedNumber.findMany({
     where: {
       clientId: clientId,
-      shopId: shopId,
-      status: 0,
+      status: { in: [0, 1, 2] },
     },
+    orderBy: {
+      id: 'desc',
+    },
+    first: 5,
   });
+};
 
 const IssuedNumberResolver = {
   Query: {
@@ -86,37 +91,58 @@ const IssuedNumberResolver = {
         return new ApolloError('Invalid shop id', 'INVALID_SHOP_ID');
       }
 
-      let turns = await getPendingTurns(ctx.tokenInfo.clientId, shopId, ctx);
+      let turns = await getTurns(ctx.tokenInfo.clientId, ctx);
 
-      const turnsLength = turns.length;
-
-      if (turnsLength) {
+      // limit to 1 pending turn per shopId
+      const pendingTurnForShop = turns.find(
+        (a) => a.shopId === shopId && a.status === 0
+      );
+      if (pendingTurnForShop) {
         return new ApolloError(
           'There is already a pending turn',
           'ACTIVE_TURN'
         );
       }
 
+      // Prevent more than 3 active turns.
+      const pendingTurns = turns.filter((a) => a.status === 0);
+      if (pendingTurns.length >= 3) {
+        return new ApolloError(
+          'Pending turns quota exceeded.',
+          'PENDING_TURNS_QUOTA_EXCEEDED'
+        );
+      }
+
+      // Prevent more than 5 turns per day
+      const todayAppointments = turns.filter(
+        (a) => compareAsc(a.createdAt, startOfDay(new Date())) >= 0
+      );
+      if (todayAppointments.length >= 5) {
+        return new ApolloError(
+          'Today turns quota exceeded',
+          'TODAY_TURNS_QUOTA_EXCEEDED'
+        );
+      }
+
       const rawQuery = `CALL increaseShopCounter(
         ${shopId}, 
-        ${ctx.tokenInfo.clientId}, 
+        ${ctx.tokenInfo.clientId},
         ${Number(publicRuntimeConfig.goToShopThreshold)}
       );`;
 
-      await ctx.prisma.raw(rawQuery);
-
-      turns = await getPendingTurns(ctx.tokenInfo.clientId, shopId, ctx);
-      if (!turns.length) {
+      try {
+        await ctx.prisma.raw(rawQuery);
+        const newTurns = await getTurns(ctx.tokenInfo.clientId, ctx);
+        return {
+          id: newTurns[0].id,
+          pendingTurnsAmount: turns.length + 1,
+        };
+      } catch (error) {
         return new ApolloError(
           'There was an error trying to set the appointment.',
           'OP_ERROR'
         );
       }
-
-      return {
-        id: turns[0].id,
-        pendingTurnsAmount: turns.length + 1,
-      };
     },
     cancelTurn: async (parent, args: MutationCancelTurnArgs, ctx: Context) => {
       if (!ctx.tokenInfo?.isValid) {

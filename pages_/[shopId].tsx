@@ -34,6 +34,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
   const { t } = useTranslation();
 
   const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState();
   const router = useRouter();
 
   React.useEffect(() => {
@@ -48,6 +49,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
 
   const handleRequestTurn = async (shopId) => {
     try {
+      setError(undefined);
       const res = await graphqlClient.request(REQUEST_TURN, { shopId });
       const goToShopThreshold =
         nextConfig?.publicRuntimeConfig?.goToShopThreshold;
@@ -60,10 +62,21 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
     } catch (error) {
       console.log(error);
       const errorCode = getErrorCodeFromApollo(error);
-      if (errorCode === 'ACTIVE_TURN') {
-        Router.push('/');
-      } else {
-        Sentry.captureException(error);
+
+      switch (errorCode) {
+        case 'ACTIVE_TURN':
+          Router.push('/');
+          break;
+        case 'PENDING_TURNS_QUOTA_EXCEEDED':
+          setError(t('common:pending-turns-quota-exceeded'));
+          break;
+        case 'TODAY_TURNS_QUOTA_EXCEEDED':
+          setError(t('common:today-turns-quota-exceeded'));
+          break;
+        default:
+          setError(t('common:mutation-error'));
+          Sentry.captureException(error);
+          break;
       }
     }
   };
@@ -82,7 +95,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
 
   return (
     <Layout>
-      <ShopCard shop={shop} onRequestTurn={handleRequestTurn} />
+      <ShopCard shop={shop} onRequestTurn={handleRequestTurn} error={error} />
       {showModal && (
         <Notification
           message={t('common:empty-shop-queue')}
