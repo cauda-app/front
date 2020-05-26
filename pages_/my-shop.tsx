@@ -6,10 +6,11 @@ import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPrint } from '@fortawesome/free-solid-svg-icons';
-import { faPen, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { GetServerSideProps } from 'next';
 import * as Sentry from '@sentry/browser';
 
+import { encodeId } from 'src/utils/hashids';
 import { getToken } from 'src/utils/next';
 import Layout from 'src/components/Layout';
 import Spinner from 'src/components/Spinner';
@@ -275,7 +276,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
           </Link>
 
           <p className="mt-2 mb-0">
-            <small>https://cauda.app/{shopId}</small>
+            <small>https://cauda.app/{encodeId(shopId)}</small>
           </p>
         </Card.Body>
       </Card>
