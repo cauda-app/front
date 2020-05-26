@@ -10750,6 +10750,11 @@ react-google-recaptcha-v3@^1.5.1:
   dependencies:
     hoist-non-react-statics "3.3.2"
 
+react-gtm-module@^2.0.8:
+  version "2.0.8"
+  resolved "https://registry.yarnpkg.com/react-gtm-module/-/react-gtm-module-2.0.8.tgz#0d37c4f2a4e3a8efa40c76c8b2aa1b7cacc16c6f"
+  integrity sha512-OU5FwAHC3gWnnxJ+MLwBMLZO1Pmn1DiVCGHqptwDnNojE3QRrNxjqozkW5cNS4Zp+C6HZ8a4ZIt0QPNlpzua4Q==
+
 react-helmet-async@^1.0.2:
   version "1.0.5"
   resolved "https://registry.yarnpkg.com/react-helmet-async/-/react-helmet-async-1.0.5.tgz#d2557bf274e32280a877ecb648b81740d8fb0bf1"

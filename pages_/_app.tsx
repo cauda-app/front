@@ -1,19 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import Router from 'next/router';
-import '../src/assets/scss/app.scss';
-import Spinner from 'src/components/Spinner';
 import * as Sentry from '@sentry/browser';
+import TagManager from 'react-gtm-module';
+
+import 'src/assets/scss/app.scss';
+import Spinner from 'src/components/Spinner';
 import ErrorBoundary from 'src/components/ErrorBoundary';
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 });
 
+const tagManagerArgs = {
+  gtmId: 'GTM-MBSR3WR',
+};
+
 export default function App({ Component, pageProps }) {
   const [loading, setLoading] = useState(false);
 
   const setIsLoading = () => setLoading(true);
   const cancelIsLoading = () => setLoading(false);
+
+  useEffect(() => {
+    TagManager.initialize(tagManagerArgs);
+  }, []);
 
   useEffect(() => {
     Router.events.on('routeChangeStart', setIsLoading);
