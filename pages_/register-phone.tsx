@@ -181,6 +181,18 @@ const VerifyPhone = () => {
           <Form onSubmit={handleSubmit}>
             {sendCodeScreen && (
               <>
+                {router.query.redirectTo === '/my-shop' ? (
+                  <p>
+                    Ingresá tu número de celular para que podamos validar tu
+                    comercio.
+                  </p>
+                ) : (
+                  <p>
+                    Ingresá tu número de celular para que podamos notificarte
+                    cuando sea tu turno.
+                  </p>
+                )}
+
                 <Form.Group controlId="register-cellphone">
                   <Form.Label className="sr-only">
                     {t('common:register-cellphone')}
@@ -206,10 +218,6 @@ const VerifyPhone = () => {
                     </FormControl.Feedback>
                   </InputGroup>
                 </Form.Group>
-
-                {/* <p>Ingresá tu número de celular para que podamos notificarte cuando sea tu turno.</p> */}
-
-                {/* <p>Ingresá tu número de celular para que podamos validar tu comercio.</p> */}
 
                 <Button
                   onClick={onSendCode}
