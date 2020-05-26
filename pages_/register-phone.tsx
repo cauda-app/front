@@ -182,15 +182,9 @@ const VerifyPhone = () => {
             {sendCodeScreen && (
               <>
                 {router.query.redirectTo === '/my-shop' ? (
-                  <p>
-                    Ingresá tu número de celular para que podamos validar tu
-                    comercio.
-                  </p>
+                  <p>{t('common:register-shop')}</p>
                 ) : (
-                  <p>
-                    Ingresá tu número de celular para que podamos notificarte
-                    cuando sea tu turno.
-                  </p>
+                  <p>{t('common:register-client')}</p>
                 )}
 
                 <Form.Group controlId="register-cellphone">

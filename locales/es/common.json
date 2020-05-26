@@ -62,6 +62,8 @@
   "qr-reader-error": "Ocurrio un error al activar el lector QR",
   "register-cellphone": "Registro de Teléfono",
   "register": "Registrate",
+  "register-client": "Ingresá tu número de celular para que podamos notificarte cuando sea tu turno.",
+  "register-shop": "Ingresá tu número de celular para que podamos validar tu comercio.",
   "request-turn": "Solicitar Turno",
   "save": "Guardar",
   "scan-qr-code": "Escanear Código QR",
