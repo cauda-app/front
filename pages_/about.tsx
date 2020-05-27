@@ -14,11 +14,16 @@ export default function AboutUs() {
       <Card className="cauda_card mb-4 mx-auto">
         <Card.Header className="text-center">{t('common:about')}</Card.Header>
         <Card.Body>
-          <p className="font-weight-bold mb-4">
-            Lorem ipsum dolor sit amet erat consectetur adipiscing elit.
+          <p>{t('common:about-1')}</p>
+
+          <p>{t('common:about-2')}</p>
+
+          <p>
+            {t('common:about-contact')}
+            <a href="mailto:somos@cauda.app">somos@cauda.app</a>
           </p>
 
-          <Carousel className="mb-3">
+          {/* <Carousel className="mb-3">
             <Carousel.Item>
               <img className="d-block w-100" src="" alt="Feature 1" />
               <Carousel.Caption>
@@ -49,16 +54,33 @@ export default function AboutUs() {
                 </p>
               </Carousel.Caption>
             </Carousel.Item>
-          </Carousel>
+          </Carousel> */}
+
+          <p className="font-weight-bold mb-4">{t('common:about-team')}</p>
 
           <p>
-            Aliquam ac metus dolor. Mauris id lacus commodo erat hendrerit
-            vulputate in sit amet dolor. Quisque ac aliquet augue. Ut arcu
-            ligula, dapibus id laoreet nec, elementum vel tortor. Nulla nec orci
-            nec ligula tempus venenatis nec at dui.{' '}
+            <label>Pablo Wolfus [{t('common:team-lead')}] </label>
+            <label>Mauricio Grijalba [UI/UX] Ramiro</label>
+            <label>Vazquez [{t('common:software-engineer')}] </label>
+            <label>Nicolás Dominguez [{t('common:software-engineer')}]</label>
+            <label>Ignacio Nieto [{t('common:legals-strategy')}] </label>
+            <label>Leonel Gierberg [{t('common:legals-strategy')}]</label>
           </p>
 
-          <Button
+          <p>{t('common:collaborators')}</p>
+          <p>
+            <label>José Doblá [Devops]</label>
+            <label>
+              Josefina Tous Bercovich [{t('common:social-media-training')}]
+            </label>
+            <label>Débora Edelberg [UI/UX]</label>
+            <label>Ariel Lipschutz [{t('common:team-lead')} chatbot]</label>
+            <label>Facundo Stancanelli [{t('common:software-engineer')}]</label>
+            <label>Sebastián Nieto [{t('common:production-reel')}]</label>
+            <label>Diego Lopez León [{t('common:software-engineer')}]</label>
+          </p>
+
+          {/* <Button
             variant="primary"
             href="/contact"
             block
@@ -67,7 +89,7 @@ export default function AboutUs() {
             <div></div>
             {t('common:contact')}
             <FontAwesomeIcon icon={faArrowRight} fixedWidth />
-          </Button>
+          </Button> */}
         </Card.Body>
       </Card>
     </Layout>
