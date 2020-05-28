@@ -176,13 +176,13 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
           </Link>
         </Card.Header>
 
-        <Card.Body className="py-3 px-2 text-center">
+        <Card.Body className="py-3 px-3 text-center">
           {myShop!.nextTurn ? (
             <>
-              <p className="myturn__number display-5 text-uppercase">
+              <p className="myturn__number display-5 mb-0 text-uppercase">
                 {t('common:next-turn')}
               </p>
-              <p className="myturn__number display-1 mb-0">
+              <p className="myturn__number display-1 mb-1">
                 {myShop!.nextTurn}
               </p>
 
@@ -193,7 +193,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
                   onClick={() => nextTurn('ATTEND')}
                   variant="success"
                   size="lg"
-                  className="d-flex justify-content-between align-items-center py-2 mb-4"
+                  className="d-flex justify-content-between align-items-center py-2 mt-1 mb-3"
                   block
                 >
                   <FontAwesomeIcon icon={faCheck} fixedWidth />
