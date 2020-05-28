@@ -1,4 +1,3 @@
-import 'firebase/analytics';
 import 'firebase/messaging';
 import firebase from 'firebase/app';
 import localforage from 'localforage';
@@ -20,7 +19,7 @@ const init = async () => {
     return;
   }
 
-  const firebaseApp = firebase.initializeApp({
+  firebase.initializeApp({
     apiKey: 'AIzaSyAnVih3kHw9T99xVpfsOlqwJP2TsZydv3I',
     authDomain: 'cauda-51729.firebaseapp.com',
     databaseURL: 'https://cauda-51729.firebaseio.com',
@@ -30,8 +29,6 @@ const init = async () => {
     appId: '1:195437660977:web:ea98dc48734274e1d77e10',
     measurementId: 'G-BQQ9NMT9QH',
   });
-
-  firebaseApp.analytics();
 };
 
 const tokenInlocalforage = (): Promise<string> => {
