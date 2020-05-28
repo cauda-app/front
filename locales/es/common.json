@@ -2,7 +2,7 @@
   "about": "Sobre Cauda",
   "accept-by-continue": "Al continuar acepto los",
   "add-shop": "Sumá tu Comercio",
-  "attend-turn": "Atender",
+  "attend-turn": "Atender Turno",
   "cancel-pending": "Cancelar Pendientes",
   "cancel-turn": "Cancelar Turno",
   "cancel": "Cancelar",
@@ -78,6 +78,6 @@
   "shop-phone": "Teléfono del Comercio",
   "terms-conditions": "Términos y Condiciones",
   "today-turns-quota-exceeded": "Has excedido el limites de turnos diarios. Mañana podrás volver a sacar nuevos turnos.",
-  "turn-missed": "Siguente (No se presentó)",
+  "turn-missed": "Cancelar Turno (Ausente)",
   "verify-code": "Verificar código"
 }

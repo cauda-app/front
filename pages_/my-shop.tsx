@@ -5,6 +5,8 @@ import useTranslation from 'next-translate/useTranslation';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faPrint } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { GetServerSideProps } from 'next';
@@ -174,37 +176,42 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
           </Link>
         </Card.Header>
 
-        <Card.Body className="p-2 text-center">
+        <Card.Body className="py-3 px-2 text-center">
           {myShop!.nextTurn ? (
             <>
               <p className="myturn__number display-5 text-uppercase">
                 {t('common:next-turn')}
               </p>
-              <p className="myturn__number display-1">{myShop!.nextTurn}</p>
+              <p className="myturn__number display-1 mb-0">
+                {myShop!.nextTurn}
+              </p>
 
-              <div className="pl-4 pr-4">
+              <div className="">
                 <LoadingButton
                   isLoading={actionLoading === 'ATTEND'}
                   disabled={!!actionLoading}
                   onClick={() => nextTurn('ATTEND')}
                   variant="success"
                   size="lg"
-                  className="d-flex justify-content-center align-items-center"
+                  className="d-flex justify-content-between align-items-center py-2 mb-4"
                   block
                 >
+                  <FontAwesomeIcon icon={faCheck} fixedWidth />
                   {t('common:attend-turn')}
+                  <div></div>
                 </LoadingButton>
 
                 <LoadingButton
                   isLoading={actionLoading === 'SKIP'}
                   disabled={!!actionLoading}
                   onClick={() => nextTurn('SKIP')}
-                  variant="danger"
-                  size="lg"
-                  className="d-flex justify-content-center align-items-center"
+                  variant="outline-danger"
+                  className="d-flex justify-content-between align-items-center py-2"
                   block
                 >
+                  <FontAwesomeIcon icon={faTimes} fixedWidth />
                   {t('common:turn-missed')}
+                  <div></div>
                 </LoadingButton>
               </div>
             </>
