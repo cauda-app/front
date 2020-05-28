@@ -14,7 +14,7 @@ const saveToken = (token) => {
   return graphQLClient.request(SAVE_FCM_TOKEN, { token });
 };
 
-const init = async () => {
+const init = () => {
   if (firebase.apps.length > 0) {
     return;
   }
@@ -36,9 +36,11 @@ const tokenInlocalforage = (): Promise<string> => {
 };
 
 const messagingInstance = () => {
-  if (firebase.apps.length > 0) {
-    return firebase.messaging();
+  if (firebase.apps.length === 0) {
+    init();
   }
+
+  return firebase.messaging();
 };
 
 const requestPermission = async () => {
