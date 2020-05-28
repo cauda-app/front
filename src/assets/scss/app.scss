@@ -30,9 +30,9 @@ $border-radius: 1rem;
 $border-radius-sm: 0.6rem;
 $border-radius-lg: 0.5rem;
 
-$btn-border-radius: 0.8rem;
-$btn-border-radius-sm: $border-radius-sm;
-$btn-border-radius-lg: $border-radius-lg;
+$btn-border-radius: 25px;
+$btn-border-radius-sm: 25px;
+$btn-border-radius-lg: 25px;
 
 // BOOTSTRAP IMPORT
 @import '~bootstrap/scss/bootstrap';
@@ -76,6 +76,10 @@ footer {
   background: var(--color_gray);
 }
 
+.small_text {
+  font-size: 90%;
+}
+
 .input-group > .form-control {
   border-top-right-radius: $border-radius !important;
   border-bottom-right-radius: $border-radius !important;
@@ -87,6 +91,65 @@ footer {
 .geosuggest__input.form-control {
   border-top-right-radius: $border-radius !important;
   border-bottom-right-radius: $border-radius !important;
+}
+
+
+.cauda_mainhome {
+  margin-top: 20px !important;
+  .home_cityscape {
+    margin-top: -50px;
+    margin-bottom: 10px;
+    width: 100%;
+    max-width: 320px;
+  }
+  .rounded_bottom {
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+  }
+}
+
+.cauda_steps {
+  .h6 {
+    font-size: 1.15rem;
+    line-height: 1.25;
+    padding-bottom: 5px;
+  }
+  .home_step {
+    margin-top: -3px;
+    margin-right: 1.2rem;
+    width: 32px;
+    height: 32px;
+    background: var(--color_white);
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    border: 1px solid rgb(194, 194, 194);
+    font-weight: bold;
+  }
+}
+
+.cauda_shops {
+  color: var(--color_white);
+  background-color: #009cde;
+  background-image: radial-gradient(circle farthest-side at center bottom, #009cde, #003087 125%);
+  p {
+    opacity: 0.95;
+  }
+  .btn {
+    // font-weight: 700;
+    letter-spacing: 0.5px;
+    border: 1px solid var(--color_white);
+  }
+  .text-muted {
+    color: var(--color_white) !important;
+    opacity: 0.7;
+  }
+  small {
+    line-height: 1.2;
+    font-size: 0.7rem;
+  }
 }
 
 .my_turns {
@@ -146,17 +209,17 @@ footer {
 // GLOBAL COMPONENTS
 
 .cauda_card {
-  width: calc(100% - 12px) !important;
-  max-width: calc(var(--app_maxwidth) - 10px);
+  width: calc(100% - 20px) !important;
+  max-width: calc(var(--app_maxwidth) - 20px);
   background: none;
   background-color: rgba(255, 255, 255, 0.8) !important;
   border: none;
   box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1),
     inset 0 0 0 1px rgba(255, 255, 255, 0.5);
   backdrop-filter: saturate(50%) blur(20px);
-  overflow: hidden;
+  // overflow: hidden;
   svg {
-    max-width: 16px;
+    // max-width: 16px;
   }
 }
 .cauda_card--clean {
@@ -270,6 +333,10 @@ footer {
   font-weight: 900;
   overflow: hidden;
   color: var(--color_primary);
+}
+.myturn__number--disabled {
+  color: var(--color_divider);
+  font-weight: 300;
 }
 .myturn__qrcode {
   border: 2px solid var(--color_primary);

@@ -493,14 +493,14 @@ const EditShop = ({ isLoggedIn, shop }: Props) => {
             >
               {t('common:save')}
             </LoadingButton>
-            <Link href={'/'} passHref>
+
+            <Link href={'/my-shop'} passHref>
               <Button
                 block
                 type="button"
                 disabled={isSubmitting}
-                variant="danger"
-                size="lg"
-                className="mt-4"
+                variant="link"
+                className="mt-3 text-dark"
               >
                 {t('common:cancel')}
               </Button>

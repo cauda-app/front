@@ -5,11 +5,14 @@ import useTranslation from 'next-translate/useTranslation';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faPrint } from '@fortawesome/free-solid-svg-icons';
-import { faPen, faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { GetServerSideProps } from 'next';
 import * as Sentry from '@sentry/browser';
 
+import { encodeId } from 'src/utils/hashids';
 import { getToken } from 'src/utils/next';
 import Layout from 'src/components/Layout';
 import Spinner from 'src/components/Spinner';
@@ -19,9 +22,10 @@ import LoadingButton from 'src/components/LoadingButton';
 type Props = {
   isLoggedIn: boolean;
   shopId?: number;
+  encodedShopId: string;
 };
 
-const MyShop = ({ isLoggedIn, shopId }: Props) => {
+const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
   const { t } = useTranslation();
 
   const [myShop, setMyShop] = useState<any>();
@@ -158,74 +162,81 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
   return (
     <Layout>
       <Card className="cauda_card mb-4 mx-auto">
-        <Card.Header className="d-flex justify-content-between align-items-center px-0">
-          <Link href="/" passHref>
+        <Card.Header className="d-flex justify-content-between align-items-center px-2 pl-3">
+          {/* <Link href="/" passHref>
             <Button variant="link" className="py-0 text-dark">
               <FontAwesomeIcon icon={faChevronLeft} className="mr-2" />
             </Button>
-          </Link>
+          </Link> */}
           <span className="text-truncate">{myShop!.details.name}</span>
           <Link href="/shop-form" passHref>
-            <Button variant="link" size="sm">
+            <Button variant="outline-primary" size="sm">
               <FontAwesomeIcon icon={faPen} className="mr-2" />
+              {t('common:edit')}
             </Button>
           </Link>
         </Card.Header>
 
-        <Card.Body className="p-2 text-center">
+        <Card.Body className="py-3 px-3 text-center">
           {myShop!.nextTurn ? (
             <>
-              <p className="myturn__number display-5 text-uppercase">
+              <p className="myturn__number display-5 mb-0 text-uppercase">
                 {t('common:next-turn')}
               </p>
-              <p className="myturn__number display-1">{myShop!.nextTurn}</p>
+              <p className="myturn__number display-1 mb-1">
+                {myShop!.nextTurn}
+              </p>
 
-              <div className="pl-4 pr-4">
+              <div className="">
                 <LoadingButton
                   isLoading={actionLoading === 'ATTEND'}
                   disabled={!!actionLoading}
                   onClick={() => nextTurn('ATTEND')}
                   variant="success"
                   size="lg"
-                  className="d-flex justify-content-center align-items-center"
+                  className="d-flex justify-content-between align-items-center py-2 mt-1 mb-3"
                   block
                 >
+                  <FontAwesomeIcon icon={faCheck} fixedWidth />
                   {t('common:attend-turn')}
+                  <div></div>
                 </LoadingButton>
 
                 <LoadingButton
                   isLoading={actionLoading === 'SKIP'}
                   disabled={!!actionLoading}
                   onClick={() => nextTurn('SKIP')}
-                  variant="danger"
-                  size="lg"
-                  className="d-flex justify-content-center align-items-center"
+                  variant="outline-danger"
+                  className="d-flex justify-content-between align-items-center py-2"
                   block
                 >
+                  <FontAwesomeIcon icon={faTimes} fixedWidth />
                   {t('common:turn-missed')}
+                  <div></div>
                 </LoadingButton>
               </div>
             </>
           ) : (
-            <p className="myturn__number display-5 p-4 text-uppercase text-dark">
+            <p className="myturn__number display-5 p-5 text-uppercase text-dark">
               {t('common:no-turns')}
             </p>
           )}
         </Card.Body>
       </Card>
 
-      <Card className="cauda_card mb-4 mx-auto">
-        <Card.Body className="p-2 text-center">
-          <div className="d-flex justify-content-center align-items-center mb-1">
-            <span className="h6 text-uppercase font-weight-light mr-1 mb-0 text-light">
-              {t('common:pending-turns')}
-            </span>
-            <span className="h2 text-uppercase font-weight-light ml-2 mb-0 text-light">
-              {myShop!.pendingTurnsAmount}
-            </span>
-          </div>
+      {myShop!.lastTurns.length > 0 ? (
+        <Card className="cauda_card mb-4 mx-auto">
+          <Card.Body className="p-2 text-center">
+            <div className="d-flex justify-content-center align-items-center mb-1">
+              <span className="h6 text-uppercase font-weight-light mr-1 mb-0 text-light">
+                {t('common:pending-turns')}
+              </span>
+              <span className="h2 text-uppercase font-weight-light ml-2 mb-0 text-light">
+                {myShop!.pendingTurnsAmount}
+              </span>
+            </div>
 
-          {/* <Button
+            {/* <Button
             disabled={myShop.pendingTurnsAmount === 0 || actionLoading}
             onClick={cancelTurns}
             variant="light"
@@ -234,8 +245,9 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
           >
             {t('common:cancel-pending')}
           </Button> */}
-        </Card.Body>
-      </Card>
+          </Card.Body>
+        </Card>
+      ) : null}
 
       {myShop!.lastTurns.length > 0 ? (
         <div className="myturn__turns mb-5 text-center">
@@ -257,12 +269,12 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
       ) : null}
 
       <Card className="cauda_card cauda_card--clean mb-4 mx-auto">
-        <Card.Body className="p-0 text-center d-flex justify-content-center align-items-center">
+        <Card.Body className="p-0 text-center d-flex flex-column justify-content-center align-items-center">
           <Link href="/shop-poster" passHref>
             <Button
               as="a"
               target="blank"
-              variant="primary"
+              variant="outline-primary"
               className="d-flex justify-content-between align-items-center py-2"
             >
               <FontAwesomeIcon icon={faPrint} fixedWidth className="mr-2" />
@@ -270,6 +282,10 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
               <div></div>
             </Button>
           </Link>
+
+          <p className="mt-2 mb-0">
+            <small>https://cauda.app/{encodedShopId}</small>
+          </p>
         </Card.Body>
       </Card>
     </Layout>
@@ -279,11 +295,17 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = getToken(context);
 
-  if (!token) {
+  if (!token || !token.clientId) {
     return { props: { isLoggedIn: false } };
   }
 
-  return { props: { isLoggedIn: true, shopId: token.shopId || '' } };
+  return {
+    props: {
+      isLoggedIn: true,
+      shopId: token.shopId,
+      encodedShopId: encodeId(token.shopId),
+    },
+  };
 };
 
 export default MyShop;

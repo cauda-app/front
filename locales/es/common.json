@@ -6,7 +6,7 @@
   "about-team": "El equipo de Cauda.",
   "accept-by-continue": "Al continuar acepto los",
   "add-shop": "Sumá tu Comercio",
-  "attend-turn": "Atender",
+  "attend-turn": "Atender Turno",
   "cancel-pending": "Cancelar Pendientes",
   "cancel-turn": "Cancelar Turno",
   "cancel": "Cancelar",
@@ -25,6 +25,7 @@
     "saturday": "Sábado",
     "sunday": "Domingo"
   },
+  "edit": "Editar",
   "email": "Email",
   "empty-shop-queue": "Hay poca gente esperando, ya podés ir saliendo que en cualquier momento te toca!",
   "enter-cellphone": "Ingresa tu celular",
@@ -45,6 +46,7 @@
   "minutes": "minutos",
   "mutation-error": "Se produjo un error al realizar la operación",
   "my-active-turns": "Mis Turnos Activos",
+  "my-past-turns": "Mis Turnos Pasados",
   "add-my-shop": "Sumar Mi Comercio",
   "my-shop": "Mi Comercio",
   "my-turn": "Mi Turno",
@@ -67,6 +69,8 @@
   "qr-reader-error": "Ocurrio un error al activar el lector QR",
   "register-cellphone": "Registro de Teléfono",
   "register": "Registrate",
+  "register-client": "Ingresá tu número de celular para que podamos notificarte cuando sea tu turno.",
+  "register-shop": "Ingresá tu número de celular para que podamos validar tu comercio.",
   "request-turn": "Solicitar Turno",
   "save": "Guardar",
   "scan-qr-code": "Escanear Código QR",
@@ -84,6 +88,6 @@
   "team-lead": "Líder de proyecto",
   "terms-conditions": "Términos y Condiciones",
   "today-turns-quota-exceeded": "Has excedido el limites de turnos diarios. Mañana podrás volver a sacar nuevos turnos.",
-  "turn-missed": "Siguente (No se presentó)",
+  "turn-missed": "Cancelar Turno (Ausente)",
   "verify-code": "Verificar código"
 }
