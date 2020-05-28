@@ -22,9 +22,10 @@ import LoadingButton from 'src/components/LoadingButton';
 type Props = {
   isLoggedIn: boolean;
   shopId?: number;
+  encodedShopId: string;
 };
 
-const MyShop = ({ isLoggedIn, shopId }: Props) => {
+const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
   const { t } = useTranslation();
 
   const [myShop, setMyShop] = useState<any>();
@@ -283,7 +284,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
           </Link>
 
           <p className="mt-2 mb-0">
-            <small>https://cauda.app/{encodeId(shopId)}</small>
+            <small>https://cauda.app/{encodedShopId}</small>
           </p>
         </Card.Body>
       </Card>
@@ -294,11 +295,17 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = getToken(context);
 
-  if (!token) {
+  if (!token || !token.clientId) {
     return { props: { isLoggedIn: false } };
   }
 
-  return { props: { isLoggedIn: true, shopId: token.shopId || '' } };
+  return {
+    props: {
+      isLoggedIn: true,
+      shopId: token.shopId,
+      encodedShopId: encodeId(token.shopId),
+    },
+  };
 };
 
 export default MyShop;
