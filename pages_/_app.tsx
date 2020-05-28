@@ -13,8 +13,6 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN,
 });
 
-firebaseCloudMessaging.init();
-
 const tagManagerArgs = {
   gtmId: 'GTM-MBSR3WR',
 };
@@ -27,6 +25,7 @@ export default function App({ Component, pageProps }) {
 
   useEffect(() => {
     TagManager.initialize(tagManagerArgs);
+    firebaseCloudMessaging.init();
   }, []);
 
   useEffect(() => {
