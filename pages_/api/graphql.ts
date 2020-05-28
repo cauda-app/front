@@ -1,6 +1,7 @@
 import { ApolloServer } from 'apollo-server-micro';
 import { makeExecutableSchema } from 'graphql-tools';
 import * as Sentry from '@sentry/node';
+import admin from 'firebase-admin';
 
 import { Context } from 'graphql/context';
 import prisma from 'prisma/client';
@@ -12,6 +13,19 @@ import { apolloServerSentryPlugin } from 'graphql/plugins';
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
 });
+
+if (admin.apps.length === 0) {
+  const firebaseService = (process.env.FIREBASE_CONFIG || '{}').replace(
+    /\\\\/g, // escape private_key backslashes
+    '\\'
+  );
+  const firebaseServiceConfig = JSON.parse(firebaseService);
+
+  admin.initializeApp({
+    credential: admin.credential.cert(firebaseServiceConfig),
+    databaseURL: 'https://cauda-51729.firebaseio.com',
+  });
+}
 
 function sentryHandler(handler) {
   return async (req, res) => {
