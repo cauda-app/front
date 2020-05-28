@@ -93,6 +93,21 @@ footer {
   border-bottom-right-radius: $border-radius !important;
 }
 
+
+.cauda_mainhome {
+  margin-top: 20px !important;
+  .home_cityscape {
+    margin-top: -50px;
+    margin-bottom: 10px;
+    width: 100%;
+    max-width: 320px;
+  }
+  .rounded_bottom {
+    border-bottom-left-radius: 1rem;
+    border-bottom-right-radius: 1rem;
+  }
+}
+
 .cauda_steps {
   .h6 {
     font-size: 1.15rem;
@@ -202,7 +217,7 @@ footer {
   box-shadow: 0 12px 28px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.1),
     inset 0 0 0 1px rgba(255, 255, 255, 0.5);
   backdrop-filter: saturate(50%) blur(20px);
-  overflow: hidden;
+  // overflow: hidden;
   svg {
     // max-width: 16px;
   }

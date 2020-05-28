@@ -9,6 +9,7 @@ import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import Layout from 'src/components/Layout';
+import Image from 'react-bootstrap/Image';
 
 const Home = () => {
   const { t } = useTranslation();
@@ -16,10 +17,15 @@ const Home = () => {
   return (
     <Layout>
       <div className="content d-flex flex-column justify-content-between align-items-center h-100">
-        <div></div>
-        <Card className="cauda_card mt-2 mb-5 p-0 text-center">
+        <Card className="cauda_card mt-2 mb-5 p-0 text-center cauda_mainhome">
           <Row noGutters>
             <Col xs="12" className="p-4">
+              <Image
+                src="/cauda_cityscape.png"
+                fluid
+                className="home_cityscape"
+              />
+
               <h1 className="h4 mb-3">
                 <strong>Fila virtual desde tu casa.</strong> ¡Gratis!
               </h1>
