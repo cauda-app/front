@@ -11,6 +11,7 @@ model Client {
   id           Int            @default(autoincrement()) @id
   phone        String         @unique
   issuedNumber IssuedNumber[]
+  fcmToken     String?
   createdAt    DateTime       @default(now())
   updatedAt    DateTime       @updatedAt
 }

@@ -22,6 +22,7 @@ import useSWR, { mutate } from 'swr';
 import LoadingButton from 'src/components/LoadingButton';
 import { TO_ISSUED_NUMBER_STATUS } from 'graphql/issuedNumber/helpers';
 import { MY_PAST_TURNS, MY_TURNS } from 'pages_';
+import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 
 const reload = () => Router.reload();
 
@@ -32,6 +33,7 @@ const MyTurn = ({
   lastTurns: initialLastTurns,
 }) => {
   const { t } = useTranslation();
+  useFirebaseMessage();
   const router = useRouter();
   const [cancelling, setCancelling] = useState(false);
   const [cancelError, setCancelError] = useState();
@@ -106,7 +108,7 @@ const MyTurn = ({
       setCancelling(false);
     } catch (error) {
       setCancelError(error);
-      console.log(error);
+      console.error(error);
       setCancelling(false);
       Sentry.captureException(error);
     }

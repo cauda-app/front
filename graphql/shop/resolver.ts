@@ -19,9 +19,35 @@ import { numberToTurn } from '../utils/turn';
 import { isOpen, shopPhone, status, lastTurns } from './helpers';
 import { decodeId, encodeId } from 'src/utils/hashids';
 import sendSms from 'graphql/utils/smsApi';
+import { sendMessage } from 'graphql/utils/fcm';
 
 const { publicRuntimeConfig } = getConfig();
 const threshold = Number(publicRuntimeConfig.goToShopThreshold);
+
+const sendFallbackSms = (phone, message) => {
+  const localPhone = getNationalNumber(phone);
+  if (process.env.SMS_ENABLED === '1') {
+    sendSms(localPhone, message);
+    console.log(`SMS-(${localPhone}): ${message}`);
+  } else {
+    console.log(`SMS-MOCK-(${localPhone}): ${message}`);
+  }
+};
+
+const sendNotification = async (client, message, title = '') => {
+  if (client.fcmToken) {
+    const notification = { title, body: message };
+    const messageId = await sendMessage(notification, client.fcmToken);
+    console.log(
+      `FCM Message to Client ID ${client.id} sent with token ${client.fcmToken}. Message ID ${messageId}`
+    );
+    if (messageId) {
+      return;
+    }
+  }
+
+  sendFallbackSms(client.phone, message);
+};
 
 const mapShop = (shop: ShopInput): ShopInput => {
   const updatedShop = { ...shop };
@@ -189,7 +215,9 @@ const shopResolver = {
         const client = await ctx.prisma.client.findOne({
           where: { id: nextTurnToNotify.clientId },
           select: {
+            id: true,
             phone: true,
+            fcmToken: true,
           },
         });
 
@@ -201,13 +229,8 @@ const shopResolver = {
         }
 
         const message = `Tu turno en ${shop?.shopDetails.name} está próximo a ser atendido. Solo hay ${threshold} personas por delante.`;
-        const localPhone = getNationalNumber(client.phone);
-        if (process.env.SMS_ENABLED === '1') {
-          sendSms(localPhone, message);
-          console.log(`SMS-(${localPhone}): ${message}`);
-        } else {
-          console.log(`SMS-MOCK-(${localPhone}): ${message}`);
-        }
+        const title = 'Cauda';
+        sendNotification(client, message, title);
       }
 
       await ctx.prisma.issuedNumber.update({

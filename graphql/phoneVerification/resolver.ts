@@ -96,6 +96,7 @@ const phoneVerificationResolver = {
 
       // If three codes were already sent, wait for 4h before sending another.
       if (
+        process.env.SMS_ENABLED === '1' &&
         phoneVerification &&
         phoneVerification.attempts >= 3 &&
         compareAsc(new Date(), addHours(phoneVerification.updatedAt, 4)) === -1

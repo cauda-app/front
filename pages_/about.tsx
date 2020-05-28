@@ -5,9 +5,11 @@ import Carousel from 'react-bootstrap/Carousel';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 
 export default function AboutUs() {
   const { t } = useTranslation();
+  useFirebaseMessage();
 
   return (
     <Layout>

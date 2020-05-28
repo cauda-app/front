@@ -17,6 +17,7 @@ import { getToken } from 'src/utils/next';
 import prismaClient from 'prisma/client';
 import graphqlClient from 'src/graphqlClient';
 import { myTurns, myPastTurns } from 'graphql/issuedNumber/helpers';
+import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 
 export const MY_TURNS = /* GraphQL */ `
   query MyTurns {
@@ -45,6 +46,7 @@ type Turn = {
 };
 
 type Props = {
+  isLoggedIn: boolean;
   activeTurns: Array<Turn>;
   pastTurns: Array<Turn>;
 };
@@ -53,6 +55,7 @@ const fetcher = (query) => graphqlClient.request(query);
 
 const MyTurns = ({ activeTurns = [], pastTurns = [] }: Props) => {
   const { t } = useTranslation();
+  useFirebaseMessage();
   const { data: myTurnsData, error: myTurnsError } = useSWR(MY_TURNS, fetcher, {
     initialData: { myTurns: activeTurns },
   });

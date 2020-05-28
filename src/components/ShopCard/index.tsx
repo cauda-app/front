@@ -34,10 +34,9 @@ export default function ShopCard({
       setIsLoading(true);
       await onRequestTurn!(shop.shopId);
     } catch (error) {
-      // TODO: show error
-      console.log(error);
-    } finally {
       setIsLoading(false);
+      // TODO: show error
+      console.error(error);
     }
   };
 

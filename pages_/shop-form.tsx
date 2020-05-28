@@ -26,6 +26,7 @@ import Layout from 'src/components/Layout';
 import Spinner from 'src/components/Spinner';
 import { days } from 'src/utils/dates';
 import { getNationalNumber } from 'src/utils/phone-utils';
+import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 
 const CREATE = /* GraphQL */ `
   mutation createShop($shop: ShopInput!) {
@@ -176,6 +177,7 @@ type Props = {
 
 const EditShop = ({ isLoggedIn, shop }: Props) => {
   const { t } = useTranslation();
+  useFirebaseMessage();
   const [state, dispatch] = React.useReducer(reducer, initFormValues(shop));
   const [submitAttempt, setSubmitAttempt] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
