@@ -132,6 +132,7 @@ const MyTurn = ({
             {t('common:my-turn')}
           </Button>
 
+          {/* TODO NICO: Add "myturn__number--disabled" class for disabled myturn__number */}
           <p className="myturn__number display-3">{turn.turn}</p>
 
           {/* <p className="myturn__timebox h2 font-weight-light mb-1">

@@ -181,6 +181,12 @@ const VerifyPhone = () => {
           <Form onSubmit={handleSubmit}>
             {sendCodeScreen && (
               <>
+                {router.query.redirectTo === '/my-shop' ? (
+                  <p>{t('common:register-shop')}</p>
+                ) : (
+                  <p>{t('common:register-client')}</p>
+                )}
+
                 <Form.Group controlId="register-cellphone">
                   <Form.Label className="sr-only">
                     {t('common:register-cellphone')}

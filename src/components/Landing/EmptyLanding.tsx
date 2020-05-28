@@ -9,6 +9,7 @@ import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import Layout from 'src/components/Layout';
+import Image from 'react-bootstrap/Image';
 
 const Home = () => {
   const { t } = useTranslation();
@@ -16,20 +17,23 @@ const Home = () => {
   return (
     <Layout>
       <div className="content d-flex flex-column justify-content-between align-items-center h-100">
-        <div></div>
-        <Card className="cauda_card mt-2 mb-5 p-0 text-center">
+        <Card className="cauda_card mt-2 mb-5 p-0 text-center cauda_mainhome">
           <Row noGutters>
             <Col xs="12" className="p-4">
-              <h1 className="h3 mb-3">Fila virtual desde tu casa. ¡Gratis!</h1>
-              <p className="mb-4">
-                Con Cauda evitás estar en la calle más de lo necesario, ahorrás
-                tiempo y no te ponés en riesgo.
-              </p>
+              <Image
+                src="/cauda_cityscape.png"
+                fluid
+                className="home_cityscape"
+              />
+
+              <h1 className="h4 mb-3">
+                <strong>Fila virtual desde tu casa.</strong> ¡Gratis!
+              </h1>
 
               <Link href="/shops" passHref>
                 <Button
                   variant="primary"
-                  className="d-flex justify-content-between align-items-center py-2"
+                  className="d-flex justify-content-between align-items-center mb-3 py-2"
                   block
                 >
                   <FontAwesomeIcon icon={faMapMarkerAlt} fixedWidth />
@@ -37,18 +41,19 @@ const Home = () => {
                   <div></div>
                 </Button>
               </Link>
-            </Col>
-            <Col xs="12" className="p-4 bg_gray rounded_bottom d-md-none">
-              <h2 className="h4">¿Estás en la calle?</h2>
-              <p>
-                Si ves un código QR en un negocio, escanealo, saca turno y
-                esperá desde tu casa.
+
+              <p className="mb-0 small_text">
+                Con Cauda evitás estar en la calle más de lo necesario, ahorrás
+                tiempo y no te ponés en riesgo.
               </p>
+            </Col>
+            <Col xs="12" className="py-4 px-4 bg_gray rounded_bottom d-lg-none">
+              <h2 className="h4 mb-3">¿Estás en la calle?</h2>
 
               <Link href="/scan" passHref>
                 <Button
                   variant="secondary"
-                  className="d-flex justify-content-between align-items-center py-2"
+                  className="d-flex justify-content-between align-items-center mb-3 py-2"
                   block
                 >
                   <FontAwesomeIcon icon={faCamera} fixedWidth />
@@ -56,30 +61,41 @@ const Home = () => {
                   <div></div>
                 </Button>
               </Link>
+
+              <p className="mb-0 small_text">
+                Si ves un código QR en un negocio, escanealo, saca turno y
+                esperá desde tu casa.
+              </p>
             </Col>
           </Row>
         </Card>
 
-        <div className="container">
-          <ul className="cauda_steps list-unstyled px-1 p-sm-0 w-sm-100 d-sm-flex mb-4">
-            <li className="media col-12 col-sm-4">
-              <img src="..." className="mr-3" alt="..." />
+        <div className="container px-0">
+          <ul className="cauda_steps list-unstyled pt-4 px-1 p-sm-0 w-sm-100 d-md-flex mb-4">
+            <li className="media col-12 col-md-4">
+              <span className="home_step">
+                <span>1</span>
+              </span>
               <div className="media-body">
                 <h5 className="h6 mb-4">
                   Buscá un comercio o escaneá un código QR.
                 </h5>
               </div>
             </li>
-            <li className="media col-12 col-sm-4">
-              <img src="..." className="mr-3" alt="..." />
+            <li className="media col-12 col-md-4">
+              <span className="home_step">
+                <span>2</span>
+              </span>
               <div className="media-body">
                 <h5 className="h6 mb-4">
                   Hacé la fila tranquilo desde tu casa.
                 </h5>
               </div>
             </li>
-            <li className="media col-12 col-sm-4">
-              <img src="..." className="mr-3" alt="..." />
+            <li className="media col-12 col-md-4">
+              <span className="home_step">
+                <span>3</span>
+              </span>
               <div className="media-body">
                 <h5 className="h6 mb-4">
                   Te avisaremos antes de que llegue tu turno.
@@ -89,27 +105,27 @@ const Home = () => {
           </ul>
         </div>
 
-        <Row className="w-100 text-center py-5 mb-5 bg-white" noGutters>
+        <Row className="cauda_shops w-100 text-center py-5 mb-5">
           <Col className="d-flex flex-column justify-content-center align-items-center mx-auto">
             <h3 className="h4 mb-4 text-center">
-              ¿Querés usar Cauda en tu comercio?
-              <br />
-              ¡Es gratis!{' '}
+              ¿Querés usar Cauda en tu comercio? <strong>¡Es gratis!</strong>{' '}
               <small>
                 <small>(*)</small>
               </small>
             </h3>
 
-            <p>
-              Usando Cauda contribuís a cuidar a tus clientes y entre todos
+            <p className="small_text">
+              Usando Cauda contribuís a cuidar a tus clientes y entre todos{' '}
+              <br className="d-none d-sm-block" />
               podemos lograr reducir el riesgo de contagio. Es rapidísimo.
             </p>
 
             <Link href="/my-shop" passHref>
               <Button
                 variant="info"
+                size="lg"
                 block
-                className="btn_myshop tertiary d-flex justify-content-between align-items-center py-2"
+                className="btn_myshop tertiary d-flex justify-content-between align-items-center py-2 mb-3"
               >
                 <FontAwesomeIcon icon={faStoreAlt} fixedWidth />
                 {t('common:add-my-shop')}
@@ -117,9 +133,9 @@ const Home = () => {
               </Button>
             </Link>
 
-            <small className="mt-3 text-muted">
-              (*) para altos volúmenes de uso, Cauda se reserva el derecho a
-              requerir una contribución
+            <small className="mb-0 text-muted">
+              (*) para altos volúmenes de uso, Cauda se reserva el <br />
+              derecho a requerir una contribución.
             </small>
           </Col>
         </Row>
@@ -166,7 +182,7 @@ const Home = () => {
       <style jsx global>{`
         .btn_myshop {
           width: 100%;
-          max-width: 220px;
+          max-width: 280px;
         }
       `}</style>
     </Layout>

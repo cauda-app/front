@@ -142,6 +142,10 @@ const MyTurns = ({ activeTurns = [], pastTurns = [] }: Props) => {
         {myPastTurnsData.myPastTurns.length === 0 ? null : (
           <Card className="cauda_card cauda_shop mt-3 my_turns inactive">
             <Card.Body>
+              <div className="text-center mb-2">
+                {t('common:my-past-turns')}
+              </div>
+
               <ul className="list-unstyled">
                 {myPastTurnsData.myPastTurns.map((turn) => (
                   <li key={turn.id}>
