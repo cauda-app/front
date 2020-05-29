@@ -246,7 +246,7 @@ const shopResolver = {
       const icon = 'https://' + ctx.req.headers.host + '/cauda_blue.png';
 
       const nextTurn = nextTurns[0];
-      if (nextTurn.status === 0) {
+      if (args.op === 'ATTEND') {
         const link = turnLink(ctx.req.headers.host, nextTurn.id);
         const message = `Es tu turno en ${shop?.shopDetails.name}!`;
         sendFcmNotification(nextTurn.client, message, title, link, icon);
