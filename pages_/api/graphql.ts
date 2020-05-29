@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/node';
 import admin from 'firebase-admin';
 
 import { Context } from 'graphql/context';
-import prisma from 'prisma/client';
+import createPrismaClient from 'prisma/client';
 import typeDefs from 'graphql/typeDefs';
 import resolvers from 'graphql/resolvers';
 import { processCookie } from 'src/utils/next';
@@ -40,6 +40,7 @@ function sentryHandler(handler) {
 }
 
 const schema = makeExecutableSchema({ typeDefs, resolvers });
+const prisma = createPrismaClient();
 
 const server = new ApolloServer({
   schema,
@@ -62,7 +63,7 @@ export const config = {
 };
 
 process.on('exit', async () => {
-  await prisma.disconnect;
+  await prisma.disconnect();
 });
 
 export default sentryHandler(server.createHandler({ path: '/api/graphql' }));

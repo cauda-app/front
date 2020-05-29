@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import * as Sentry from '@sentry/browser';
 import { mutate } from 'swr';
 
-import prismaClient from '../prisma/client';
+import createPrismaClient from '../prisma/client';
 import ShopCard from 'src/components/ShopCard';
 import Layout from 'src/components/Layout';
 import NotFound from 'src/components/NotFound';
@@ -118,10 +118,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const encodedShopId = context.params?.shopId as string | undefined;
   const shopId = decodeId(encodedShopId) as number | null;
 
+  const prisma = createPrismaClient();
+
   if (shopId) {
-    const dbShop = await prismaClient.shopDetails.findOne({
+    const dbShop = await prisma.shopDetails.findOne({
       where: { shopId },
     });
+
+    await prisma.disconnect();
+
     if (dbShop) {
       const shop = {
         shopId: encodedShopId,
@@ -133,7 +138,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         isOpen: isOpen(dbShop),
         status: status(dbShop),
       };
-
       return { props: { isLoggedIn: true, shop } };
     }
   }
