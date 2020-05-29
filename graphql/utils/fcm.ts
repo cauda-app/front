@@ -8,11 +8,22 @@ type Notification = {
 
 export const sendMessage = async (
   notification: Notification,
-  token: string
+  token: string,
+  link: string,
+  icon: string
 ) => {
   var message = {
-    data: notification,
+    notification,
     token,
+    webpush: {
+      notification: {
+        requireInteraction: true,
+        icon: icon,
+      },
+      fcm_options: {
+        link: link,
+      },
+    },
   };
 
   try {

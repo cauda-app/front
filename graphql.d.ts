@@ -116,6 +116,8 @@ export type MutationVerifyPhoneArgs = {
 export type NotificationInput = {
   title: Scalars['String'];
   body: Scalars['String'];
+  link: Scalars['String'];
+  icon: Scalars['String'];
 };
 
 

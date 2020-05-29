@@ -85,7 +85,12 @@ const clientResolver = {
         body: args.data.body,
       };
 
-      return sendMessage(notification, client?.fcmToken);
+      return sendMessage(
+        notification,
+        client?.fcmToken,
+        args.data.link,
+        args.data.icon
+      );
     },
   },
 };

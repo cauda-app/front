@@ -34,12 +34,32 @@ const sendFallbackSms = (phone, message) => {
   }
 };
 
-const sendNotification = async (client, message, title = '') => {
+const sendFcmNotification = async (client, message, title, link, icon) => {
   if (client.fcmToken) {
     const notification = { title, body: message };
-    const messageId = await sendMessage(notification, client.fcmToken);
-    console.log(
-      `FCM Message to Client ID ${client.id} sent with token ${client.fcmToken}. Message ID ${messageId}`
+    const messageId = await sendMessage(
+      notification,
+      client.fcmToken,
+      link,
+      icon
+    );
+    if (messageId) {
+      console.log(
+        `FCM Message to Client ID ${client.id} sent with token ${client.fcmToken}. Message ID ${messageId}`
+      );
+      return messageId;
+    }
+  }
+};
+
+const sendNotification = async (client, message, title = '', link, icon) => {
+  if (client.fcmToken) {
+    const messageId = await sendFcmNotification(
+      client,
+      message,
+      title,
+      link,
+      icon
     );
     if (messageId) {
       return;
@@ -47,6 +67,10 @@ const sendNotification = async (client, message, title = '') => {
   }
 
   sendFallbackSms(client.phone, message);
+};
+
+const turnLink = (host, turnId) => {
+  return 'https://' + host + '/turn/' + encodeId(turnId);
 };
 
 const mapShop = (shop: ShopInput): ShopInput => {
@@ -201,6 +225,15 @@ const shopResolver = {
         where: { shopId: ctx.tokenInfo!.shopId, AND: { status: 0 } },
         orderBy: { issuedNumber: 'asc' },
         first: threshold + 1,
+        include: {
+          client: {
+            select: {
+              id: true,
+              phone: true,
+              fcmToken: true,
+            },
+          },
+        },
       });
 
       const shop = await getShop();
@@ -209,17 +242,17 @@ const shopResolver = {
         return shop;
       }
 
+      const nextTurn = nextTurns[0];
+      const title = 'Cauda';
+      const link = turnLink(ctx.req.headers.host, nextTurn.id);
+      const icon = 'https://' + ctx.req.headers.host + '/cauda_blue.png';
+      const message = `Es tu turno en ${shop?.shopDetails.name}!`;
+      sendFcmNotification(nextTurn.client, message, title, link, icon);
+
       // If there is a turn after threshold, send a notification
       const nextTurnToNotify = nextTurns[threshold];
       if (nextTurnToNotify && nextTurnToNotify.shouldNotify) {
-        const client = await ctx.prisma.client.findOne({
-          where: { id: nextTurnToNotify.clientId },
-          select: {
-            id: true,
-            phone: true,
-            fcmToken: true,
-          },
-        });
+        const client = nextTurnToNotify.client;
 
         if (!client) {
           return new ApolloError(
@@ -229,8 +262,8 @@ const shopResolver = {
         }
 
         const message = `Tu turno en ${shop?.shopDetails.name} está próximo a ser atendido. Solo hay ${threshold} personas por delante.`;
-        const title = 'Cauda';
-        sendNotification(client, message, title);
+        const link = turnLink(ctx.req.headers.host, nextTurnToNotify.id);
+        sendNotification(client, message, title, link, icon);
       }
 
       await ctx.prisma.issuedNumber.update({

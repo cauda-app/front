@@ -18,4 +18,6 @@ type Mutation {
 input NotificationInput {
   title: String!
   body: String!
+  link: String!
+  icon: String!
 }
