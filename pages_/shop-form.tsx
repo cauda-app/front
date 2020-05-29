@@ -14,7 +14,7 @@ import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import Button from 'react-bootstrap/Button';
 import Link from 'next/link';
 
-import prismaClient from '../prisma/client';
+import createPrismaClient from '../prisma/client';
 import { getToken } from 'src/utils/next';
 import { isEmptyObject, validatePhoneRequest } from 'src/utils';
 import GeoSuggest from 'src/components/GeoSuggest';
@@ -26,6 +26,7 @@ import Layout from 'src/components/Layout';
 import Spinner from 'src/components/Spinner';
 import { days } from 'src/utils/dates';
 import { getNationalNumber } from 'src/utils/phone-utils';
+import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 
 const CREATE = /* GraphQL */ `
   mutation createShop($shop: ShopInput!) {
@@ -176,6 +177,7 @@ type Props = {
 
 const EditShop = ({ isLoggedIn, shop }: Props) => {
   const { t } = useTranslation();
+  useFirebaseMessage();
   const [state, dispatch] = React.useReducer(reducer, initFormValues(shop));
   const [submitAttempt, setSubmitAttempt] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -521,9 +523,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const shopId = token.shopId;
 
   if (shopId) {
-    const dbShop = await prismaClient.shopDetails.findOne({
+    const prisma = createPrismaClient();
+
+    const dbShop = await prisma.shopDetails.findOne({
       where: { shopId },
     });
+
+    await prisma.disconnect();
+
     if (dbShop) {
       const shop = {
         id: dbShop.shopId,

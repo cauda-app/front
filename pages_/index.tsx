@@ -14,9 +14,10 @@ import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import Layout from 'src/components/Layout';
 import EmptyLanding from 'src/components/Landing/EmptyLanding';
 import { getToken } from 'src/utils/next';
-import prismaClient from 'prisma/client';
+import createPrismaClient from 'prisma/client';
 import graphqlClient from 'src/graphqlClient';
 import { myTurns, myPastTurns } from 'graphql/issuedNumber/helpers';
+import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 
 export const MY_TURNS = /* GraphQL */ `
   query MyTurns {
@@ -45,6 +46,7 @@ type Turn = {
 };
 
 type Props = {
+  isLoggedIn: boolean;
   activeTurns: Array<Turn>;
   pastTurns: Array<Turn>;
 };
@@ -53,6 +55,7 @@ const fetcher = (query) => graphqlClient.request(query);
 
 const MyTurns = ({ activeTurns = [], pastTurns = [] }: Props) => {
   const { t } = useTranslation();
+  useFirebaseMessage();
   const { data: myTurnsData, error: myTurnsError } = useSWR(MY_TURNS, fetcher, {
     initialData: { myTurns: activeTurns },
   });
@@ -204,10 +207,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { props: { isLoggedIn: true } };
   }
 
+  const prisma = createPrismaClient();
+
   const [activeTurns, pastTurns] = await Promise.all([
-    myTurns(clientId, prismaClient),
-    myPastTurns(clientId, prismaClient),
+    myTurns(clientId, prisma),
+    myPastTurns(clientId, prisma),
   ]);
+
+  await prisma.disconnect();
 
   return {
     props: {

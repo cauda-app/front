@@ -18,6 +18,7 @@ import Layout from 'src/components/Layout';
 import Spinner from 'src/components/Spinner';
 import graphqlClient from 'src/graphqlClient';
 import LoadingButton from 'src/components/LoadingButton';
+import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 
 type Props = {
   isLoggedIn: boolean;
@@ -27,7 +28,7 @@ type Props = {
 
 const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
   const { t } = useTranslation();
-
+  useFirebaseMessage();
   const [myShop, setMyShop] = useState<any>();
   const [error, setError] = useState();
   const [actionLoading, setActionLoading] = useState('');

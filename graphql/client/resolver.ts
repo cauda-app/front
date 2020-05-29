@@ -1,13 +1,14 @@
 import { ApolloError } from 'apollo-server-core';
+import * as Sentry from '@sentry/node';
 import { Context } from 'graphql/context';
+import { sendMessage } from 'graphql/utils/fcm';
+import {
+  MutationSaveFcMtokenArgs,
+  MutationSendNotificationArgs,
+} from '../../graphql';
 
 const clientResolver = {
   Query: {
-    client: (parent, args, ctx: Context) => {
-      return ctx.prisma.client.findOne({
-        where: { id: Number(args.id) },
-      });
-    },
     myTurn: (parent, args, ctx: Context) => {
       if (!ctx.tokenInfo) {
         return new ApolloError('No Token provided', 'NO_TOKEN_PROVIDED');
@@ -31,6 +32,65 @@ const clientResolver = {
       return ctx.prisma.client.findOne({
         where: { id: ctx.tokenInfo.clientId },
       });
+    },
+  },
+  Mutation: {
+    saveFCMtoken: async (
+      parent,
+      args: MutationSaveFcMtokenArgs,
+      ctx: Context
+    ) => {
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
+
+      try {
+        await ctx.prisma.client.update({
+          where: { id: ctx.tokenInfo.clientId },
+          data: {
+            fcmToken: args.token,
+          },
+        });
+
+        return true;
+      } catch (error) {
+        Sentry.setContext('user token', ctx.tokenInfo);
+        Sentry.setContext('fcm token', { fcmToken: args.token });
+        Sentry.captureException(error);
+        return false;
+      }
+    },
+    sendNotification: async (
+      parent,
+      args: MutationSendNotificationArgs,
+      ctx: Context
+    ) => {
+      if (process.env.NODE_ENV === 'production') {
+        return;
+      }
+
+      const client = await ctx.prisma.client.findOne({
+        where: { id: args.clientId },
+        select: {
+          fcmToken: true,
+        },
+      });
+
+      if (!client || !client.fcmToken) {
+        return null;
+      }
+
+      const notification = {
+        title: args.data.title,
+        body: args.data.body,
+      };
+
+      return sendMessage(
+        notification,
+        client?.fcmToken,
+        args.data.link,
+        args.data.icon
+      );
     },
   },
 };

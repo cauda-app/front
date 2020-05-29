@@ -10,6 +10,7 @@ import useQuery from 'src/hooks/useQuery';
 import Location, { Coords } from 'src/components/Location';
 import ShopCard from 'src/components/ShopCard';
 import GoBack from 'src/components/GoBack';
+import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 
 const PAGE_ROWS = 10;
 
@@ -37,6 +38,7 @@ type Props = {
 
 const Shops = ({ coords: { lat, lng } }: Props) => {
   const { t } = useTranslation();
+  useFirebaseMessage();
   const variables = React.useMemo(() => ({ lat, lng }), [lat, lng]);
   const [offset, setOffset] = React.useState(0);
   const { data, loading, error, fetchMore } = useQuery(SHOPS, { variables });
