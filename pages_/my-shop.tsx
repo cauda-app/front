@@ -50,39 +50,33 @@ const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
 
   const [actionLoading, setActionLoading] = useState('');
   const { data: myShopData, error } = useSWR(MY_SHOP, fetcher, {
-    refreshInterval: 15_000,
+    refreshInterval: 10_000,
   });
 
-  // const nextTurn = async (op: 'ATTEND' | 'SKIP') => {
-  //   setActionLoading(op);
-  //   const NEXT_TURN = /* GraphQL */ `
-  //     mutation NextTurn($op: NextTurnOperation!) {
-  //       nextTurn(op: $op) {
-  //         nextTurn
-  //         lastTurns {
-  //           status
-  //           turn
-  //         }
-  //         pendingTurnsAmount
-  //       }
-  //     }
-  //   `;
+  const nextTurn = async (op: 'ATTEND' | 'SKIP') => {
+    setActionLoading(op);
+    const NEXT_TURN = /* GraphQL */ `
+      mutation NextTurn($op: NextTurnOperation!) {
+        nextTurn(op: $op) {
+          nextTurn
+          lastTurns {
+            status
+            turn
+          }
+          pendingTurnsAmount
+        }
+      }
+    `;
 
-  //   try {
-  //     const res = await graphqlClient.request(NEXT_TURN, { op });
-  //     // setMyShop({ ...myShop, ...res.nextTurn });
-  //     mutate()
-  //     setActionLoading('');
-  //   } catch (error) {
-  //     setActionLoading('');
-  //     Sentry.captureException(error);
-  //   }
-  // };
-
-  const nextTurn = (op: 'ATTEND' | 'SKIP') => {
-    const copy = { ...myShopData };
-    copy.myShop.details.name = 'monchito';
-    mutate(MY_SHOP, copy);
+    try {
+      await graphqlClient.request(NEXT_TURN, { op });
+      // TODO: update with the result of previos request.
+      await mutate(MY_SHOP);
+      setActionLoading('');
+    } catch (error) {
+      setActionLoading('');
+      Sentry.captureException(error);
+    }
   };
 
   // const cancelTurns = async () => {
