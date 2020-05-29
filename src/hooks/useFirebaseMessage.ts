@@ -13,7 +13,7 @@ function useFirebaseMessage() {
     if (messaging) {
       const unsubscribe = messaging.onMessage((payload) => {
         showModal({
-          message: payload.data?.body,
+          message: payload.notification?.body,
           buttonLabel: t('common:close'),
         });
       });

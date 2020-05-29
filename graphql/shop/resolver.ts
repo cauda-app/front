@@ -242,12 +242,15 @@ const shopResolver = {
         return shop;
       }
 
-      const nextTurn = nextTurns[0];
       const title = 'Cauda';
-      const link = turnLink(ctx.req.headers.host, nextTurn.id);
       const icon = 'https://' + ctx.req.headers.host + '/cauda_blue.png';
-      const message = `Es tu turno en ${shop?.shopDetails.name}!`;
-      sendFcmNotification(nextTurn.client, message, title, link, icon);
+
+      const nextTurn = nextTurns[0];
+      if (nextTurn.status === 0) {
+        const link = turnLink(ctx.req.headers.host, nextTurn.id);
+        const message = `Es tu turno en ${shop?.shopDetails.name}!`;
+        sendFcmNotification(nextTurn.client, message, title, link, icon);
+      }
 
       // If there is a turn after threshold, send a notification
       const nextTurnToNotify = nextTurns[threshold];
