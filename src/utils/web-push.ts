@@ -1,7 +1,6 @@
 import 'firebase/messaging';
 import firebase from 'firebase/app';
 import localforage from 'localforage';
-import * as Sentry from '@sentry/browser';
 import graphQLClient from 'src/graphqlClient';
 
 const SAVE_FCM_TOKEN = /* GraphQL */ `
@@ -15,20 +14,26 @@ const saveToken = (token) => {
 };
 
 const init = () => {
-  if (firebase.apps.length > 0) {
-    return;
-  }
+  try {
+    if (firebase.apps.length > 0) {
+      return;
+    }
 
-  firebase.initializeApp({
-    apiKey: 'AIzaSyAnVih3kHw9T99xVpfsOlqwJP2TsZydv3I',
-    authDomain: 'cauda-51729.firebaseapp.com',
-    databaseURL: 'https://cauda-51729.firebaseio.com',
-    projectId: 'cauda-51729',
-    storageBucket: 'cauda-51729.appspot.com',
-    messagingSenderId: '195437660977',
-    appId: '1:195437660977:web:ea98dc48734274e1d77e10',
-    measurementId: 'G-BQQ9NMT9QH',
-  });
+    firebase.initializeApp({
+      apiKey: 'AIzaSyAnVih3kHw9T99xVpfsOlqwJP2TsZydv3I',
+      authDomain: 'cauda-51729.firebaseapp.com',
+      databaseURL: 'https://cauda-51729.firebaseio.com',
+      projectId: 'cauda-51729',
+      storageBucket: 'cauda-51729.appspot.com',
+      messagingSenderId: '195437660977',
+      appId: '1:195437660977:web:ea98dc48734274e1d77e10',
+      measurementId: 'G-BQQ9NMT9QH',
+    });
+  } catch (error) {
+    if (error.code !== 'messaging/unsupported-browser') {
+      throw error;
+    }
+  }
 };
 
 const tokenInlocalforage = (): Promise<string> => {
@@ -36,11 +41,17 @@ const tokenInlocalforage = (): Promise<string> => {
 };
 
 const messagingInstance = () => {
-  if (firebase.apps.length === 0) {
-    init();
-  }
+  try {
+    if (firebase.apps.length === 0) {
+      init();
+    }
 
-  return firebase.messaging();
+    return firebase.messaging();
+  } catch (error) {
+    if (error.code !== 'messaging/unsupported-browser') {
+      throw error;
+    }
+  }
 };
 
 const requestPermission = async () => {
@@ -63,7 +74,9 @@ const requestPermission = async () => {
     });
   } catch (error) {
     console.error(error);
-    Sentry.captureException(error);
+    if (error.code !== 'messaging/unsupported-browser') {
+      throw error;
+    }
   }
 };
 
