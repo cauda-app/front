@@ -19,6 +19,8 @@ import {
   myPastTurns as myPastTurnsFetch,
 } from 'graphql/issuedNumber/helpers';
 import getTurnColor, { Colors } from 'src/utils/colors';
+import createPrismaClient from 'prisma/client';
+import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 
 export const MY_TURNS = /* GraphQL */ `
   query MyTurns {
@@ -60,6 +62,7 @@ const MyTurns = ({
   isLoggedIn,
 }: Props) => {
   const { t } = useTranslation();
+  useFirebaseMessage();
 
   if (!isLoggedIn || (myTurns.length === 0 && myPastTurns.length === 0)) {
     return <EmptyLanding />;
@@ -197,11 +200,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { props: { isLoggedIn: false } };
   }
 
+  const prisma = createPrismaClient();
+
   const clientId = token.clientId;
   const [activeTurns, pastTurns] = await Promise.all([
-    myTurnsFetch(clientId, prismaClient),
-    myPastTurnsFetch(clientId, prismaClient),
+    myTurnsFetch(clientId, prisma),
+    myPastTurnsFetch(clientId, prisma),
   ]);
+
+  await prisma.disconnect();
 
   return {
     props: {

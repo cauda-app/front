@@ -5,7 +5,7 @@ import useTranslation from 'next-translate/useTranslation';
 import * as Sentry from '@sentry/browser';
 import { mutate } from 'swr';
 
-import prismaClient from '../prisma/client';
+import createPrismaClient from '../prisma/client';
 import ShopCard from 'src/components/ShopCard';
 import Layout from 'src/components/Layout';
 import NotFound from 'src/components/NotFound';
@@ -18,6 +18,8 @@ import { decodeId } from 'src/utils/hashids';
 import Notification from 'src/components/Notification';
 import getConfig from 'next/config';
 import { MY_TURNS } from 'pages_';
+import { firebaseCloudMessaging } from 'src/utils/web-push';
+import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 
 const nextConfig = getConfig();
 
@@ -32,7 +34,7 @@ const REQUEST_TURN = /* GraphQL */ `
 
 const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
   const { t } = useTranslation();
-
+  useFirebaseMessage();
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState();
   const router = useRouter();
@@ -50,6 +52,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
   const handleRequestTurn = async (shopId) => {
     try {
       setError(undefined);
+      await firebaseCloudMessaging.requestPermission();
       const res = await graphqlClient.request(REQUEST_TURN, { shopId });
       const goToShopThreshold =
         nextConfig?.publicRuntimeConfig?.goToShopThreshold;
@@ -60,7 +63,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
         goToHome();
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       const errorCode = getErrorCodeFromApollo(error);
 
       switch (errorCode) {
@@ -115,10 +118,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const encodedShopId = context.params?.shopId as string | undefined;
   const shopId = decodeId(encodedShopId) as number | null;
 
+  const prisma = createPrismaClient();
+
   if (shopId) {
-    const dbShop = await prismaClient.shopDetails.findOne({
+    const dbShop = await prisma.shopDetails.findOne({
       where: { shopId },
     });
+
+    await prisma.disconnect();
+
     if (dbShop) {
       const shop = {
         shopId: encodedShopId,
@@ -130,7 +138,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         isOpen: isOpen(dbShop),
         status: status(dbShop),
       };
-
       return { props: { isLoggedIn: true, shop } };
     }
   }

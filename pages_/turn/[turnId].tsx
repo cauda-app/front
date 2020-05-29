@@ -9,7 +9,7 @@ import * as Sentry from '@sentry/browser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRedo } from '@fortawesome/free-solid-svg-icons';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
-import prismaClient from 'prisma/client';
+import createPrismaClient from 'prisma/client';
 import Layout from 'src/components/Layout';
 import { getToken } from 'src/utils/next';
 import { decodeId, encodeId } from 'src/utils/hashids';
@@ -22,6 +22,7 @@ import useSWR, { mutate } from 'swr';
 import LoadingButton from 'src/components/LoadingButton';
 import { TO_ISSUED_NUMBER_STATUS } from 'graphql/issuedNumber/helpers';
 import { MY_PAST_TURNS, MY_TURNS } from 'pages_';
+import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 
 const reload = () => Router.reload();
 
@@ -32,6 +33,7 @@ const MyTurn = ({
   lastTurns: initialLastTurns,
 }) => {
   const { t } = useTranslation();
+  useFirebaseMessage();
   const router = useRouter();
   const [cancelling, setCancelling] = useState(false);
   const [cancelError, setCancelError] = useState();
@@ -106,7 +108,7 @@ const MyTurn = ({
       setCancelling(false);
     } catch (error) {
       setCancelError(error);
-      console.log(error);
+      console.error(error);
       setCancelling(false);
       Sentry.captureException(error);
     }
@@ -199,7 +201,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { props: { statusCode: 404, isLoggedIn: true } };
   }
 
-  const issuedNumber = await prismaClient.issuedNumber.findOne({
+  const prisma = createPrismaClient();
+
+  const issuedNumber = await prisma.issuedNumber.findOne({
     where: { id: turnId as number },
     select: {
       issuedNumber: true,
@@ -212,10 +216,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   if (!issuedNumber || issuedNumber?.clientId !== token.clientId) {
     context.res.statusCode = 404;
+    await prisma.disconnect();
     return { props: { statusCode: 404, isLoggedIn: true } };
   }
 
-  const turns = await lastTurns(prismaClient, issuedNumber.shopId);
+  const turns = await lastTurns(prisma, issuedNumber.shopId);
+
+  await prisma.disconnect();
 
   context.res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
 

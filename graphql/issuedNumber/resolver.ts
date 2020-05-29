@@ -2,6 +2,7 @@ import { ApolloError } from 'apollo-server-core';
 import getConfig from 'next/config';
 import compareAsc from 'date-fns/compareAsc';
 import startOfDay from 'date-fns/startOfDay';
+import * as Sentry from '@sentry/node';
 
 import {
   MutationRequestTurnArgs,
@@ -138,6 +139,7 @@ const IssuedNumberResolver = {
           pendingTurnsAmount: turns.length + 1,
         };
       } catch (error) {
+        Sentry.captureException(error);
         return new ApolloError(
           'There was an error trying to set the appointment.',
           'OP_ERROR'

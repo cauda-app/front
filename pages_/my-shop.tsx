@@ -20,6 +20,7 @@ import Spinner from 'src/components/Spinner';
 import graphqlClient from 'src/graphqlClient';
 import LoadingButton from 'src/components/LoadingButton';
 import getTurnColor from 'src/utils/colors';
+import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 
 const MY_SHOP = /* GraphQL */ `
   query MyShop {
@@ -47,6 +48,7 @@ const fetcher = (query) => graphqlClient.request(query);
 
 const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
   const { t } = useTranslation();
+  useFirebaseMessage();
 
   const [actionLoading, setActionLoading] = useState('');
   const { data: myShopData, error } = useSWR(MY_SHOP, fetcher, {

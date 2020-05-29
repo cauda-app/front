@@ -6,6 +6,8 @@ import TagManager from 'react-gtm-module';
 import 'src/assets/scss/app.scss';
 import Spinner from 'src/components/Spinner';
 import ErrorBoundary from 'src/components/ErrorBoundary';
+import NotificationProvider from 'src/components/NotificationProvider';
+import { firebaseCloudMessaging } from 'src/utils/web-push';
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
@@ -23,6 +25,7 @@ export default function App({ Component, pageProps }) {
 
   useEffect(() => {
     TagManager.initialize(tagManagerArgs);
+    firebaseCloudMessaging.init();
   }, []);
 
   useEffect(() => {
@@ -52,7 +55,9 @@ export default function App({ Component, pageProps }) {
           </style>
         </div>
       ) : (
-        <Component {...pageProps} />
+        <NotificationProvider>
+          <Component {...pageProps} />
+        </NotificationProvider>
       )}
     </ErrorBoundary>
   );

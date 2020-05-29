@@ -3,14 +3,21 @@ type Client {
   phone: String!
   createdAt: DateTime!
   updatedAt: DateTime!
-  # issuedNumber: [IssuedNumber!]!
+  fcmToken: String
 }
 
 type Query {
   myTurn: Client!
-  client(id: ID): Client
 }
 
-input ClientSignupInput {
-  phone: String!
+type Mutation {
+  saveFCMtoken(token: String!): Boolean!
+  sendNotification(clientId: Int!, data: NotificationInput!): String
+}
+
+input NotificationInput {
+  title: String!
+  body: String!
+  link: String!
+  icon: String!
 }

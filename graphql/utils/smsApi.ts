@@ -2,7 +2,7 @@ import axios from 'axios';
 import addMinutes from 'date-fns/addMinutes';
 import { utcToZonedTime } from 'date-fns-tz';
 import format from 'date-fns/format';
-import * as Sentry from '@sentry/browser';
+import * as Sentry from '@sentry/node';
 
 import { PHONE_CODE_EXPIRY } from './constants';
 

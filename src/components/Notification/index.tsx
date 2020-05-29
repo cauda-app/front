@@ -5,9 +5,14 @@ import useTranslation from 'next-translate/useTranslation';
 type Props = {
   message: String;
   onConfirm: () => void;
+  confirmLabel?: String;
 };
 
-export default function Notification({ message, onConfirm }: Props) {
+export default function Notification({
+  message,
+  onConfirm,
+  confirmLabel,
+}: Props) {
   const { t } = useTranslation();
 
   return (
@@ -15,7 +20,7 @@ export default function Notification({ message, onConfirm }: Props) {
       <div className="content">
         <p>{message}</p>
         <Button variant="primary" size="sm" onClick={onConfirm}>
-          {t('common:continue')}
+          {confirmLabel ? confirmLabel : t('common:continue')}
         </Button>
       </div>
 

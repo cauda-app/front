@@ -9,6 +9,7 @@ import Spinner from '../src/components/Spinner';
 import Layout from '../src/components/Layout';
 import { ReaderProps } from '../src/types/react-qr-reader';
 import img_scanningUrl from '../public/cauda_scanqr@3x.png';
+import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 
 const QrReader: ComponentType<ReaderProps> = dynamic(
   () => import('react-qr-reader'),
@@ -19,6 +20,7 @@ const QrReader: ComponentType<ReaderProps> = dynamic(
 
 const Scan = () => {
   const { t } = useTranslation();
+  useFirebaseMessage();
   const [codeError, setCodeError] = React.useState(false);
   const [readerError, setReaderError] = React.useState(false);
   const [loaded, setLoaded] = React.useState(false);
