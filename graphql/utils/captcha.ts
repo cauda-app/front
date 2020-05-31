@@ -15,7 +15,7 @@ export default async function validateCaptcha(token) {
   const captchaValidation = res.data;
   if (
     !captchaValidation.success ||
-    captchaValidation.score < 0.1 || // TODO: Review the score value
+    captchaValidation.score < 0.8 || // TODO: Review the score value
     (process.env.NODE_ENV === 'production' &&
       captchaValidation.hostname === 'localhost')
   ) {
