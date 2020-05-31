@@ -70,6 +70,9 @@ main {
 footer {
   margin: 0 auto;
   max-width: 768px;
+  a {
+    color: var(--color_primary);
+  }
 }
 
 .bg_gray {
@@ -122,7 +125,7 @@ footer {
 }
 
 .cauda_steps {
-  max-width: 920px;
+  max-width: 840px;
   margin: 0 auto;
   .h6 {
     font-size: 1.15rem;
@@ -276,6 +279,9 @@ footer {
   svg {
     // max-width: 16px;
   }
+  .card-header {
+    font-weight: bold;
+  }
 }
 .cauda_card--clean {
   box-shadow: none !important;
@@ -410,5 +416,48 @@ footer {
     @include media-breakpoint-up(sm) {
       font-size: 1rem;
     }
+  }
+}
+
+.cauda_about {
+  max-width: 600px;
+  .card-body {
+    padding: 20px;
+    font-size: 0.9rem;
+    line-height: 1.8;
+    @include media-breakpoint-up(sm) {
+      font-size: 1rem;
+      padding: 40px 50px 30px;
+    }
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .media {
+    width: 250px;
+    margin-bottom: 1.2rem;
+    img {
+      width: 44px;
+      height: 44px;
+      margin-top: -4px;
+      margin-right: 0.9rem;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      overflow: hidden;
+    }
+    h5 {
+      font-size: 0.86rem;
+      margin-bottom: 0;
+    }
+    p {
+      font-size: 0.8rem;
+      margin-bottom: 0;
+      opacity: 0.8;
+    }
+  }
+  .btn {
+    margin: 0 auto;
+    max-width: 280px;
   }
 }

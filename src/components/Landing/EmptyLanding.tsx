@@ -70,7 +70,7 @@ const Home = () => {
           </Row>
         </Card>
 
-        <Card className="cauda_video container p-2 p-sm-3 mb-5">
+        <Card className="cauda_video container p-2 p-sm-3 mb-4 mb-sm-5">
           <div className="embed-responsive embed-responsive-16by9">
             <iframe
               width="560"
