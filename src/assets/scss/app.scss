@@ -80,6 +80,10 @@ footer {
   font-size: 90%;
 }
 
+.grecaptcha-badge {
+  display: none !important;
+}
+
 .input-group > .form-control {
   border-top-right-radius: $border-radius !important;
   border-bottom-right-radius: $border-radius !important;
