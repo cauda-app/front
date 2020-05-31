@@ -15,12 +15,16 @@ export const myPastTurns = async (clientId, prisma: PrismaClient) => {
     select: {
       id: true,
       issuedNumber: true,
+      shopId: true,
+      status: true,
       shopDetails: { select: { name: true } },
     },
   });
 
   const turns = issuedNumbers.map((issuedNumber) => ({
     id: encodeId(issuedNumber.id),
+    shopId: encodeId(issuedNumber.shopId),
+    status: TO_ISSUED_NUMBER_STATUS[issuedNumber.status],
     turn: numberToTurn(issuedNumber.issuedNumber),
     shopName: issuedNumber.shopDetails.name,
   }));

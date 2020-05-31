@@ -90,5 +90,8 @@
   "terms-conditions": "Términos y Condiciones",
   "today-turns-quota-exceeded": "Has excedido el limites de turnos diarios. Mañana podrás volver a sacar nuevos turnos.",
   "turn-missed": "Cancelar Turno (Ausente)",
+  "turn-status-ATTENDED": "Atendido",
+  "turn-status-SKIPPED": "Ausente",
+  "turn-status-CANCELLED": "Cancelado",
   "verify-code": "Verificar código"
 }
