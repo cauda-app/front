@@ -115,15 +115,15 @@ const IssuedNumberResolver = {
       }
 
       // Prevent more than 5 turns per day
-      // const todayAppointments = turns.filter(
-      //   (a) => compareAsc(a.createdAt, startOfDay(new Date())) >= 0
-      // );
-      // if (todayAppointments.length >= 5) {
-      //   return new ApolloError(
-      //     'Today turns quota exceeded',
-      //     'TODAY_TURNS_QUOTA_EXCEEDED'
-      //   );
-      // }
+      const todayAppointments = turns.filter(
+        (a) => compareAsc(a.createdAt, startOfDay(new Date())) >= 0
+      );
+      if (todayAppointments.length >= 5) {
+        return new ApolloError(
+          'Today turns quota exceeded',
+          'TODAY_TURNS_QUOTA_EXCEEDED'
+        );
+      }
 
       const rawQuery = `CALL increaseShopCounter(
         ${shopId}, 

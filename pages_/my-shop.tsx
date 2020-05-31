@@ -116,7 +116,6 @@ const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
   }, [isLoggedIn, shopId]);
 
   if (error) {
-    Sentry.captureException(error);
     throw error;
   }
 
