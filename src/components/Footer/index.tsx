@@ -1,6 +1,10 @@
 import useTranslation from 'next-translate/useTranslation';
 import Link from 'next/link';
 import Image from 'react-bootstrap/Image';
+import Modal from 'react-bootstrap/Modal';
+import Button from 'react-bootstrap/Button';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 import getConfig from 'next/config';
 const nextConfig = getConfig();
@@ -38,6 +42,34 @@ export default function Footer(props) {
       </div>
 
       <Image src="/footer_cityscapes.png" fluid />
+
+      <Modal.Dialog>
+        <Modal.Header>
+          <Modal.Title>Compartir Ubicación</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body className="py-5 px-3 text-center">
+          <p>
+            <strong className="d-block mb-3">
+              Por favor activa tu Ubicación (GPS)
+            </strong>
+            <span className="text-muted">
+              Debes compartir tu ubicación actual para localizar comercios
+              cercanos.
+            </span>
+          </p>
+          <Button
+            variant="primary"
+            size="lg"
+            className="d-flex justify-content-between align-items-center"
+            block
+          >
+            <div></div>
+            Continuar
+            <FontAwesomeIcon icon={faArrowRight} />
+          </Button>
+        </Modal.Body>
+      </Modal.Dialog>
 
       <style jsx>{`
         .root {
