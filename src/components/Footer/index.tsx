@@ -11,21 +11,23 @@ export default function Footer(props) {
   return (
     <footer className="root">
       <ul className="list-inline text-center">
-        <li className="list-inline-item">{t('common:add-shop')}</li>
         <li className="list-inline-item">
           <Link href="/about">
             <a>{t('common:about')}</a>
           </Link>
         </li>
         <li className="list-inline-item">
-          <Link href="/contact">
-            <a>{t('common:contact')}</a>
+          <Link href="/my-shop" passHref>
+            <a>{t('common:shop-access')}</a>
           </Link>
+        </li>
+        <li className="list-inline-item">
+          <a href="mailto:somos@cauda.app">{t('common:contact')}</a>
         </li>
       </ul>
 
       <div className="devlinks text-center">
-        FOR DEV:
+        {/* FOR DEV: */}
         <Link href="/logout">
           <a>Logout</a>
         </Link>
