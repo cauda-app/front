@@ -17,7 +17,7 @@ const Home = () => {
   return (
     <Layout>
       <div className="content d-flex flex-column justify-content-between align-items-center h-100">
-        <Card className="cauda_card mt-2 mb-5 p-0 text-center cauda_mainhome">
+        <Card className="cauda_mainhome cauda_card mt-2 mb-5 p-0 text-center">
           <Row noGutters>
             <Col xs="12" className="p-4">
               <Image
@@ -68,6 +68,20 @@ const Home = () => {
               </p>
             </Col>
           </Row>
+        </Card>
+
+        <Card className="cauda_video container p-2 p-sm-3 mb-5">
+          <div className="embed-responsive embed-responsive-16by9">
+            <iframe
+              width="560"
+              height="315"
+              src="https://www.youtube.com/embed/ZOgSdoCrAQk"
+              frameBorder="0"
+              allowFullScreen
+              allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+              className="embed-responsive-item"
+            ></iframe>
+          </div>
         </Card>
 
         <div className="container px-0">
@@ -170,12 +184,98 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="container mb-5">
+        <div className="cauda_sponsor container mb-5">
           <h3 className="h4 mb-3 text-center">Nos apoyan</h3>
 
-          <p className="text-center">
-            Google, AWS, Conciencia, Helpers, Wingu, Beccar Varela, Notimation
-          </p>
+          <div className="cards">
+            <Card>
+              <Link href="//cloud.google.com/">
+                <a target="_blank">
+                  <Image src="/sponsor/cauda_google.png" fluid alt="Google" />
+                  <span>Google</span>
+                </a>
+              </Link>
+            </Card>
+
+            <Card>
+              <Link href="//aws.amazon.com/">
+                <a target="_blank">
+                  <Image src="/sponsor/cauda_aws.png" fluid alt="AWS" />
+                  <span>Amazon Web Services</span>
+                </a>
+              </Link>
+            </Card>
+
+            <Card>
+              <Link href="//conciencia.org/">
+                <a target="_blank">
+                  <Image
+                    src="/sponsor/cauda_conciencia.png"
+                    fluid
+                    alt="Conciencia"
+                  />
+                  <span>Conciencia</span>
+                </a>
+              </Link>
+            </Card>
+
+            <Card>
+              <Link href="//helpers.ngo/">
+                <a target="_blank">
+                  <Image src="/sponsor/cauda_helpers.png" fluid alt="Helpers" />
+                  <span>Helpers</span>
+                </a>
+              </Link>
+            </Card>
+
+            <Card>
+              <Link href="//winguweb.org/">
+                <a target="_blank">
+                  <Image src="/sponsor/cauda_wingu.png" fluid alt="Wingu" />
+                  <span>Wingu</span>
+                </a>
+              </Link>
+            </Card>
+
+            <Card>
+              <Link href="//beccarvarela.com/">
+                <a target="_blank">
+                  <Image
+                    src="/sponsor/cauda_beccarvarela.png"
+                    fluid
+                    alt="Beccar Varela"
+                  />
+                  <span>Beccar Varela</span>
+                </a>
+              </Link>
+            </Card>
+
+            <Card>
+              <Link href="//notimation.com.ar/">
+                <a target="_blank">
+                  <Image
+                    src="/sponsor/cauda_notimation.png"
+                    fluid
+                    alt="Notimation"
+                  />
+                  <span>Notimation</span>
+                </a>
+              </Link>
+            </Card>
+
+            <Card>
+              <Link href="//itcrowdarg.com/">
+                <a target="_blank">
+                  <Image
+                    src="/sponsor/cauda_itcrowd.png"
+                    fluid
+                    alt="IT Crowd"
+                  />
+                  <span>IT Crowd</span>
+                </a>
+              </Link>
+            </Card>
+          </div>
         </div>
       </div>
 
