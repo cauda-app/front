@@ -96,6 +96,7 @@ footer {
 
 .cauda_mainhome {
   margin-top: 20px !important;
+  max-width: 450px !important;
   .home_cityscape {
     margin-top: -50px;
     margin-bottom: 10px;
@@ -108,7 +109,17 @@ footer {
   }
 }
 
+.cauda_video {
+  @include media-breakpoint-down(sm) {
+    border: none;
+    border-radius: 0;
+  }
+  max-width: 800px;
+}
+
 .cauda_steps {
+  max-width: 920px;
+  margin: 0 auto;
   .h6 {
     font-size: 1.15rem;
     line-height: 1.25;
@@ -149,6 +160,46 @@ footer {
   small {
     line-height: 1.2;
     font-size: 0.7rem;
+  }
+}
+
+.cauda_sponsor {
+  padding: 0;
+  .cards {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 720px;
+    margin: 0 auto;
+    @include media-breakpoint-up(md) {
+      max-width: 840px;
+    }
+
+    .card {
+      margin: 6px;
+      padding: 0;
+      max-width: 140px;
+      text-align: center;
+      @include media-breakpoint-up(md) {
+        margin: 10px;
+        max-width: 180px;
+      }
+      a {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        color: var(--color_black);
+        font-size: 0.8rem;
+        text-decoration: none;
+        &:hover {
+          color: var(--color_primary);
+        }
+        span {
+          display: none;
+        }
+      }
+    }
   }
 }
 
