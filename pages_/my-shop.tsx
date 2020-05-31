@@ -195,9 +195,9 @@ const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
       </Card>
 
       {myShopData.myShop.lastTurns.length > 0 ? (
-        <Card className="cauda_card mb-4 mx-auto">
+        <Card className="cauda_card cauda_card--flatborder mb-3 mx-auto">
           <Card.Body className="p-2 text-center">
-            <div className="d-flex justify-content-center align-items-center mb-1">
+            <div className="d-flex justify-content-center align-items-center">
               <span className="h6 text-uppercase font-weight-light mr-1 mb-0 text-light">
                 {t('common:pending-turns')}
               </span>
@@ -220,22 +220,23 @@ const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
       ) : null}
 
       {myShopData.myShop.lastTurns.length > 0 ? (
-        <div className="myturn__turns mb-5 text-center">
-          <p className="h6 text-uppercase text-muted font-weight-light">
-            {t('common:last-numbers')}
-          </p>
-
-          <ul className="list-unstyled list-inline h4 mb-0">
-            {myShopData.myShop.lastTurns.map((lt, index) => (
-              <li
-                key={index}
-                className={`list-inline-item text-${getTurnColor(lt.status)}`}
-              >
-                {lt.turn}
-              </li>
-            ))}
-          </ul>
-        </div>
+        <Card className="cauda_card cauda_card--flatborder mb-4 mx-auto">
+          <Card.Body className="p-3 text-center">
+            <p className="h6 text-uppercase text-muted font-weight-light">
+              {t('common:last-numbers')}
+            </p>
+            <ul className="list-unstyled list-inline h4 mb-0">
+              {myShopData.myShop.lastTurns.map((lt, index) => (
+                <li
+                  key={index}
+                  className={`list-inline-item text-${getTurnColor(lt.status)}`}
+                >
+                  {lt.turn}
+                </li>
+              ))}
+            </ul>
+          </Card.Body>
+        </Card>
       ) : null}
 
       <Card className="cauda_card cauda_card--clean mb-4 mx-auto">
