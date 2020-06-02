@@ -134,7 +134,7 @@ const Home = () => {
               podemos lograr reducir el riesgo de contagio. Es rapidísimo.
             </p>
 
-            <Link href="/my-shop" passHref>
+            <Link href="/register-phone?redirectTo=/my-shop" passHref>
               <Button
                 variant="info"
                 size="lg"
