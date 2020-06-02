@@ -251,7 +251,7 @@ const Home = () => {
             </Card>
 
             <Card>
-              <Link href="//notimation.com.ar/">
+              <Link href="//landing.notimation.com.ar/">
                 <a target="_blank">
                   <Image
                     src="/sponsor/cauda_notimation.png"
