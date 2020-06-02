@@ -2,7 +2,11 @@ import { ApolloError } from 'apollo-server-core';
 import getConfig from 'next/config';
 
 import { days, serializeTime } from 'src/utils/dates';
-import { formatPhone, getNationalNumber } from 'src/utils/phone-utils';
+import {
+  formatPhone,
+  getNationalNumber,
+  parsePhone,
+} from 'src/utils/phone-utils';
 import { Context } from 'graphql/context';
 import {
   Shop,
@@ -13,6 +17,7 @@ import {
   MutationRegisterShopArgs,
   MutationUpdateShopArgs,
   MutationNextTurnArgs,
+  MutationSendSmsArgs,
 } from '../../graphql';
 import { setCookieToken } from '../utils/jwt';
 import { numberToTurn } from '../utils/turn';
@@ -296,6 +301,24 @@ const shopResolver = {
       return ctx.prisma.shop.findOne({
         where: { id: ctx.tokenInfo!.shopId },
       });
+    },
+    sendSms: async (parent, args: MutationSendSmsArgs, ctx: Context) => {
+      if (process.env.NODE_ENV === 'production') {
+        return false;
+      }
+
+      try {
+        parsePhone(args.phone);
+      } catch (error) {
+        return new ApolloError('Invalid phone', 'INVALID_PHONE');
+      }
+
+      try {
+        await sendSms(args.phone, args.message);
+        return true;
+      } catch (error) {
+        return new ApolloError('Error sending message', 'ERROR');
+      }
     },
   },
   Shop: {
