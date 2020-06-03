@@ -23,7 +23,7 @@ const ShopPoster = ({ isLoggedIn, shopId }: Props) => {
 
   useEffect(() => {
     if (!isLoggedIn) {
-      Router.push('/register-phone?redirectTo=/flyer');
+      Router.replace('/register-phone?redirectTo=/flyer');
     } else if (!shopId) {
       Router.push('/');
     }

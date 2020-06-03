@@ -41,7 +41,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
 
   React.useEffect(() => {
     if (!isLoggedIn) {
-      Router.push('/register-phone?redirectTo=' + router.asPath);
+      Router.replace('/register-phone?redirectTo=' + router.asPath);
     }
   }, [isLoggedIn]);
 

@@ -112,9 +112,9 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
 
   useEffect(() => {
     if (!isLoggedIn) {
-      Router.push('/register-phone?redirectTo=/my-shop');
+      Router.replace('/register-phone?redirectTo=/my-shop');
     } else if (!shopId) {
-      Router.push('/shop-form');
+      Router.replace('/shop-form');
     }
   }, [isLoggedIn, shopId]);
 
