@@ -279,7 +279,7 @@ const VerifyPhone = () => {
 
 const VerifyPhoneWithCaptcha = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (isLoggedIn) {
