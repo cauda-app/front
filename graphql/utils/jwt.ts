@@ -24,15 +24,7 @@ export const setCookieToken = (
     phone: string;
   }
 ) => {
-  const token = jwt.sign(
-    {
-      clientId,
-      shopId,
-      phone,
-    },
-    process.env.JWT_SECRET as string,
-    { expiresIn: `${TOKEN_EXPIRY}d` }
-  );
+  const token = sign({ clientId, shopId, phone });
 
   res.setHeader(
     'Set-Cookie',
@@ -56,4 +48,26 @@ export const verifyToken = (token: any): TokenInfo => {
   } catch (error) {
     return { isValid: false, error };
   }
+};
+
+export const sign = ({
+  clientId,
+  shopId,
+  phone,
+}: {
+  clientId?: number;
+  shopId?: number;
+  phone?: string;
+}) => {
+  const token = jwt.sign(
+    {
+      clientId,
+      shopId,
+      phone,
+    },
+    process.env.JWT_SECRET as string,
+    { expiresIn: `${TOKEN_EXPIRY}d` }
+  );
+
+  return token;
 };

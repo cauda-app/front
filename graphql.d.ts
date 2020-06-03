@@ -24,6 +24,7 @@ export type Client = {
 
 export type Query = {
    __typename?: 'Query';
+  clientTokens: Array<Scalars['String']>;
   lastTurns: Array<LastTurns>;
   myPastTurns: Array<TurnResponse>;
   myShop: Shop;
@@ -32,6 +33,11 @@ export type Query = {
   nearByShops: Array<ShopDetails>;
   shops: Array<Shop>;
   turn: TurnResponse;
+};
+
+
+export type QueryClientTokensArgs = {
+  limit?: Maybe<Scalars['Int']>;
 };
 
 
@@ -329,8 +335,8 @@ export type ResolversTypes = ResolversObject<{
   Client: ResolverTypeWrapper<Client>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
   Query: ResolverTypeWrapper<{}>,
-  Float: ResolverTypeWrapper<Scalars['Float']>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
+  Float: ResolverTypeWrapper<Scalars['Float']>,
   Mutation: ResolverTypeWrapper<{}>,
   NotificationInput: NotificationInput,
   Date: ResolverTypeWrapper<Scalars['Date']>,
@@ -355,8 +361,8 @@ export type ResolversParentTypes = ResolversObject<{
   Client: Client,
   ID: Scalars['ID'],
   Query: {},
-  Float: Scalars['Float'],
   Int: Scalars['Int'],
+  Float: Scalars['Float'],
   Mutation: {},
   NotificationInput: NotificationInput,
   Date: Scalars['Date'],
@@ -384,6 +390,7 @@ export type ClientResolvers<ContextType = any, ParentType extends ResolversParen
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  clientTokens?: Resolver<Array<ResolversTypes['String']>, ParentType, ContextType, RequireFields<QueryClientTokensArgs, 'limit'>>,
   lastTurns?: Resolver<Array<ResolversTypes['LastTurns']>, ParentType, ContextType, RequireFields<QueryLastTurnsArgs, 'shopId'>>,
   myPastTurns?: Resolver<Array<ResolversTypes['TurnResponse']>, ParentType, ContextType>,
   myShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
