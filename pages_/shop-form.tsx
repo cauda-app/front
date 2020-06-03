@@ -216,7 +216,7 @@ const EditShop = ({ isLoggedIn, shop }: Props) => {
 
   React.useEffect(() => {
     if (!isLoggedIn) {
-      Router.push('/register-phone?redirectTo=/shop-form');
+      Router.replace('/register-phone?redirectTo=/shop-form');
     }
   }, [isLoggedIn]);
 

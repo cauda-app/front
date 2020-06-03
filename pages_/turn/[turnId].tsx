@@ -72,7 +72,7 @@ const MyTurn = ({
 
   useEffect(() => {
     if (!isLoggedIn) {
-      Router.push('/register-phone?redirectTo=' + router.asPath);
+      Router.replace('/register-phone?redirectTo=' + router.asPath);
     }
   }, [isLoggedIn]);
 
