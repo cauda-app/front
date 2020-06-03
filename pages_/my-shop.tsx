@@ -51,9 +51,13 @@ const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
   useFirebaseMessage();
 
   const [actionLoading, setActionLoading] = useState('');
-  const { data: myShopData, error } = useSWR(MY_SHOP, fetcher, {
-    refreshInterval: 10_000,
-  });
+  const { data: myShopData, error } = useSWR(
+    !shopId ? null : MY_SHOP,
+    fetcher,
+    {
+      refreshInterval: 10_000,
+    }
+  );
 
   const nextTurn = async (op: 'ATTEND' | 'SKIP') => {
     setActionLoading(op);
@@ -265,14 +269,14 @@ const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = getToken(context);
 
-  if (!token || !token.shopId) {
-    return { props: { isLoggedIn: false } };
+  if (!token?.shopId) {
+    return { props: { isLoggedIn: false, shopId: null } };
   }
 
   return {
     props: {
       isLoggedIn: true,
-      shopId: token.shopId,
+      shopId: token.shopId === undefined ? null : token.shopId,
       encodedShopId: encodeId(token.shopId),
     },
   };
