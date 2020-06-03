@@ -13,7 +13,6 @@ import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import Layout from 'src/components/Layout';
 import EmptyLanding from 'src/components/Landing/EmptyLanding';
 import { getToken } from 'src/utils/next';
-import prismaClient from 'prisma/client';
 import {
   myTurns as myTurnsFetch,
   myPastTurns as myPastTurnsFetch,
@@ -21,6 +20,7 @@ import {
 import getTurnColor, { Colors } from 'src/utils/colors';
 import createPrismaClient from 'prisma/client';
 import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
+import Router, { useRouter } from 'next/router';
 
 export const MY_TURNS = /* GraphQL */ `
   query MyTurns {
