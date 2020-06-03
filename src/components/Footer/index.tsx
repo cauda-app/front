@@ -3,10 +3,12 @@ import Link from 'next/link';
 import Image from 'react-bootstrap/Image';
 
 import getConfig from 'next/config';
+import { useRouter } from 'next/router';
 const nextConfig = getConfig();
 
 export default function Footer(props) {
   const { t } = useTranslation();
+  const router = useRouter();
 
   return (
     <footer className="root">
@@ -26,12 +28,14 @@ export default function Footer(props) {
         </li>
       </ul>
 
-      <div className="devlinks text-center">
-        {/* FOR DEV: */}
-        <Link href="/logout">
-          <a>Logout</a>
-        </Link>
-      </div>
+      {(process.env.NODE_ENV !== 'production' ||
+        router.pathname === '/my-shop') && (
+        <div className="devlinks text-center">
+          <Link href="/logout">
+            <a>Logout</a>
+          </Link>
+        </div>
+      )}
 
       <div className="version text-center">
         Version: {nextConfig?.publicRuntimeConfig?.version}
