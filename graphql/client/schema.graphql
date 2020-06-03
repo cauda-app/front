@@ -8,6 +8,7 @@ type Client {
 
 type Query {
   myTurn: Client!
+  clientTokens(limit: Int = 50): [String!]!
 }
 
 type Mutation {

@@ -64,7 +64,7 @@ const phoneVerificationResolver = {
       });
 
       setCookieToken(ctx.res, {
-        clientId: client?.id,
+        clientId: client.id,
         shopId: shopDetails?.shopId,
         phone: phone,
       });

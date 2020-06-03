@@ -40,13 +40,12 @@ const MY_SHOP = /* GraphQL */ `
 
 type Props = {
   isLoggedIn: boolean;
-  shopId?: number;
-  encodedShopId: string;
+  shopId?: string;
 };
 
 const fetcher = (query) => graphqlClient.request(query);
 
-const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
+const MyShop = ({ isLoggedIn, shopId }: Props) => {
   const { t } = useTranslation();
   useFirebaseMessage();
 
@@ -76,7 +75,7 @@ const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
 
     try {
       await graphqlClient.request(NEXT_TURN, { op });
-      // TODO: update with the result of previos request.
+      // TODO: update with the result of previous request.
       await mutate(MY_SHOP);
       setActionLoading('');
     } catch (error) {
@@ -258,7 +257,7 @@ const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
           </Link>
 
           <p className="mt-2 mb-0">
-            <small>https://cauda.app/{encodedShopId}</small>
+            <small>https://cauda.app/{shopId}</small>
           </p>
         </Card.Body>
       </Card>
@@ -269,15 +268,18 @@ const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = getToken(context);
 
-  if (!token?.shopId) {
-    return { props: { isLoggedIn: false, shopId: null } };
+  if (!token) {
+    return { props: { isLoggedIn: false } };
+  }
+
+  if (!token.shopId) {
+    return { props: { isLoggedIn: true } };
   }
 
   return {
     props: {
       isLoggedIn: true,
-      shopId: token.shopId === undefined ? null : token.shopId,
-      encodedShopId: encodeId(token.shopId),
+      shopId: encodeId(token.shopId),
     },
   };
 };
