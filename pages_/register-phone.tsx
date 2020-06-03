@@ -310,7 +310,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   return {
     props: {
-      isLoggedIn: token?.clientId !== undefined,
+      isLoggedIn: token !== null,
     },
   };
 };

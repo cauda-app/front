@@ -269,15 +269,15 @@ const MyShop = ({ isLoggedIn, shopId, encodedShopId }: Props) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = getToken(context);
 
-  if (!token || !token?.isValid || !token.clientId) {
-    return { props: { isLoggedIn: false, isShopCreated: false, shopId: null } };
+  if (!token?.shopId) {
+    return { props: { isLoggedIn: false, shopId: null } };
   }
 
   return {
     props: {
       isLoggedIn: true,
       shopId: token.shopId === undefined ? null : token.shopId,
-      encodedShopId: encodeId(token.shopId || 0),
+      encodedShopId: encodeId(token.shopId),
     },
   };
 };
