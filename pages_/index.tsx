@@ -11,6 +11,7 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import Layout from 'src/components/Layout';
+import GuestLanding from 'src/components/Landing/GuestLanding';
 import EmptyLanding from 'src/components/Landing/EmptyLanding';
 import { getToken } from 'src/utils/next';
 import {
@@ -20,7 +21,6 @@ import {
 import getTurnColor, { Colors } from 'src/utils/colors';
 import createPrismaClient from 'prisma/client';
 import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
-import Router, { useRouter } from 'next/router';
 
 export const MY_TURNS = /* GraphQL */ `
   query MyTurns {
@@ -64,7 +64,11 @@ const MyTurns = ({
   const { t } = useTranslation();
   useFirebaseMessage();
 
-  if (!isLoggedIn || (myTurns.length === 0 && myPastTurns.length === 0)) {
+  if (!isLoggedIn) {
+    return <GuestLanding />;
+  }
+
+  if (myTurns.length === 0 && myPastTurns.length === 0) {
     return <EmptyLanding />;
   }
 
