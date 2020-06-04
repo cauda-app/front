@@ -14,6 +14,7 @@ import { formats, parseUTCTime } from 'src/utils/dates';
 import LoadingButton from '../LoadingButton';
 import GoBack from '../GoBack';
 import Notification from 'src/components/Notification';
+import { firebaseCloudMessaging } from 'src/utils/web-push';
 
 type Props = {
   shop: any;
@@ -48,6 +49,7 @@ export default function ShopCard({
     });
 
     if (PermissionStatus.state === 'prompt') {
+      await firebaseCloudMessaging.removePermission();
       setRequestNotification(true);
     }
   };

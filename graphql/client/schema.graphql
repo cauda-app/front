@@ -12,6 +12,7 @@ type Query {
 
 type Mutation {
   saveFCMtoken(token: String!): Boolean!
+  removeFCMtoken: Boolean!
   sendNotification(clientId: Int!, data: NotificationInput!): String
 }
 

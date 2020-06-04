@@ -57,6 +57,7 @@ export type Mutation = {
   cancelTurns: Shop;
   nextTurn: Shop;
   registerShop: Shop;
+  removeFCMtoken: Scalars['Boolean'];
   requestTurn: RequestTurnResponse;
   saveFCMtoken: Scalars['Boolean'];
   sendNotification?: Maybe<Scalars['String']>;
@@ -392,6 +393,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   cancelTurns?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
   nextTurn?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationNextTurnArgs, 'op'>>,
   registerShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationRegisterShopArgs, 'shop'>>,
+  removeFCMtoken?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
   requestTurn?: Resolver<ResolversTypes['RequestTurnResponse'], ParentType, ContextType, RequireFields<MutationRequestTurnArgs, 'shopId'>>,
   saveFCMtoken?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSaveFcMtokenArgs, 'token'>>,
   sendNotification?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationSendNotificationArgs, 'clientId' | 'data'>>,

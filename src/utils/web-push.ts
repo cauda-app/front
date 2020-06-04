@@ -9,9 +9,15 @@ const SAVE_FCM_TOKEN = /* GraphQL */ `
   }
 `;
 
-const saveToken = (token) => {
-  return graphQLClient.request(SAVE_FCM_TOKEN, { token });
-};
+const REMOVE_FCM_TOKEN = /* GraphQL */ `
+  mutation RemoveFCMtoken($token: String!) {
+    removeFCMtoken(token: $token)
+  }
+`;
+
+const saveToken = (token) => graphQLClient.request(SAVE_FCM_TOKEN, { token });
+
+const removeToken = () => graphQLClient.request(REMOVE_FCM_TOKEN);
 
 const init = () => {
   try {
@@ -80,9 +86,20 @@ const requestPermission = async () => {
   }
 };
 
+const removePermission = async () => {
+  if ((await tokenInlocalforage()) !== null) {
+    return;
+  }
+
+  const storagePromise = localforage.removeItem('fcm_token');
+  const tokenPromise = removeToken();
+  return Promise.all([storagePromise, tokenPromise]);
+};
+
 const firebaseCloudMessaging = {
   init,
   requestPermission,
+  removePermission,
   tokenInlocalforage,
   messagingInstance,
 };
