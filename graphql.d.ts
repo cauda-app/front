@@ -168,7 +168,6 @@ export type TurnResponse = {
 
 export type RequestTurnResponse = {
    __typename?: 'RequestTurnResponse';
-  id: Scalars['ID'];
   pendingTurnsAmount: Scalars['Int'];
 };
 
@@ -194,6 +193,7 @@ export type Shop = {
 
 export type LastTurns = {
    __typename?: 'LastTurns';
+  id: Scalars['ID'];
   status: IssuedNumberStatus;
   turn: Scalars['String'];
 };
@@ -451,7 +451,6 @@ export type TurnResponseResolvers<ContextType = any, ParentType extends Resolver
 }>;
 
 export type RequestTurnResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['RequestTurnResponse'] = ResolversParentTypes['RequestTurnResponse']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   pendingTurnsAmount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
@@ -472,6 +471,7 @@ export type ShopResolvers<ContextType = any, ParentType extends ResolversParentT
 }>;
 
 export type LastTurnsResolvers<ContextType = any, ParentType extends ResolversParentTypes['LastTurns'] = ResolversParentTypes['LastTurns']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   status?: Resolver<ResolversTypes['IssuedNumberStatus'], ParentType, ContextType>,
   turn?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,

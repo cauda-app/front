@@ -26,7 +26,6 @@ const nextConfig = getConfig();
 const REQUEST_TURN = /* GraphQL */ `
   mutation RequestTurn($shopId: ID!) {
     requestTurn(shopId: $shopId) {
-      id
       pendingTurnsAmount
     }
   }
@@ -68,7 +67,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
 
       switch (errorCode) {
         case 'ACTIVE_TURN':
-          Router.push('/');
+          goToHome();
           break;
         case 'PENDING_TURNS_QUOTA_EXCEEDED':
           setError(t('common:pending-turns-quota-exceeded'));

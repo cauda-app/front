@@ -10,6 +10,7 @@ import { parseUTCTime } from 'src/utils/dates';
 import { parsePhone } from 'src/utils/phone-utils';
 import { numberToTurn } from 'graphql/utils/turn';
 import { TO_ISSUED_NUMBER_STATUS } from 'graphql/issuedNumber/helpers';
+import { encodeId } from 'src/utils/hashids';
 
 const todaysStatus = (shopDetails: ShopDetails | PrismaShopDetails) => {
   const now = nowFromCoordinates(shopDetails.lat, shopDetails.lng);
@@ -57,7 +58,7 @@ export const lastTurns = async (prismaClient: PrismaClient, shopId: number) => {
     where: { shopId, AND: { status: { in: [1, 2, 3] } } },
     first: 5,
     orderBy: { createdAt: 'desc' },
-    select: { issuedNumber: true, status: true },
+    select: { id: true, issuedNumber: true, status: true },
   });
 
   if (!res.length) {
@@ -65,6 +66,7 @@ export const lastTurns = async (prismaClient: PrismaClient, shopId: number) => {
   }
 
   return res.map((e) => ({
+    id: encodeId(e.id),
     turn: numberToTurn(e.issuedNumber),
     status: e.status,
   }));
