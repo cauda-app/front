@@ -51,6 +51,8 @@ export default function ShopCard({
     if (PermissionStatus.state === 'prompt') {
       await firebaseCloudMessaging.removePermission();
       setRequestNotification(true);
+    } else {
+      handleConfirm();
     }
   };
 

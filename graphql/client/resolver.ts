@@ -86,7 +86,7 @@ const clientResolver = {
         return true;
       } catch (error) {
         Sentry.setContext('user token', ctx.tokenInfo);
-        Sentry.setContext('fcm token', { fcmToken: args.token });
+        Sentry.setContext('fcm token', { fcmToken: null });
         Sentry.captureException(error);
         return false;
       }

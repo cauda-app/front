@@ -10,8 +10,8 @@ const SAVE_FCM_TOKEN = /* GraphQL */ `
 `;
 
 const REMOVE_FCM_TOKEN = /* GraphQL */ `
-  mutation RemoveFCMtoken($token: String!) {
-    removeFCMtoken(token: $token)
+  mutation RemoveFCMtoken {
+    removeFCMtoken
   }
 `;
 
@@ -87,7 +87,7 @@ const requestPermission = async () => {
 };
 
 const removePermission = async () => {
-  if ((await tokenInlocalforage()) !== null) {
+  if ((await tokenInlocalforage()) === null) {
     return;
   }
 
