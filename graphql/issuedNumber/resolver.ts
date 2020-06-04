@@ -9,7 +9,7 @@ import {
   MutationCancelTurnArgs,
   QueryTurnArgs,
 } from '../../graphql.d';
-import { decodeId } from 'src/utils/hashids';
+import { decodeId, encodeId } from 'src/utils/hashids';
 import { myTurns, ISSUED_NUMBER_STATUS, myPastTurns } from './helpers';
 import { numberToTurn } from 'graphql/utils/turn';
 import { Context } from 'graphql/context';
@@ -101,7 +101,8 @@ const IssuedNumberResolver = {
       if (pendingTurnForShop) {
         return new ApolloError(
           'There is already a pending turn',
-          'ACTIVE_TURN'
+          'ACTIVE_TURN',
+          { turnId: encodeId(pendingTurnForShop.id) }
         );
       }
 
@@ -133,9 +134,9 @@ const IssuedNumberResolver = {
 
       try {
         await ctx.prisma.raw(rawQuery);
-        const newTurns = await getTurns(ctx.tokenInfo.clientId, ctx);
+        //const newTurns = await getTurns(ctx.tokenInfo.clientId, ctx);
         return {
-          id: newTurns[0].id,
+          //id: encodeId(newTurns[0].id), // TODO: Wait for Prisma to support returning results from raw queries and get the inserted ID from there
           pendingTurnsAmount: turns.length + 1,
         };
       } catch (error) {
