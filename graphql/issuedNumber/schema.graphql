@@ -33,7 +33,7 @@ type Query {
 }
 
 type RequestTurnResponse {
-  id: ID!
+  #id: ID!
   pendingTurnsAmount: Int!
 }
 

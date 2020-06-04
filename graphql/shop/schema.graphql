@@ -18,6 +18,7 @@ type Shop {
 }
 
 type LastTurns {
+  id: ID!
   status: IssuedNumberStatus!
   turn: String!
 }

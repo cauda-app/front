@@ -26,7 +26,6 @@ const nextConfig = getConfig();
 const REQUEST_TURN = /* GraphQL */ `
   mutation RequestTurn($shopId: ID!) {
     requestTurn(shopId: $shopId) {
-      id
       pendingTurnsAmount
     }
   }
@@ -41,7 +40,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
 
   React.useEffect(() => {
     if (!isLoggedIn) {
-      Router.push('/register-phone?redirectTo=' + router.asPath);
+      Router.replace('/register-phone?redirectTo=' + router.asPath);
     }
   }, [isLoggedIn]);
 
@@ -70,7 +69,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
 
       switch (errorCode) {
         case 'ACTIVE_TURN':
-          Router.push('/');
+          goToHome();
           break;
         case 'PENDING_TURNS_QUOTA_EXCEEDED':
           setError(t('common:pending-turns-quota-exceeded'));

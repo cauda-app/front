@@ -5,8 +5,10 @@ import Router, { useRouter } from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import Badge from 'react-bootstrap/Badge';
 import * as Sentry from '@sentry/browser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
 import { faRedo } from '@fortawesome/free-solid-svg-icons';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import createPrismaClient from 'prisma/client';
@@ -23,56 +25,44 @@ import LoadingButton from 'src/components/LoadingButton';
 import { TO_ISSUED_NUMBER_STATUS } from 'graphql/issuedNumber/helpers';
 import { MY_PAST_TURNS, MY_TURNS } from 'pages_';
 import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
+import getTurnColor from 'src/utils/colors';
 
 const reload = () => Router.reload();
 
-const MyTurn = ({
-  isLoggedIn,
-  statusCode,
-  turn,
-  lastTurns: initialLastTurns,
-}) => {
+const QUERY = /* GraphQL */ `
+  query Turn($turnId: ID!, $shopId: ID!) {
+    turn(turnId: $turnId) {
+      turn
+      shopName
+      status
+    }
+
+    lastTurns(shopId: $shopId) {
+      id
+      status
+      turn
+    }
+  }
+`;
+
+const MyTurn = ({ isLoggedIn, statusCode, turn, lastTurns }) => {
   const { t } = useTranslation();
   useFirebaseMessage();
   const router = useRouter();
   const [cancelling, setCancelling] = useState(false);
   const [cancelError, setCancelError] = useState();
   const { data, error } = useSWR(
-    [
-      /* GraphQL */ `
-        query Turn($turnId: ID!) {
-          turn(turnId: $turnId) {
-            id
-            turn
-            shopName
-            status
-          }
-        }
-      `,
-      router.query.turnId,
-    ],
-    (query, turnId) => graphQLClient.request(query, { turnId }),
-    { initialData: { turn } }
-  );
-  const { data: lastTurnsResponse, error: lastTurnsError } = useSWR(
-    [
-      /* GraphQL */ `
-        query LastTurns($shopId: ID!) {
-          lastTurns(shopId: $shopId) {
-            status
-            turn
-          }
-        }
-      `,
-      turn.shopId,
-    ],
-    (query, shopId) => graphQLClient.request(query, { shopId }),
-    { initialData: { lastTurns: initialLastTurns }, refreshInterval: 10_000 }
+    [QUERY, router.query.turnId, turn.shopId],
+    (query, turnId, shopId) => graphQLClient.request(query, { turnId, shopId }),
+    {
+      initialData: { turn, lastTurns },
+      refreshInterval: turn.status === 'PENDING' ? 10_000 : 0,
+    }
   );
 
   useEffect(() => {
     if (!isLoggedIn) {
-      Router.push('/register-phone?redirectTo=' + router.asPath);
+      Router.replace('/register-phone?redirectTo=' + router.asPath);
     }
   }, [isLoggedIn]);
 
@@ -80,7 +70,7 @@ const MyTurn = ({
     return <NotFound />;
   }
 
-  if (!isLoggedIn) {
+  if (!isLoggedIn || !data) {
     return (
       <Layout>
         <Spinner />
@@ -118,7 +108,7 @@ const MyTurn = ({
     <Layout>
       <Card className="cauda_card myturn__card mb-4 mx-auto">
         <Card.Header className="d-flex justify-content-between align-items-center">
-          {turn.shopName}
+          {data.turn.shopName}
 
           <Link href="/" passHref>
             <Button variant="danger" size="sm">
@@ -127,13 +117,27 @@ const MyTurn = ({
           </Link>
         </Card.Header>
         <Card.Body className="p-2 text-center">
-          <Button onClick={reload} variant="link" className="py-0">
-            <FontAwesomeIcon icon={faRedo} className="mr-2" />
-            {t('common:my-turn')}
-          </Button>
+          {data.turn.status === 'PENDING' ? (
+            <Button onClick={reload} variant="link" className="py-0">
+              <FontAwesomeIcon icon={faRedo} className="mr-2" />
+              {t('common:my-turn')}
+            </Button>
+          ) : null}
 
           {/* TODO NICO: Add "myturn__number--disabled" class for disabled myturn__number */}
-          <p className="myturn__number display-3">{turn.turn}</p>
+          <p
+            className={`myturn__number display-3 text-${getTurnColor(
+              data.turn.status
+            )}`}
+          >
+            {data.turn.turn}
+          </p>
+
+          {data.turn.status !== 'PENDING' ? (
+            <Badge variant={getTurnColor(data.turn.status)} className="mb-3">
+              {t(`common:turn-status-${data.turn.status}`)}
+            </Badge>
+          ) : null}
 
           {/* <p className="myturn__timebox h2 font-weight-light mb-1">
             <span className="myturn__time font-weight-bold">25</span>{' '}
@@ -151,10 +155,10 @@ const MyTurn = ({
               </p>
 
               <ul className="list-unstyled list-inline h4 mb-0">
-                {lastTurnsResponse?.lastTurns.length > 0
-                  ? lastTurnsResponse?.lastTurns.map(({ turn, status }) => (
+                {data.lastTurns.length > 0
+                  ? data.lastTurns.map(({ id, turn, status }) => (
                       <li
-                        key={turn}
+                        key={id}
                         className={`list-inline-item text-${
                           ['SKIPPED', 'CANCELLED'].includes(status)
                             ? 'danger'
@@ -169,19 +173,27 @@ const MyTurn = ({
             </Card.Body>
           </Card>
 
-          <LoadingButton
-            disabled={turn.status !== 'PENDING'}
-            isLoading={cancelling}
-            onClick={cancelTurn}
-            variant="danger"
-            size="lg"
-            className="d-flex justify-content-between align-items-center"
-            block
-          >
-            <FontAwesomeIcon icon={faTimes} />
-            {t('common:cancel-turn')}
-            <div></div>
-          </LoadingButton>
+          {data.turn.status === 'PENDING' ? (
+            <LoadingButton
+              isLoading={cancelling}
+              onClick={cancelTurn}
+              variant="danger"
+              size="lg"
+              className="d-flex justify-content-between align-items-center"
+              block
+            >
+              <FontAwesomeIcon icon={faTimes} />
+              {t('common:cancel-turn')}
+              <div></div>
+            </LoadingButton>
+          ) : (
+            <Link href="/[shopId]" as={'/' + turn.shopId} passHref>
+              <Button as="a" variant="primary" block size="lg">
+                <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}
+                {t('common:request-another-turn')}
+              </Button>
+            </Link>
+          )}
         </Card.Body>
       </Card>
     </Layout>
