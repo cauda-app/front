@@ -11,6 +11,8 @@ import { faPhone } from '@fortawesome/free-solid-svg-icons';
 
 import parseISO from 'date-fns/parseISO';
 import Router, { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
+import { getToken } from 'src/utils/next';
 import * as Sentry from '@sentry/browser';
 import {
   GoogleReCaptchaProvider,
@@ -269,7 +271,25 @@ const VerifyPhone = () => {
   );
 };
 
-const VerifyPhoneWithCaptcha = () => {
+const VerifyPhoneWithCaptcha = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      router.push('/');
+      setLoading(true);
+    }
+  }, []);
+
+  if (loading) {
+    return (
+      <Layout>
+        <Spinner />
+      </Layout>
+    );
+  }
+
   return (
     <GoogleReCaptchaProvider
       reCaptchaKey={process.env.NEXT_PUBLIC_RE_CAPTCHA_KEY}
@@ -277,6 +297,16 @@ const VerifyPhoneWithCaptcha = () => {
       <VerifyPhone />
     </GoogleReCaptchaProvider>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const token = getToken(context);
+
+  return {
+    props: {
+      isLoggedIn: token !== null,
+    },
+  };
 };
 
 export default VerifyPhoneWithCaptcha;

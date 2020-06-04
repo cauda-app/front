@@ -64,7 +64,7 @@ const phoneVerificationResolver = {
       });
 
       setCookieToken(ctx.res, {
-        clientId: client?.id,
+        clientId: client.id,
         shopId: shopDetails?.shopId,
         phone: phone,
       });
@@ -96,6 +96,7 @@ const phoneVerificationResolver = {
 
       // If three codes were already sent, wait for 4h before sending another.
       if (
+        process.env.NODE_ENV === 'production' &&
         process.env.SMS_ENABLED === '1' &&
         phoneVerification &&
         phoneVerification.attempts >= 3 &&
@@ -109,6 +110,7 @@ const phoneVerificationResolver = {
 
       // Do not send before PHONE_CODE_EXPIRY
       if (
+        process.env.NODE_ENV === 'production' &&
         phoneVerification &&
         compareAsc(
           new Date(),

@@ -3,12 +3,22 @@ import * as Sentry from '@sentry/node';
 import { Context } from 'graphql/context';
 import { sendMessage } from 'graphql/utils/fcm';
 import {
+  QueryClientTokensArgs,
   MutationSaveFcMtokenArgs,
   MutationSendNotificationArgs,
 } from '../../graphql';
+import { sign } from 'graphql/utils/jwt';
 
 const clientResolver = {
   Query: {
+    clientTokens: async (parent, args: QueryClientTokensArgs, ctx: Context) => {
+      if (process.env.NODE_ENV === 'production') {
+        return [];
+      }
+
+      const clients = await ctx.prisma.client.findMany({ first: args.limit });
+      return clients.map((client) => sign({ clientId: client.id }));
+    },
     myTurn: (parent, args, ctx: Context) => {
       if (!ctx.tokenInfo) {
         return new ApolloError('No Token provided', 'NO_TOKEN_PROVIDED');

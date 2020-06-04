@@ -67,6 +67,7 @@ type Mutation {
   updateShop(shop: ShopInput!): Shop!
   nextTurn(op: NextTurnOperation!): Shop!
   cancelTurns: Shop!
+  sendSms(phone: String!, message: String!): Boolean!
 }
 
 input ShopInput {

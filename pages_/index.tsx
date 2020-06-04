@@ -11,9 +11,9 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import Layout from 'src/components/Layout';
+import GuestLanding from 'src/components/Landing/GuestLanding';
 import EmptyLanding from 'src/components/Landing/EmptyLanding';
 import { getToken } from 'src/utils/next';
-import prismaClient from 'prisma/client';
 import {
   myTurns as myTurnsFetch,
   myPastTurns as myPastTurnsFetch,
@@ -64,7 +64,11 @@ const MyTurns = ({
   const { t } = useTranslation();
   useFirebaseMessage();
 
-  if (!isLoggedIn || (myTurns.length === 0 && myPastTurns.length === 0)) {
+  if (!isLoggedIn) {
+    return <GuestLanding />;
+  }
+
+  if (myTurns.length === 0 && myPastTurns.length === 0) {
     return <EmptyLanding />;
   }
 
