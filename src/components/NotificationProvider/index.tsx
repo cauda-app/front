@@ -12,6 +12,7 @@ export const NotificationContext = React.createContext(
 
 function NotificationProvider({ children }) {
   const [modalInfo, setModalInfo] = React.useState<ModalInfo | null>(null);
+
   const handleModalOpen = React.useCallback((modalInfo: ModalInfo | null) => {
     setModalInfo(modalInfo);
   }, []);
@@ -21,6 +22,7 @@ function NotificationProvider({ children }) {
       {children}
       {modalInfo ? (
         <Notification
+          title="CAUDA"
           message={modalInfo.message}
           onConfirm={() => handleModalOpen(null)}
           confirmLabel={modalInfo.buttonLabel}

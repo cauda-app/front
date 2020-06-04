@@ -8,7 +8,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
-import differenceInSeconds from 'date-fns/differenceInSeconds';
+
 import parseISO from 'date-fns/parseISO';
 import Router, { useRouter } from 'next/router';
 import * as Sentry from '@sentry/browser';
@@ -22,6 +22,7 @@ import { validatePhoneRequest, getErrorCodeFromApollo } from 'src/utils';
 import graphqlClient from 'src/graphqlClient';
 import Spinner from 'src/components/Spinner';
 import GoBack from 'src/components/GoBack';
+import { formattedTimeDifference } from 'src/utils/dates';
 
 const VERIFY_CODE = /* GraphQL */ `
   mutation VerifyCode($code: Int!, $phone: String!) {
@@ -149,15 +150,8 @@ const VerifyPhone = () => {
     }
 
     const interval = setInterval(() => {
-      let now = new Date();
-      if (expiresIn > now) {
-        const totalSeconds = differenceInSeconds(expiresIn, +Date.now());
-        const minutes = Math.floor(totalSeconds / 60);
-        const seconds = totalSeconds % 60;
-        const formattedDif = `${minutes
-          .toString()
-          .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
+      const formattedDif = formattedTimeDifference(expiresIn);
+      if (formattedDif !== null) {
         setCountDown(formattedDif);
       } else {
         setCountDown('');

@@ -49,11 +49,13 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
     Router.push('/');
   };
 
-  const handleRequestTurn = async (shopId) => {
+  const handleRequestTurn = async () => {
     try {
       setError(undefined);
       await firebaseCloudMessaging.requestPermission();
-      const res = await graphqlClient.request(REQUEST_TURN, { shopId });
+      const res = await graphqlClient.request(REQUEST_TURN, {
+        shopId: shop.shopId,
+      });
       const goToShopThreshold =
         nextConfig?.publicRuntimeConfig?.goToShopThreshold;
       if (res.requestTurn.pendingTurnsAmount <= goToShopThreshold) {
@@ -96,15 +98,21 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
     );
   }
 
-  return (
-    <Layout>
-      <ShopCard shop={shop} onRequestTurn={handleRequestTurn} error={error} />
-      {showModal && (
+  if (showModal) {
+    return (
+      <Layout>
         <Notification
+          title="CAUDA"
           message={t('common:empty-shop-queue')}
           onConfirm={goToHome}
         />
-      )}
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      <ShopCard shop={shop} onRequestTurn={handleRequestTurn} error={error} />
     </Layout>
   );
 };
