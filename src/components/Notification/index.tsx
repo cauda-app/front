@@ -8,6 +8,7 @@ import addMilliseconds from 'date-fns/addMilliseconds';
 import { formattedTimeDifference } from 'src/utils/dates';
 
 type Props = {
+  show?: boolean;
   title: String;
   subTitle?: String;
   message: String;
@@ -17,6 +18,7 @@ type Props = {
 };
 
 export default function Notification({
+  show,
   title,
   subTitle,
   message,
@@ -52,8 +54,10 @@ export default function Notification({
     return () => clearInterval(interval);
   }, []);
 
+  const ModalComponent: React.ElementType = show ? Modal : Modal.Dialog;
+
   return (
-    <Modal.Dialog>
+    <ModalComponent show={show} onHide={onConfirm}>
       <Modal.Header>
         <Modal.Title>{title}</Modal.Title>
       </Modal.Header>
@@ -84,6 +88,6 @@ export default function Notification({
           )}
         </Button>
       </Modal.Body>
-    </Modal.Dialog>
+    </ModalComponent>
   );
 }

@@ -22,6 +22,7 @@ function NotificationProvider({ children }) {
       {children}
       {modalInfo ? (
         <Notification
+          show={!!modalInfo}
           title="CAUDA"
           message={modalInfo.message}
           onConfirm={() => handleModalOpen(null)}
