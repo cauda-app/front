@@ -44,14 +44,19 @@ export default function ShopCard({
   };
 
   const checkNotificationsEnabled = async () => {
-    const PermissionStatus = await navigator.permissions.query({
-      name: 'notifications',
-    });
+    try {
+      const PermissionStatus = await navigator.permissions.query({
+        name: 'notifications',
+      });
 
-    if (PermissionStatus.state === 'prompt') {
-      await firebaseCloudMessaging.removePermission();
-      setRequestNotification(true);
-    } else {
+      if (PermissionStatus.state === 'prompt') {
+        await firebaseCloudMessaging.removePermission();
+        setRequestNotification(true);
+      } else {
+        handleConfirm();
+      }
+    } catch (error) {
+      console.error(error);
       handleConfirm();
     }
   };
