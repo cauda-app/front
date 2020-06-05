@@ -26,6 +26,7 @@ export default async function sendSms(
         message: message,
         expiresAt,
         ignore_banned: 1,
+        service_id: 130,
       },
       {
         headers: {
