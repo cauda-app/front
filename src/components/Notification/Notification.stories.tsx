@@ -3,5 +3,11 @@ import { storiesOf } from '@storybook/react';
 import Notification from '.';
 
 storiesOf('Notification', module).add('default', () => {
-  return <Notification message="asd" onConfirm={() => alert('asd')} />;
+  return (
+    <Notification
+      title="SomeTitle"
+      message="asd"
+      onConfirm={() => alert('asd')}
+    />
+  );
 });

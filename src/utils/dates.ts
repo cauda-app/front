@@ -2,6 +2,7 @@ import format from 'date-fns/format';
 import parse from 'date-fns/parse';
 import isWithinInterval from 'date-fns/isWithinInterval';
 import utcToZonedTime from 'date-fns-tz/utcToZonedTime';
+import differenceInSeconds from 'date-fns/differenceInSeconds';
 import tzLookup from 'tz-lookup';
 
 export const parseUTCTime = (time, date) => parse(time, "HH:mm:ss'Z'", date);
@@ -41,6 +42,20 @@ export const serializeTime = (date: Date): string => {
   const regexFracSec = /\.\d{1,}/;
   time = time.replace(regexFracSec, '');
   return time;
+};
+
+export const formattedTimeDifference = (timeInFuture: Date): string | null => {
+  let now = new Date();
+  if (timeInFuture > now) {
+    const totalSeconds = differenceInSeconds(timeInFuture, +Date.now());
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    const formattedDif = `${minutes
+      .toString()
+      .padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    return formattedDif;
+  }
+  return null;
 };
 
 export const days = [

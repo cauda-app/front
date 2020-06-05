@@ -9,6 +9,7 @@ import Spinner from '../Spinner';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import Notification from '../Notification';
 
 export type Coords = {
   lat: number;
@@ -82,28 +83,14 @@ const RequestGPSNotification = ({ render }: Props) => {
   if (!coords && !notificationAccepted && !errorCode) {
     return (
       <Layout>
-        <div className="card cauda_card mt-3 mx-auto mb-5 px-3 py-4 p-sm-5 text-center">
-          <p>
-            <strong className="d-block mb-3">
-              Por favor activa tu Ubicación (GPS)
-            </strong>
-            <span className="text-muted">
-              Debes compartir tu ubicación actual para localizar comercios
-              cercanos.
-            </span>
-          </p>
-          <Button
-            onClick={requestAccess}
-            variant="primary"
-            size="lg"
-            className="d-flex justify-content-between align-items-center"
-            block
-          >
-            <div></div>
-            Continuar
-            <FontAwesomeIcon icon={faArrowRight} />
-          </Button>
-        </div>
+        <Notification
+          title="Compartir Ubicación"
+          subTitle="Vamos a solicitarte que actives tu Ubicación (GPS)"
+          message="Es muy importante que aceptes para poder localizar comercios
+              cercanos."
+          onConfirm={requestAccess}
+          countDown={5_000}
+        />
       </Layout>
     );
   }

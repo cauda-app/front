@@ -170,22 +170,6 @@ const MyTurns = ({
             </Card.Body>
           </Card>
         )}
-
-        <Row className="w-100">
-          <Col className="d-flex justify-content-center align-items-center mx-auto">
-            <Link href="/my-shop" passHref>
-              <Button
-                variant="info"
-                size="lg"
-                className="btn_myshop tertiary d-flex justify-content-between align-items-center py-2"
-              >
-                <FontAwesomeIcon icon={faStoreAlt} fixedWidth />
-                {t('common:my-shop')}
-                <div></div>
-              </Button>
-            </Link>
-          </Col>
-        </Row>
       </div>
 
       <style jsx global>{`

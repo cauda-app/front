@@ -70,6 +70,27 @@ const clientResolver = {
         return false;
       }
     },
+    removeFCMtoken: async (parent, args, ctx: Context) => {
+      if (!ctx.tokenInfo?.isValid) {
+        return new ApolloError('Invalid token', 'INVALID_TOKEN');
+      }
+
+      try {
+        await ctx.prisma.client.update({
+          where: { id: ctx.tokenInfo.clientId },
+          data: {
+            fcmToken: null,
+          },
+        });
+
+        return true;
+      } catch (error) {
+        Sentry.setContext('user token', ctx.tokenInfo);
+        Sentry.setContext('fcm token', { fcmToken: null });
+        Sentry.captureException(error);
+        return false;
+      }
+    },
     sendNotification: async (
       parent,
       args: MutationSendNotificationArgs,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import useTranslation from 'next-translate/useTranslation';
 import Card from 'react-bootstrap/Card';
@@ -13,11 +13,13 @@ import Map from '../Map';
 import { formats, parseUTCTime } from 'src/utils/dates';
 import LoadingButton from '../LoadingButton';
 import GoBack from '../GoBack';
+import Notification from 'src/components/Notification';
+import { firebaseCloudMessaging } from 'src/utils/web-push';
 
 type Props = {
   shop: any;
   error?: string;
-  onRequestTurn?: (shopId: String) => Promise<any>;
+  onRequestTurn?: () => Promise<any>;
 };
 
 export default function ShopCard({
@@ -28,17 +30,46 @@ export default function ShopCard({
 }: Props) {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [requestNotification, setRequestNotification] = useState(false);
 
   const handleConfirm = async () => {
     try {
       setIsLoading(true);
-      await onRequestTurn!(shop.shopId);
+      await onRequestTurn!();
     } catch (error) {
       setIsLoading(false);
       // TODO: show error
       console.error(error);
     }
   };
+
+  const checkNotificationsEnabled = async () => {
+    const PermissionStatus = await navigator.permissions.query({
+      name: 'notifications',
+    });
+
+    if (PermissionStatus.state === 'prompt') {
+      await firebaseCloudMessaging.removePermission();
+      setRequestNotification(true);
+    } else {
+      handleConfirm();
+    }
+  };
+
+  if (requestNotification) {
+    return (
+      <Notification
+        title="Habilitar Notificaciones"
+        subTitle="Vamos a solicitarte que permitas recibir Notificaciones"
+        message="Es muy importante que aceptes para poder notificarte cuando se aproxime tu turno."
+        onConfirm={() => {
+          setRequestNotification(false);
+          handleConfirm();
+        }}
+        countDown={5_000}
+      />
+    );
+  }
 
   return (
     <div {...rest}>
@@ -86,7 +117,7 @@ export default function ShopCard({
               size="lg"
               block
               disabled={!shop.isOpen}
-              onClick={handleConfirm}
+              onClick={checkNotificationsEnabled}
               className="py-2"
             >
               <FontAwesomeIcon
