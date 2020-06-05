@@ -37,15 +37,15 @@ model IssuedNumber {
 }
 
 model Shop {
-  id            Int            @default(autoincrement()) @id
-  isClosed      Boolean        @default(false)
-  numberCounter Int            @default(0)
-  lastNumber    Int
-  nextNumber    Int
-  issuedNumber  IssuedNumber[]
-  shopDetails   ShopDetails
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id           Int            @default(autoincrement()) @id
+  isClosed     Boolean        @default(false)
+  lastIssued   Int            @default(0)
+  queueSize    Int
+  nextToCall   Int
+  issuedNumber IssuedNumber[]
+  shopDetails  ShopDetails
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 }
 
 model ShopDetails {
