@@ -1,14 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import * as Sentry from '@sentry/browser';
 
-import step1 from './assets/step1.jpeg';
-import step2 from './assets/step2.jpeg';
-import step3 from './assets/step3.jpeg';
+import step1 from './assets/step1.png';
+import step2 from './assets/step2.png';
+import step3 from './assets/step3.png';
+import step4 from './assets/step4.png';
 import Layout from '../Layout';
 import Spinner from '../Spinner';
-import Button from 'react-bootstrap/Button';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import Notification from '../Notification';
 
 export type Coords = {
@@ -20,45 +18,68 @@ type Props = {
   render: (props: { coords: Coords }) => any;
 };
 
-const GPS_STATUS_KEY = 'GPS_STATUS';
-const GPS_GRANTED = 'GPS_GRANTED';
-
 const RequestGPSNotification = ({ render }: Props) => {
   const [loading, setLoading] = useState(true);
   const [errorCode, setErrorCode] = useState<number>();
+  const [navigatorNotSupported, setNavigatorNotSupported] = useState(false);
+  const [showNotification, setShowNotification] = useState(false);
   const [coords, setCoords] = useState<Coords>();
-  const [notificationAccepted, setNotificationAccepted] = useState(false);
 
   const requestAccess = () => {
+    setShowNotification(false);
     setLoading(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        window.localStorage.setItem(GPS_STATUS_KEY, GPS_GRANTED);
         setCoords({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
-        setNotificationAccepted(true);
         setLoading(false);
       },
       (error) => {
-        window.localStorage.removeItem(GPS_STATUS_KEY);
-        setNotificationAccepted(false);
-        setLoading(false);
         setErrorCode(error.code);
+        setLoading(false);
         Sentry.captureException(error);
       }
     );
   };
 
   useEffect(() => {
-    const res = window.localStorage.getItem(GPS_STATUS_KEY);
-    if (res) {
-      setNotificationAccepted(true);
-      requestAccess();
+    const getGpsStatus = async () => {
+      const PermissionStatus = await navigator.permissions.query({
+        name: 'geolocation',
+      });
+
+      switch (PermissionStatus.state) {
+        case 'granted':
+          requestAccess();
+          break;
+        case 'prompt':
+          setShowNotification(true);
+          break;
+        case 'denied':
+          setErrorCode(1);
+          break;
+      }
+
+      setLoading(false);
+    };
+
+    if (!navigator.geolocation) {
+      setNavigatorNotSupported(true);
+      return;
     }
-    setLoading(false);
+
+    getGpsStatus();
   }, []);
+
+  if (navigatorNotSupported) {
+    return (
+      <Layout>
+        <div>Geolocation is not supported by this device.</div>
+      </Layout>
+    );
+  }
 
   if (loading) {
     return (
@@ -68,19 +89,11 @@ const RequestGPSNotification = ({ render }: Props) => {
     );
   }
 
-  if (!navigator.geolocation) {
-    return (
-      <Layout>
-        <div>Geolocation is not supported by this device.</div>
-      </Layout>
-    );
-  }
-
   if (coords) {
     return render({ coords });
   }
 
-  if (!coords && !notificationAccepted && !errorCode) {
+  if (showNotification) {
     return (
       <Layout>
         <Notification
@@ -112,11 +125,24 @@ const RequestGPSNotification = ({ render }: Props) => {
               </p>
               <hr />
               <h3 className="h5">Paso 1</h3>
-              <img src={step1} alt="Paso 1" className="img-fluid mb-4 border" />
+              <img src={step1} alt="Paso 1" className="img-fluid border" />
+              <br />
               <h3 className="h5">Paso 2</h3>
-              <img src={step2} alt="Paso 2" className="img-fluid mb-4 border" />
+              <img src={step2} alt="Paso 2" className="img-fluid border" />
+              <br />
               <h3 className="h5">Paso 3</h3>
               <img src={step3} alt="Paso 3" className="img-fluid border" />
+              <br />
+              <h3 className="h5">Paso 4</h3>
+              <img src={step4} alt="Paso 4" className="img-fluid border" />
+
+              <style jsx>
+                {`
+                  .img-fluid {
+                    padding: 20px;
+                  }
+                `}
+              </style>
             </div>
           </Layout>
         );
