@@ -32,7 +32,7 @@ export default async function sendSms(
     ignore_banned: 1,
   };
 
-  if (shortNumber) {
+  if (shortNumber || process.env.SHORT_SMS_AS_DEFAULT === '1') {
     options.service_id = 130;
   }
 
