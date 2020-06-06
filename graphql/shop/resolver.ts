@@ -107,7 +107,7 @@ const shopResolver = {
     },
     nearByShops: async (parent, args: QueryNearByShopsArgs, ctx: Context) => {
       const MAX_DISTANCE_METERS = 2000;
-      return await ctx.prisma.raw(`
+      return await ctx.prisma.queryRaw(`
         SELECT
           * ,
           ST_Distance_Sphere(
@@ -230,7 +230,7 @@ const shopResolver = {
       const nextTurns = await ctx.prisma.issuedNumber.findMany({
         where: { shopId: ctx.tokenInfo!.shopId, AND: { status: 0 } },
         orderBy: { issuedNumber: 'asc' },
-        first: threshold + 1,
+        take: threshold + 1,
         include: {
           client: {
             select: {
@@ -334,7 +334,7 @@ const shopResolver = {
     nextTurn: async (parent: Shop, args, ctx: Context) => {
       const res = await ctx.prisma.issuedNumber.findMany({
         where: { shopId: Number(parent.id), AND: { status: 0 } },
-        first: 1,
+        take: 1,
         orderBy: { issuedNumber: 'asc' },
         select: { issuedNumber: true },
       });

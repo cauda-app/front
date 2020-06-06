@@ -16,7 +16,9 @@ const clientResolver = {
         return [];
       }
 
-      const clients = await ctx.prisma.client.findMany({ first: args.limit });
+      const clients = await ctx.prisma.client.findMany({
+        take: args?.limit || undefined,
+      });
       return clients.map((client) => sign({ clientId: client.id }));
     },
     myTurn: (parent, args, ctx: Context) => {

@@ -24,7 +24,7 @@ const getTurns = (clientId: number, ctx: Context) => {
     orderBy: {
       id: 'desc',
     },
-    first: 5,
+    take: 5,
   });
 };
 
@@ -108,7 +108,7 @@ const IssuedNumberResolver = {
 
       // Prevent more than 3 active turns.
       const pendingTurns = turns.filter((a) => a.status === 0);
-      if (pendingTurns.length >= 3) {
+      if (process.env.NODE_ENV === 'production' && pendingTurns.length >= 3) {
         return new ApolloError(
           'Pending turns quota exceeded.',
           'PENDING_TURNS_QUOTA_EXCEEDED'
@@ -119,7 +119,10 @@ const IssuedNumberResolver = {
       const todayAppointments = turns.filter(
         (a) => compareAsc(a.createdAt, startOfDay(new Date())) >= 0
       );
-      if (todayAppointments.length >= 5) {
+      if (
+        process.env.NODE_ENV === 'production' &&
+        todayAppointments.length >= 5
+      ) {
         return new ApolloError(
           'Today turns quota exceeded',
           'TODAY_TURNS_QUOTA_EXCEEDED'
@@ -133,7 +136,7 @@ const IssuedNumberResolver = {
       );`;
 
       try {
-        await ctx.prisma.raw(rawQuery);
+        await ctx.prisma.executeRaw(rawQuery);
         //const newTurns = await getTurns(ctx.tokenInfo.clientId, ctx);
         return {
           //id: encodeId(newTurns[0].id), // TODO: Wait for Prisma to support returning results from raw queries and get the inserted ID from there
@@ -141,6 +144,7 @@ const IssuedNumberResolver = {
         };
       } catch (error) {
         Sentry.captureException(error);
+        console.log(error);
         return new ApolloError(
           'There was an error trying to set the appointment.',
           'OP_ERROR'

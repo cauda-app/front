@@ -56,7 +56,7 @@ export const status = (shopDetails: ShopDetails | PrismaShopDetails) => {
 export const lastTurns = async (prismaClient: PrismaClient, shopId: number) => {
   const res = await prismaClient.issuedNumber.findMany({
     where: { shopId, AND: { status: { in: [1, 2, 3] } } },
-    first: 5,
+    take: 5,
     orderBy: { createdAt: 'desc' },
     select: { id: true, issuedNumber: true, status: true },
   });
