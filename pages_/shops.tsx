@@ -91,14 +91,18 @@ const Shops = ({ coords: { lat, lng } }: Props) => {
                 <h1 className="cauda_title mb-0">{t('common:nearby-shops')}</h1>
               </Col>
             </Row>
-
-            {data.nearByShops?.length === 0 ? (
-              <div className="text-center m-auto p-3">
-                <span>{t('common:no-shops')}</span>
-              </div>
-            ) : null}
           </Card.Body>
         </Card>
+
+        {data.nearByShops?.length === 0 ? (
+          <Card className="cauda_card mb-4 mx-auto">
+            <Card.Body className="text-center d-flex flex-column justify-content-center align-items-center">
+              <div className="text-center lead m-auto p-3 py-5">
+                {t('common:no-shops')}
+              </div>
+            </Card.Body>
+          </Card>
+        ) : null}
 
         {data.nearByShops?.map((shop) => (
           <ShopCard key={shop.id} shop={shop} />
