@@ -315,7 +315,7 @@ const shopResolver = {
       }
 
       try {
-        await sendSms(args.phone, args.message);
+        await sendSms(args.phone, args.message, args.short);
         return true;
       } catch (error) {
         return new ApolloError('Error sending message', 'ERROR');
