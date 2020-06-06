@@ -136,7 +136,6 @@ export default function ShopCard({
           ) : (
             <Link href="/[shopId]" as={'/' + shop.shopId} passHref>
               <Button as="a" variant="primary" block disabled={!shop.isOpen}>
-                <FontAwesomeIcon icon={faCalendarCheck} fixedWidth />{' '}
                 {t('common:see-shop')}{' '}
                 {!shop.isOpen ? `(${t('common:close-now')})` : ''}
               </Button>
