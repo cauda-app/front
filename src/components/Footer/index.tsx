@@ -26,6 +26,11 @@ export default function Footer(props) {
         <li className="list-inline-item">
           <a href="mailto:somos@cauda.app">{t('common:contact')}</a>
         </li>
+        <li className="list-inline-item">
+          <Link href="/terms" passHref>
+            <a>{t('common:terms-conditions')}</a>
+          </Link>
+        </li>
       </ul>
 
       {(process.env.NODE_ENV !== 'production' ||
