@@ -123,7 +123,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   }
 
   const encodedShopId = context.params?.shopId as string | undefined;
-  const shopId = decodeId(encodedShopId) as number | null;
+  let shopId;
+  try {
+    shopId = decodeId(encodedShopId) as number | null;
+  } catch (error) {
+    return { props: { isLoggedIn: true, statusCode: 404 } };
+  }
 
   const prisma = createPrismaClient();
 
