@@ -1,8 +1,10 @@
 import React from 'react';
 import * as Sentry from '@sentry/browser';
+import Error from '../Error';
 
 class ErrorBoundary extends React.Component {
   state: {
+    error: Error;
     hasError: false;
     eventId: '';
   };
@@ -15,25 +17,17 @@ class ErrorBoundary extends React.Component {
     Sentry.withScope((scope) => {
       scope.setExtras(errorInfo);
       const eventId = Sentry.captureException(error);
-      this.setState({ eventId });
+      this.setState({ eventId, error });
     });
   }
 
   render() {
+    if (this.state.hasError && process.env.NODE_ENV === 'development') {
+      throw this.state.error;
+    }
+
     if (this.state.hasError) {
-      return (
-        <div>
-          Error: {this.state.eventId}
-          <style jsx>{`
-            div {
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              height: 100vh;
-            }
-          `}</style>
-        </div>
-      );
+      return <Error statusCode={500} />;
     }
 
     return this.props.children;
