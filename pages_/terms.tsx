@@ -179,7 +179,7 @@ export default function Terms() {
           <p>
             <span>
               <strong>
-                <i>DATOS PERSONALES.</i>
+                <i>DATOS PERSONALES. </i>
               </strong>
             </span>
             PROPIETARIO informa a los Usuarios que la recolección y tratamiento
@@ -195,8 +195,6 @@ export default function Terms() {
             El Usuario garantiza y responde, en cualquier caso, por la
             veracidad, exactitud, vigencia y autenticidad de los Datos
             Personales facilitados y se compromete a mantenerlos debidamente
-          </p>
-          <p>
             actualizados. Para hacer cualquier modificación en los Datos
             Personales suministrados mediante CAUDA, se debe ingresar en la
             sección de edición del comercio.
@@ -280,7 +278,7 @@ export default function Terms() {
           <p>
             <span>
               <strong>
-                <i>SUS DERECHOS.</i>
+                <i>SUS DERECHOS. </i>
               </strong>
             </span>
             Los Usuarios tienen el derecho a solicitar y obtener información
