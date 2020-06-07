@@ -19,7 +19,7 @@ export default function Footer(props) {
           </Link>
         </li>
         <li className="list-inline-item">
-          <Link href="/my-shop" passHref>
+          <Link href="/my-shop">
             <a>{t('common:shop-access')}</a>
           </Link>
         </li>
@@ -27,7 +27,7 @@ export default function Footer(props) {
           <a href="mailto:somos@cauda.app">{t('common:contact')}</a>
         </li>
         <li className="list-inline-item">
-          <Link href="/terms" passHref>
+          <Link href="/terms">
             <a>{t('common:terms-conditions')}</a>
           </Link>
         </li>
