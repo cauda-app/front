@@ -11,7 +11,7 @@ export const myPastTurns = async (clientId, prisma: PrismaClient) => {
       updatedAt: { gte: startOfToday() },
     },
     orderBy: { updatedAt: 'desc' },
-    first: 3,
+    take: 3,
     select: {
       id: true,
       issuedNumber: true,

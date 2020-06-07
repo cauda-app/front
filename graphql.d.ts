@@ -108,6 +108,7 @@ export type MutationSendNotificationArgs = {
 export type MutationSendSmsArgs = {
   phone: Scalars['String'];
   message: Scalars['String'];
+  short?: Maybe<Scalars['Boolean']>;
 };
 
 
