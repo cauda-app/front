@@ -25,6 +25,7 @@ import graphqlClient from 'src/graphqlClient';
 import Spinner from 'src/components/Spinner';
 import GoBack from 'src/components/GoBack';
 import { formattedTimeDifference } from 'src/utils/dates';
+import RegistrationDisabled from 'src/components/RegistrationDisabled';
 
 const VERIFY_CODE = /* GraphQL */ `
   mutation VerifyCode($code: Int!, $phone: String!) {
@@ -271,7 +272,15 @@ const VerifyPhone = () => {
   );
 };
 
-const VerifyPhoneWithCaptcha = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
+const VerifyPhoneWithCaptcha = ({
+  isLoggedIn,
+  clientEnabled,
+  shopEnabled,
+}: {
+  isLoggedIn: boolean;
+  clientEnabled: boolean;
+  shopEnabled: boolean;
+}) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -281,6 +290,13 @@ const VerifyPhoneWithCaptcha = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       setLoading(true);
     }
   }, []);
+
+  if (
+    (!shopEnabled && router.query.redirectTo === '/my-shop') ||
+    (!clientEnabled && router.query.redirectTo !== '/my-shop')
+  ) {
+    return <RegistrationDisabled />;
+  }
 
   if (loading) {
     return (
@@ -302,9 +318,20 @@ const VerifyPhoneWithCaptcha = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = getToken(context);
 
+  console.log(
+    'process.env.CAUDA_CLIENT_REGISTRATION_ENABLED',
+    process.env.CAUDA_CLIENT_REGISTRATION_ENABLED
+  );
+  console.log(
+    'process.env.CAUDA_SHOP_REGISTRATION_ENABLED',
+    process.env.CAUDA_SHOP_REGISTRATION_ENABLED
+  );
+
   return {
     props: {
       isLoggedIn: token !== null,
+      clientEnabled: process.env.CAUDA_CLIENT_REGISTRATION_ENABLED === '1',
+      shopEnabled: process.env.CAUDA_SHOP_REGISTRATION_ENABLED === '1',
     },
   };
 };

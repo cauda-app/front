@@ -74,6 +74,7 @@
   "register": "Registrate",
   "register-client": "Ingresá tu número de celular para que podamos notificarte cuando sea tu turno.",
   "register-shop": "Ingresá tu número de celular para que podamos validar tu comercio.",
+  "registration-disabled": "Hemos llegado al límite diario de registros. Por favor intentá mañana.",
   "request-another-turn": "Sacar otro Turno",
   "request-turn": "Solicitar Turno",
   "retry": "Reintentar",
