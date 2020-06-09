@@ -17,7 +17,7 @@ export default async function sendSms(
 
   const date = addMinutes(new Date(), PHONE_CODE_EXPIRY);
   const ba_time = utcToZonedTime(date, 'America/Buenos_Aires');
-  const expiresAt = format(ba_time, 'yyyy-MM-dd HH:mm:ss');
+  //const expiresAt = format(ba_time, 'yyyy-MM-dd HH:mm:ss');
   const headers = {
     headers: {
       Accept: 'application/json',
@@ -41,7 +41,7 @@ export default async function sendSms(
       options,
       headers
     );
-    console.log(`SMS sent to phone: ${phone}`);
+    console.log(`SMS sent to phone: ${phone}.`, JSON.stringify(res.data));
     return res.data.status === 'success';
   } catch (error) {
     console.log(error);
