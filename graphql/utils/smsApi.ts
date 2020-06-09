@@ -28,7 +28,6 @@ export default async function sendSms(
   const options: any = {
     recipient: phone,
     message: message,
-    expiresAt,
     ignore_banned: 1,
   };
 
