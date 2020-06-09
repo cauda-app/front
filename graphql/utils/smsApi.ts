@@ -11,9 +11,9 @@ export default async function sendSms(
   message: string,
   shortNumber?: boolean | null | undefined
 ): Promise<boolean> {
-  if (phone.length > 10) {
-    return false;
-  }
+  // if (phone.length > 10) {
+  //   return false;
+  // }
 
   const date = addMinutes(new Date(), PHONE_CODE_EXPIRY);
   const ba_time = utcToZonedTime(date, 'America/Buenos_Aires');
