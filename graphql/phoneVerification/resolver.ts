@@ -158,7 +158,7 @@ const phoneVerificationResolver = {
       const expiry = addMinutes(new Date(), PHONE_CODE_EXPIRY).toISOString();
       let attempts = (phoneVerification?.attempts || 0) + 1;
       if (attempts > 3) {
-        attempts = 0;
+        attempts = 1;
       }
 
       const phoneVerificationRes = await ctx.prisma.phoneVerification.upsert({
@@ -176,13 +176,15 @@ const phoneVerificationResolver = {
         },
       });
 
-      const message = `${verificationCode} es tu código de verificación CAUDA.`;
+      const message = `${verificationCode} es tu código de verificación CAUDA. ${
+        attempts > 1 ? 'intento: ' + attempts : ''
+      }`;
 
       if (process.env.SMS_ENABLED === '1') {
         await sendSms(
           localPhone,
           message,
-          attempts === 3,
+          attempts > 1,
           phoneVerificationRes.id,
           ctx
         );

@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "next-translate && yarn gen && next dev",
+    "debug": "next-translate && yarn gen && node --inspect node_modules/.bin/next dev",
     "build": "next-translate && yarn gen && next build",
     "start": "NODE_ENV=production next start",
     "storybook": "start-storybook -p 6006 -c .storybook",
