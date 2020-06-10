@@ -1,7 +1,7 @@
 import axios from 'axios';
 import addMinutes from 'date-fns/addMinutes';
 import { utcToZonedTime } from 'date-fns-tz';
-import format from 'date-fns/format';
+// import format from 'date-fns/format';
 import * as Sentry from '@sentry/node';
 import { Context } from 'graphql/context';
 
@@ -33,8 +33,7 @@ export default async function sendSms(
     message: message,
     //expires_at: expiresAt,
     ignore_banned: 1,
-    service_id:
-      shortNumber && process.env.SHORT_SMS_AS_DEFAULT === '1' ? 130 : 78,
+    service_id: shortNumber && process.env.SHORT_SMS_ENABLED === '1' ? 130 : 78,
   };
 
   try {
