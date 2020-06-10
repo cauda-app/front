@@ -9,6 +9,9 @@ import Layout from '../Layout';
 import Spinner from '../Spinner';
 import Notification from '../Notification';
 
+const GPS_STATUS_KEY = 'GPS_STATUS';
+const GPS_GRANTED = 'GPS_GRANTED';
+
 export type Coords = {
   lat: number;
   lng: number;
@@ -30,6 +33,7 @@ const RequestGPSNotification = ({ render }: Props) => {
     setLoading(true);
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        window.localStorage.setItem(GPS_STATUS_KEY, GPS_GRANTED);
         setCoords({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
@@ -37,6 +41,7 @@ const RequestGPSNotification = ({ render }: Props) => {
         setLoading(false);
       },
       (error) => {
+        window.localStorage.removeItem(GPS_STATUS_KEY);
         setErrorCode(error.code);
         setLoading(false);
         Sentry.captureException(error);
@@ -46,27 +51,42 @@ const RequestGPSNotification = ({ render }: Props) => {
 
   useEffect(() => {
     const getGpsStatus = async () => {
-      const PermissionStatus = await navigator.permissions.query({
-        name: 'geolocation',
-      });
+      try {
+        const PermissionStatus = await navigator.permissions.query({
+          name: 'geolocation',
+        });
 
-      switch (PermissionStatus.state) {
-        case 'granted':
-          requestAccess();
-          break;
-        case 'prompt':
-          setShowNotification(true);
-          break;
-        case 'denied':
-          setErrorCode(1);
-          break;
+        switch (PermissionStatus.state) {
+          case 'granted':
+            requestAccess();
+            break;
+          case 'prompt':
+            setShowNotification(true);
+            break;
+          case 'denied':
+            setErrorCode(1);
+            break;
+        }
+      } catch (error) {
+        console.error(error);
+
+        // fix for browsers that don't support navigator.permissions, e.g. Safari
+        if (navigator.geolocation) {
+          const res = window.localStorage.getItem(GPS_STATUS_KEY);
+          if (!res) {
+            setShowNotification(true);
+          } else {
+            requestAccess();
+          }
+        }
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     if (!navigator.geolocation) {
       setNavigatorNotSupported(true);
+      setLoading(false);
       return;
     }
 
