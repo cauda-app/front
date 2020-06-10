@@ -236,8 +236,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   await prisma.disconnect();
 
-  context.res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate');
-
   return {
     props: {
       isLoggedIn: true,
