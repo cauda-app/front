@@ -5,16 +5,30 @@ import compareAsc from 'date-fns/compareAsc';
 
 import { setCookieToken } from '../../graphql/utils/jwt';
 import { MutationVerifyCodeArgs, MutationVerifyPhoneArgs } from '../../graphql';
+import { PhoneVerification } from '@prisma/client';
 import { Context } from 'graphql/context';
-import randomCode from '../utils/randomCode';
+import generateRandomCode from '../utils/randomCode';
 import { PHONE_CODE_EXPIRY } from '../utils/constants';
 import sendSms from '../utils/smsApi';
-import {
-  formatPhone,
-  getNationalNumber,
-  parsePhone,
-} from 'src/utils/phone-utils';
+import { formatPhone, getNationalNumber } from 'src/utils/phone-utils';
 import validateCaptcha from 'graphql/utils/captcha';
+
+const getCode = (phoneVerification: PhoneVerification | null) => {
+  if (process.env.SMS_ENABLED !== '1') {
+    return 1234;
+  }
+
+  if (!phoneVerification) {
+    return generateRandomCode();
+  }
+
+  return compareAsc(
+    new Date(),
+    addMinutes(phoneVerification.updatedAt, PHONE_CODE_EXPIRY * 3)
+  ) === 1
+    ? generateRandomCode()
+    : phoneVerification.code;
+};
 
 const phoneVerificationResolver = {
   Mutation: {
@@ -76,6 +90,16 @@ const phoneVerificationResolver = {
       args: MutationVerifyPhoneArgs,
       ctx: Context
     ) => {
+      if (
+        process.env.CAUDA_SHOP_REGISTRATION_ENABLED !== '1' &&
+        process.env.CAUDA_CLIENT_REGISTRATION_ENABLED !== '1'
+      ) {
+        return new ApolloError(
+          'registration disabled',
+          'REGISTRATION_DISABLED'
+        );
+      }
+
       // verify captcha
       const isCaptchaValid = await validateCaptcha(args.token);
       if (!isCaptchaValid) {
@@ -83,13 +107,21 @@ const phoneVerificationResolver = {
       }
 
       // verify phone
+      let phone;
       try {
-        parsePhone(args.phone);
+        phone = formatPhone('AR', args.phone);
       } catch (error) {
         return new ApolloError('Invalid phone', 'INVALID_PHONE');
       }
 
-      const phone = formatPhone('AR', args.phone);
+      const localPhone = getNationalNumber(phone);
+      if (!localPhone) {
+        return new ApolloError(
+          'Invalid national phone',
+          'INVALID_NATIONAL_PHONE'
+        );
+      }
+
       const phoneVerification = await ctx.prisma.phoneVerification.findOne({
         where: { phone },
       });
@@ -97,7 +129,6 @@ const phoneVerificationResolver = {
       // If three codes were already sent, wait for 4h before sending another.
       if (
         process.env.NODE_ENV === 'production' &&
-        process.env.SMS_ENABLED === '1' &&
         phoneVerification &&
         phoneVerification.attempts >= 3 &&
         compareAsc(new Date(), addHours(phoneVerification.updatedAt, 4)) === -1
@@ -123,28 +154,38 @@ const phoneVerificationResolver = {
         );
       }
 
-      const code = process.env.SMS_ENABLED === '1' ? randomCode() : 1234;
+      const verificationCode = getCode(phoneVerification);
       const expiry = addMinutes(new Date(), PHONE_CODE_EXPIRY).toISOString();
+      let attempts = (phoneVerification?.attempts || 0) + 1;
+      if (attempts > 3) {
+        attempts = 0;
+      }
 
-      await ctx.prisma.phoneVerification.upsert({
+      const phoneVerificationRes = await ctx.prisma.phoneVerification.upsert({
         where: { phone },
         create: {
           phone,
-          code,
+          code: verificationCode,
           expiry,
           attempts: 1,
         },
         update: {
-          code,
-          attempts: (phoneVerification?.attempts || 0) + 1,
+          code: verificationCode,
+          attempts,
           expiry,
         },
       });
 
-      const message = `${code} es tu código de verificación CAUDA.`;
-      const localPhone = getNationalNumber(phone);
+      const message = `${verificationCode} es tu código de verificación CAUDA.`;
+
       if (process.env.SMS_ENABLED === '1') {
-        sendSms(localPhone, message);
+        await sendSms(
+          localPhone,
+          message,
+          attempts === 3,
+          phoneVerificationRes.id,
+          ctx
+        );
         console.log(`SMS-(${localPhone}): ${message}`);
       } else {
         console.log(`SMS-MOCK-(${localPhone}): ${message}`);

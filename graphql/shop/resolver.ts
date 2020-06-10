@@ -1,5 +1,6 @@
 import { ApolloError } from 'apollo-server-core';
 import getConfig from 'next/config';
+import * as Sentry from '@sentry/node';
 
 import { days, serializeTime } from 'src/utils/dates';
 import {
@@ -29,10 +30,16 @@ import { sendMessage } from 'graphql/utils/fcm';
 const { publicRuntimeConfig } = getConfig();
 const threshold = Number(publicRuntimeConfig.goToShopThreshold);
 
-const sendFallbackSms = (phone, message) => {
+const sendFallbackSms = (phone, message, ctx: Context) => {
   const localPhone = getNationalNumber(phone);
+
+  if (!localPhone) {
+    Sentry.setContext('SMS ERROR', { phone });
+    return;
+  }
+
   if (process.env.SMS_ENABLED === '1') {
-    sendSms(localPhone, message);
+    sendSms(localPhone, message, true, null, ctx);
     console.log(`SMS-(${localPhone}): ${message}`);
   } else {
     console.log(`SMS-MOCK-(${localPhone}): ${message}`);
@@ -57,7 +64,14 @@ const sendFcmNotification = async (client, message, title, link, icon) => {
   }
 };
 
-const sendNotification = async (client, message, title = '', link, icon) => {
+const sendNotification = async (
+  client,
+  message,
+  title = '',
+  link,
+  icon,
+  ctx: Context
+) => {
   if (client.fcmToken) {
     const messageId = await sendFcmNotification(
       client,
@@ -71,7 +85,7 @@ const sendNotification = async (client, message, title = '', link, icon) => {
     }
   }
 
-  sendFallbackSms(client.phone, message);
+  sendFallbackSms(client.phone, message, ctx);
 };
 
 const turnLink = (host, turnId) => {
@@ -152,6 +166,13 @@ const shopResolver = {
       args: MutationRegisterShopArgs,
       ctx: Context
     ) => {
+      if (process.env.CAUDA_SHOP_REGISTRATION_ENABLED !== '1') {
+        return new ApolloError(
+          'Shop registration disabled',
+          'SHOP_REGISTRATION_DISABLED'
+        );
+      }
+
       if (!ctx.tokenInfo?.isValid) {
         return new ApolloError('Invalid token', 'INVALID_TOKEN');
       }
@@ -272,7 +293,7 @@ const shopResolver = {
 
         const message = `Tu turno en ${shop?.shopDetails.name} está próximo a ser atendido. Solo hay ${threshold} personas por delante.`;
         const link = turnLink(ctx.req.headers.host, nextTurnToNotify.id);
-        sendNotification(client, message, title, link, icon);
+        sendNotification(client, message, title, link, icon, ctx);
       }
 
       await ctx.prisma.issuedNumber.update({
@@ -315,7 +336,7 @@ const shopResolver = {
       }
 
       try {
-        await sendSms(args.phone, args.message, args.short);
+        await sendSms(args.phone, args.message, args.short, null, ctx);
         return true;
       } catch (error) {
         return new ApolloError('Error sending message', 'ERROR');

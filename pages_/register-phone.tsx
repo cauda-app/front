@@ -20,11 +20,12 @@ import {
 } from 'react-google-recaptcha-v3';
 
 import Layout from 'src/components/Layout';
-import { validatePhoneRequest, getErrorCodeFromApollo } from 'src/utils';
+import { getErrorCodeFromApollo } from 'src/utils';
 import graphqlClient from 'src/graphqlClient';
 import Spinner from 'src/components/Spinner';
 import GoBack from 'src/components/GoBack';
 import { formattedTimeDifference } from 'src/utils/dates';
+import RegistrationDisabled from 'src/components/RegistrationDisabled';
 
 const VERIFY_CODE = /* GraphQL */ `
   mutation VerifyCode($code: Int!, $phone: String!) {
@@ -72,14 +73,6 @@ const VerifyPhone = () => {
   const onSendCode = async () => {
     setIsSubmitting(true);
 
-    const isValid = await validatePhoneRequest(phone);
-
-    if (!isValid) {
-      setErrors({ ...errors, phone: t('common:phone-invalid') });
-      setIsSubmitting(false);
-      return;
-    }
-
     if (!executeRecaptcha) {
       setIsSubmitting(false);
       return;
@@ -101,6 +94,10 @@ const VerifyPhone = () => {
           break;
         case 'IN_PROGRESS_VERIFICATION':
           setErrors({ ...errors, phone: t('common:in-progress-verification') });
+          break;
+        case 'INVALID_PHONE':
+        case 'INVALID_NATIONAL_PHONE':
+          setErrors({ ...errors, phone: t('common:phone-invalid') });
           break;
         default:
           setErrors({ ...errors, phone: t('common:mutation-error') });
@@ -271,7 +268,15 @@ const VerifyPhone = () => {
   );
 };
 
-const VerifyPhoneWithCaptcha = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
+const VerifyPhoneWithCaptcha = ({
+  isLoggedIn,
+  clientEnabled,
+  shopEnabled,
+}: {
+  isLoggedIn: boolean;
+  clientEnabled: boolean;
+  shopEnabled: boolean;
+}) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -281,6 +286,13 @@ const VerifyPhoneWithCaptcha = ({ isLoggedIn }: { isLoggedIn: boolean }) => {
       setLoading(true);
     }
   }, []);
+
+  if (
+    (!shopEnabled && router.query.redirectTo === '/my-shop') ||
+    (!clientEnabled && router.query.redirectTo !== '/my-shop')
+  ) {
+    return <RegistrationDisabled />;
+  }
 
   if (loading) {
     return (
@@ -305,6 +317,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       isLoggedIn: token !== null,
+      clientEnabled: process.env.CAUDA_CLIENT_REGISTRATION_ENABLED === '1',
+      shopEnabled: process.env.CAUDA_SHOP_REGISTRATION_ENABLED === '1',
     },
   };
 };
