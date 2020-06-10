@@ -197,19 +197,18 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
         </Card.Body>
       </Card>
 
-      {myShopData.myShop.lastTurns.length > 0 ? (
-        <Card className="cauda_card cauda_card--flatborder mb-3 mx-auto">
-          <Card.Body className="p-2 text-center">
-            <div className="d-flex justify-content-center align-items-center">
-              <span className="h6 text-uppercase font-weight-light mr-1 mb-0 text-light">
-                {t('common:pending-turns')}
-              </span>
-              <span className="h2 text-uppercase font-weight-light ml-2 mb-0 text-light">
-                {myShopData.myShop.pendingTurnsAmount}
-              </span>
-            </div>
+      <Card className="cauda_card cauda_card--flatborder mb-3 mx-auto">
+        <Card.Body className="p-2 text-center">
+          <div className="d-flex justify-content-center align-items-center">
+            <span className="h6 text-uppercase font-weight-light mr-1 mb-0 text-light">
+              {t('common:pending-turns')}
+            </span>
+            <span className="h2 text-uppercase font-weight-light ml-2 mb-0 text-light">
+              {myShopData.myShop.pendingTurnsAmount}
+            </span>
+          </div>
 
-            {/* <Button
+          {/* <Button
             disabled={myShop.pendingTurnsAmount === 0 || actionLoading}
             onClick={cancelTurns}
             variant="light"
@@ -218,9 +217,8 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
           >
             {t('common:cancel-pending')}
           </Button> */}
-          </Card.Body>
-        </Card>
-      ) : null}
+        </Card.Body>
+      </Card>
 
       {myShopData.myShop.lastTurns.length > 0 ? (
         <Card className="cauda_card cauda_card--flatborder mb-4 mx-auto">
