@@ -82,6 +82,8 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
           Sentry.captureException(error);
           break;
       }
+
+      return Promise.reject(error);
     }
   };
 
