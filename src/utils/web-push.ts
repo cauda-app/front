@@ -80,9 +80,16 @@ const requestPermission = async () => {
     });
   } catch (error) {
     console.error(error);
-    if (error.code !== 'messaging/unsupported-browser') {
-      throw error;
+    if (error.code === 'messaging/unsupported-browser') {
+      return;
     }
+
+    if (error.code === 'messaging/permission-blocked') {
+      // TODO: Log blocked requests
+      return;
+    }
+
+    throw error;
   }
 };
 
