@@ -108,7 +108,7 @@ export type MutationSendNotificationArgs = {
 export type MutationSendSmsArgs = {
   phone: Scalars['String'];
   message: Scalars['String'];
-  short?: Maybe<Scalars['Boolean']>;
+  short: Scalars['Boolean'];
 };
 
 
@@ -412,7 +412,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   requestTurn?: Resolver<ResolversTypes['RequestTurnResponse'], ParentType, ContextType, RequireFields<MutationRequestTurnArgs, 'shopId'>>,
   saveFCMtoken?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSaveFcMtokenArgs, 'token'>>,
   sendNotification?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, RequireFields<MutationSendNotificationArgs, 'clientId' | 'data'>>,
-  sendSms?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendSmsArgs, 'phone' | 'message'>>,
+  sendSms?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationSendSmsArgs, 'phone' | 'message' | 'short'>>,
   updateShop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType, RequireFields<MutationUpdateShopArgs, 'shop'>>,
   verifyCode?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationVerifyCodeArgs, 'phone' | 'code'>>,
   verifyPhone?: Resolver<ResolversTypes['DateTime'], ParentType, ContextType, RequireFields<MutationVerifyPhoneArgs, 'phone' | 'token'>>,

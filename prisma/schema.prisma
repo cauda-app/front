@@ -88,3 +88,13 @@ model PhoneVerification {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 }
+
+model Sms {
+  id                  Int      @default(autoincrement()) @id
+  phoneVerificationId Int?
+  smsId               String?
+  error               String?
+  createdAt           DateTime @default(now())
+
+  @@index([phoneVerificationId], name: "fk_Sms_PhoneVerification")
+}

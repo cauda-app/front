@@ -1,6 +1,30 @@
-const PNF = require('google-libphonenumber').PhoneNumberFormat;
-const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
-const PhoneNumberType = require('google-libphonenumber').PhoneNumberType;
+//const PNF = require('google-libphonenumber').PhoneNumberFormat;
+//const phoneUtil = require('google-libphonenumber').PhoneNumberUtil.getInstance();
+//const PhoneNumberType = require('google-libphonenumber').PhoneNumberType;
+
+import {
+  PhoneNumberUtil,
+  PhoneNumberType,
+  PhoneNumberFormat as PNF,
+  PhoneNumber,
+} from 'google-libphonenumber';
+
+const phoneUtil = PhoneNumberUtil.getInstance();
+
+const isMobilePhoneNumber = (phoneNumber) =>
+  phoneUtil.getNumberType(phoneNumber) === PhoneNumberType.MOBILE;
+
+const isValid = (parsedNumber: PhoneNumber, region?: string): boolean => {
+  if (!region) {
+    region = phoneUtil.getRegionCodeForNumber(parsedNumber);
+  }
+
+  return (
+    phoneUtil.isPossibleNumber(parsedNumber) &&
+    phoneUtil.isValidNumber(parsedNumber) &&
+    phoneUtil.isValidNumberForRegion(parsedNumber, region)
+  );
+};
 
 export const parsePhone = (rawNumber: string) => {
   try {
@@ -10,8 +34,10 @@ export const parsePhone = (rawNumber: string) => {
       throw Error(`Phone number ${rawNumber} is invalid`);
     }
 
-    const countryCode: string = phoneUtil.getRegionCodeForNumber(number);
-    const formattedNumber: string = phoneUtil.formatInOriginalFormat(number);
+    const countryCode = phoneUtil.getRegionCodeForNumber(number);
+    const formattedNumber: string = (phoneUtil as any).formatInOriginalFormat(
+      number
+    );
     const fullNumber: string = phoneUtil.format(number, PNF.INTERNATIONAL);
 
     return {
@@ -28,7 +54,7 @@ export const parsePhone = (rawNumber: string) => {
   }
 };
 
-export const getNationalNumber = (rawNumber: string) => {
+export const getNationalNumber = (rawNumber: string): string | undefined => {
   try {
     const number = phoneUtil.parse(rawNumber);
 
@@ -36,10 +62,17 @@ export const getNationalNumber = (rawNumber: string) => {
       throw Error(`Phone number ${rawNumber} is invalid`);
     }
 
-    return number.getNationalNumber();
+    const nationalNumber = number.getNationalNumber();
+    if (!!nationalNumber) {
+      return;
+    }
+
+    const nationNumberString = nationalNumber!.toString();
+    if (number.getCountryCode() === 54 && nationNumberString[0] === '9') {
+      return nationNumberString.slice(1, nationNumberString.length);
+    }
   } catch (error) {
     console.log(error);
-    return '';
   }
 };
 
@@ -56,21 +89,6 @@ export const formatPhone = (countryCode: string, number: string): string => {
   }
 
   return phoneUtil.format(parsedNumber, PNF.E164);
-};
-
-const isMobilePhoneNumber = (phoneNumber) =>
-  phoneUtil.getNumberType(phoneNumber) === PhoneNumberType.MOBILE;
-
-const isValid = (parsedNumber: string, region?: string): boolean => {
-  if (!region) {
-    region = phoneUtil.getRegionCodeForNumber(parsedNumber);
-  }
-
-  return (
-    phoneUtil.isPossibleNumber(parsedNumber) &&
-    phoneUtil.isValidNumber(parsedNumber) &&
-    phoneUtil.isValidNumberForRegion(parsedNumber, region)
-  );
 };
 
 export const parseAndValidate = (

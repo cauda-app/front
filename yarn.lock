@@ -2872,6 +2872,11 @@
   dependencies:
     "@types/node" "*"
 
+"@types/google-libphonenumber@^7.4.18":
+  version "7.4.18"
+  resolved "https://registry.yarnpkg.com/@types/google-libphonenumber/-/google-libphonenumber-7.4.18.tgz#8066e2fa505c1e5490ea3524cb8ae4ac693d77c2"
+  integrity sha512-sXkLBpseVM5YeUwvxGjb2lkowZlSqazBnETiRSlvIWHw9ZOe0sTJiYzOSfSf40LQzEv/q5c8dvrH0rNOJFuxkw==
+
 "@types/graphql-upload@^8.0.0":
   version "8.0.3"
   resolved "https://registry.yarnpkg.com/@types/graphql-upload/-/graphql-upload-8.0.3.tgz#b371edb5f305a2a1f7b7843a890a2a7adc55c3ec"

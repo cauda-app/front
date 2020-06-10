@@ -6,7 +6,7 @@
   "author": "Cauda",
   "license": "MIT",
   "scripts": {
-    "dev": "next-translate && yarn gen && next dev",
+    "dev": "next-translate && yarn gen && node --inspect node_modules/.bin/next dev",
     "build": "next-translate && yarn gen && next build",
     "start": "NODE_ENV=production next start",
     "storybook": "start-storybook -p 6006 -c .storybook",
@@ -39,6 +39,7 @@
     "@prisma/client": "^2.0.0-beta.8",
     "@sentry/browser": "^5.15.5",
     "@sentry/node": "^5.15.5",
+    "@types/google-libphonenumber": "^7.4.18",
     "@zeit/next-sass": "^1.0.1",
     "@zeit/next-source-maps": "^0.0.4-canary.1",
     "apollo-server-core": "^2.12.0",

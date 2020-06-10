@@ -3,13 +3,16 @@ import addMinutes from 'date-fns/addMinutes';
 import { utcToZonedTime } from 'date-fns-tz';
 import format from 'date-fns/format';
 import * as Sentry from '@sentry/node';
+import { Context } from 'graphql/context';
 
 import { PHONE_CODE_EXPIRY } from './constants';
 
 export default async function sendSms(
   phone: string,
   message: string,
-  shortNumber?: boolean | null | undefined
+  shortNumber: boolean,
+  phoneVerificationId: number | null,
+  ctx: Context
 ): Promise<boolean> {
   if (phone.length > 10) {
     return false;
@@ -28,13 +31,11 @@ export default async function sendSms(
   const options: any = {
     recipient: phone,
     message: message,
-    expiresAt,
+    expires_at: expiresAt,
     ignore_banned: 1,
+    service_id:
+      shortNumber && process.env.SHORT_SMS_AS_DEFAULT === '1' ? 130 : 78,
   };
-
-  if (shortNumber || process.env.SHORT_SMS_AS_DEFAULT === '1') {
-    options.service_id = 130;
-  }
 
   try {
     const res = await axios.post(
@@ -42,8 +43,19 @@ export default async function sendSms(
       options,
       headers
     );
+
+    const isSuccess = res.data.status === 'success';
+
+    await ctx.prisma.sms.create({
+      data: {
+        smsId: isSuccess ? res.data.sms_id.toString() : null,
+        phoneVerificationId: phoneVerificationId || null,
+        error: isSuccess ? null : res.data.message,
+      },
+    });
+
     console.log(`SMS sent to phone: ${phone}`);
-    return res.data.status === 'success';
+    return isSuccess;
   } catch (error) {
     console.log(error);
     Sentry.captureException(error);

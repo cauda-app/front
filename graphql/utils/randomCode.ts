@@ -1,4 +1,4 @@
-export default function randomCode() {
+export default function generateRandomCode() {
   const min = Math.ceil(1000);
   const max = Math.floor(9999);
 

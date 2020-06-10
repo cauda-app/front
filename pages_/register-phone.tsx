@@ -318,15 +318,6 @@ const VerifyPhoneWithCaptcha = ({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = getToken(context);
 
-  console.log(
-    'process.env.CAUDA_CLIENT_REGISTRATION_ENABLED',
-    process.env.CAUDA_CLIENT_REGISTRATION_ENABLED
-  );
-  console.log(
-    'process.env.CAUDA_SHOP_REGISTRATION_ENABLED',
-    process.env.CAUDA_SHOP_REGISTRATION_ENABLED
-  );
-
   return {
     props: {
       isLoggedIn: token !== null,

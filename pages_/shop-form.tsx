@@ -27,6 +27,7 @@ import Spinner from 'src/components/Spinner';
 import { days } from 'src/utils/dates';
 import { getNationalNumber } from 'src/utils/phone-utils';
 import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
+import RegistrationDisabled from 'src/components/RegistrationDisabled';
 
 const CREATE = /* GraphQL */ `
   mutation createShop($shop: ShopInput!) {
@@ -173,9 +174,10 @@ interface ShopErrors {
 type Props = {
   isLoggedIn: boolean;
   shop?: Shop;
+  shopEnabled: boolean;
 };
 
-const EditShop = ({ isLoggedIn, shop }: Props) => {
+const EditShop = ({ isLoggedIn, shop, shopEnabled }: Props) => {
   const { t } = useTranslation();
   useFirebaseMessage();
   const [state, dispatch] = React.useReducer(reducer, initFormValues(shop));
@@ -278,6 +280,10 @@ const EditShop = ({ isLoggedIn, shop }: Props) => {
 
     setIsSubmitting(false);
   };
+
+  if (!shopEnabled) {
+    return <RegistrationDisabled />;
+  }
 
   if (!isLoggedIn) {
     return (
@@ -516,8 +522,9 @@ const EditShop = ({ isLoggedIn, shop }: Props) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const token = getToken(context);
+  const shopEnabled = process.env.CAUDA_SHOP_REGISTRATION_ENABLED === '1';
   if (!token) {
-    return { props: { isLoggedIn: false } };
+    return { props: { isLoggedIn: false, shopEnabled } };
   }
 
   const shopId = token.shopId;
@@ -556,13 +563,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         sundayTimeStart: dbShop.sundayTimeStart,
         sundayTimeEnd: dbShop.sundayTimeEnd,
       };
-      return { props: { isLoggedIn: true, shop } };
+      return { props: { isLoggedIn: true, shop, shopEnabled } };
     } else {
       context.res.statusCode = 404;
-      return { props: { isLoggedIn: true, statusCode: 404 } };
+      return { props: { isLoggedIn: true, statusCode: 404, shopEnabled } };
     }
   } else {
-    return { props: { isLoggedIn: true, shop: null } };
+    return { props: { isLoggedIn: true, shop: null, shopEnabled } };
   }
 };
 
