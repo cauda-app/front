@@ -63,13 +63,14 @@ export const getNationalNumber = (rawNumber: string): string | undefined => {
     }
 
     const nationalNumber = number.getNationalNumber();
-    if (!!nationalNumber) {
+    if (!nationalNumber) {
       return;
     }
 
-    const nationNumberString = nationalNumber!.toString();
-    if (number.getCountryCode() === 54 && nationNumberString[0] === '9') {
-      return nationNumberString.slice(1, nationNumberString.length);
+    const nationalNumberString = nationalNumber!.toString();
+
+    if (number.getCountryCode() === 54 && nationalNumberString[0] === '9') {
+      return nationalNumberString.slice(1, nationalNumberString.length);
     }
   } catch (error) {
     console.log(error);
@@ -78,6 +79,10 @@ export const getNationalNumber = (rawNumber: string): string | undefined => {
 
 export const formatPhone = (countryCode: string, number: string): string => {
   let parsedNumber = phoneUtil.parse(number, countryCode);
+
+  if (!isValid(parsedNumber, countryCode)) {
+    throw `Invalid Phone: ${countryCode} ${number}`;
+  }
 
   // https://github.com/google/libphonenumber/blob/master/FAQ.md#why-is-this-number-from-argentina-ar-or-mexico-mx-not-identified-as-the-right-number-type
   if (!isMobilePhoneNumber(parsedNumber)) {

@@ -10,11 +10,7 @@ import { Context } from 'graphql/context';
 import generateRandomCode from '../utils/randomCode';
 import { PHONE_CODE_EXPIRY } from '../utils/constants';
 import sendSms from '../utils/smsApi';
-import {
-  formatPhone,
-  getNationalNumber,
-  parsePhone,
-} from 'src/utils/phone-utils';
+import { formatPhone, getNationalNumber } from 'src/utils/phone-utils';
 import validateCaptcha from 'graphql/utils/captcha';
 
 const getCode = (phoneVerification: PhoneVerification | null) => {
@@ -111,13 +107,12 @@ const phoneVerificationResolver = {
       }
 
       // verify phone
+      let phone;
       try {
-        parsePhone(args.phone);
+        phone = formatPhone('AR', args.phone);
       } catch (error) {
         return new ApolloError('Invalid phone', 'INVALID_PHONE');
       }
-
-      const phone = formatPhone('AR', args.phone);
 
       const localPhone = getNationalNumber(phone);
       if (!localPhone) {
@@ -184,7 +179,7 @@ const phoneVerificationResolver = {
       const message = `${verificationCode} es tu código de verificación CAUDA.`;
 
       if (process.env.SMS_ENABLED === '1') {
-        sendSms(
+        await sendSms(
           localPhone,
           message,
           attempts === 3,

@@ -46,15 +46,16 @@ export default async function sendSms(
 
     const isSuccess = res.data.status === 'success';
 
+    console.log(`SMS sent to phone: ${phone}`, JSON.stringify(res.data));
+
     await ctx.prisma.sms.create({
       data: {
-        smsId: isSuccess ? res.data.sms_id.toString() : null,
+        smsId: isSuccess ? res.data.data.sms_id.toString() : null,
         phoneVerificationId: phoneVerificationId || null,
         error: isSuccess ? null : res.data.message,
       },
     });
 
-    console.log(`SMS sent to phone: ${phone}`, JSON.stringify(res.data));
     return isSuccess;
   } catch (error) {
     console.log(error);
