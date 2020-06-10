@@ -30,7 +30,7 @@ import { sendMessage } from 'graphql/utils/fcm';
 const { publicRuntimeConfig } = getConfig();
 const threshold = Number(publicRuntimeConfig.goToShopThreshold);
 
-const sendFallbackSms = (phone, message, ctx: Context) => {
+const sendFallbackSms = async (phone, message, ctx: Context) => {
   const localPhone = getNationalNumber(phone);
 
   if (!localPhone) {
@@ -39,7 +39,7 @@ const sendFallbackSms = (phone, message, ctx: Context) => {
   }
 
   if (process.env.SMS_ENABLED === '1') {
-    sendSms(localPhone, message, true, null, ctx);
+    await sendSms(localPhone, message, true, null, ctx);
     console.log(`SMS-(${localPhone}): ${message}`);
   } else {
     console.log(`SMS-MOCK-(${localPhone}): ${message}`);
