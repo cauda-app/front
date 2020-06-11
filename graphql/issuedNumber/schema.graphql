@@ -34,7 +34,7 @@ type Query {
 
 type RequestTurnResponse {
   #id: ID!
-  pendingTurnsAmount: Int!
+  queueSize: Int!
 }
 
 type Mutation {

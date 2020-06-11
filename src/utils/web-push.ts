@@ -80,7 +80,10 @@ const requestPermission = async () => {
     });
   } catch (error) {
     console.error(error);
-    if (error.code === 'messaging/unsupported-browser') {
+    if (
+      error.code === 'messaging/unsupported-browser' ||
+      error.message === 'Registration failed - push service error'
+    ) {
       return;
     }
 
@@ -88,7 +91,6 @@ const requestPermission = async () => {
       // TODO: Log blocked requests
       return;
     }
-
     throw error;
   }
 };

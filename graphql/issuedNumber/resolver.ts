@@ -140,7 +140,7 @@ const IssuedNumberResolver = {
         //const newTurns = await getTurns(ctx.tokenInfo.clientId, ctx);
         return {
           //id: encodeId(newTurns[0].id), // TODO: Wait for Prisma to support returning results from raw queries and get the inserted ID from there
-          pendingTurnsAmount: turns.length + 1,
+          queueSize: turns.length + 1,
         };
       } catch (error) {
         Sentry.captureException(error);

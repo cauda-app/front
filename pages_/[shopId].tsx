@@ -26,7 +26,7 @@ const nextConfig = getConfig();
 const REQUEST_TURN = /* GraphQL */ `
   mutation RequestTurn($shopId: ID!) {
     requestTurn(shopId: $shopId) {
-      pendingTurnsAmount
+      queueSize
     }
   }
 `;
@@ -57,7 +57,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
       });
       const goToShopThreshold =
         nextConfig?.publicRuntimeConfig?.goToShopThreshold;
-      if (res.requestTurn.pendingTurnsAmount <= goToShopThreshold) {
+      if (res.requestTurn.queueSize <= goToShopThreshold) {
         setShowModal(true);
       } else {
         await mutate(MY_TURNS); // invalidate cached data

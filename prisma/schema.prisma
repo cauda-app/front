@@ -98,3 +98,15 @@ model Sms {
 
   @@index([phoneVerificationId], name: "fk_Sms_PhoneVerification")
 }
+
+model NextTurnResults {
+  id                 String   @id
+  nextID             Int?
+  nextNumber         Int?
+  nextPhone          String?
+  nextFcmToken       String?
+  windowClientId     Int?
+  windowPhone        String?
+  windowFcmToken     String?
+  windowShouldNotify Boolean?
+}
