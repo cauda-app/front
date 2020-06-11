@@ -1,5 +1,10 @@
 import { ShopDetails } from './../../graphql.d';
-import { ShopDetails as PrismaShopDetails, PrismaClient } from '@prisma/client';
+import {
+  ShopDetails as PrismaShopDetails,
+  PrismaClient,
+  IssuedNumberWhereInput,
+} from '@prisma/client';
+import { ApolloError } from 'apollo-server-core';
 
 import {
   nowFromCoordinates,
@@ -9,8 +14,7 @@ import {
 import { parseUTCTime } from 'src/utils/dates';
 import { parsePhone } from 'src/utils/phone-utils';
 import { numberToTurn } from 'graphql/utils/turn';
-import { TO_ISSUED_NUMBER_STATUS } from 'graphql/issuedNumber/helpers';
-import { encodeId } from 'src/utils/hashids';
+import { encodeId, decodeId } from 'src/utils/hashids';
 
 const todaysStatus = (shopDetails: ShopDetails | PrismaShopDetails) => {
   const now = nowFromCoordinates(shopDetails.lat, shopDetails.lng);
@@ -53,9 +57,24 @@ export const status = (shopDetails: ShopDetails | PrismaShopDetails) => {
   return { opens: status.start, closes: status.end };
 };
 
-export const lastTurns = async (prismaClient: PrismaClient, shopId: number) => {
+export const lastTurns = async (
+  prismaClient: PrismaClient,
+  shopId: number,
+  priorTo?: number
+) => {
+  const andCondition: IssuedNumberWhereInput['AND'] = [
+    { status: { in: [1, 2, 3] } },
+  ];
+
+  if (priorTo !== undefined) {
+    andCondition.push({ id: { lt: priorTo } });
+  }
+
   const res = await prismaClient.issuedNumber.findMany({
-    where: { shopId, AND: { status: { in: [1, 2, 3] } } },
+    where: {
+      shopId,
+      AND: andCondition,
+    },
     take: 5,
     orderBy: { createdAt: 'desc' },
     select: { id: true, issuedNumber: true, status: true },

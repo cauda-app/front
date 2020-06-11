@@ -1,6 +1,6 @@
-export type Colors = 'ATTENDED' | 'SKIPPED' | 'CANCELLED';
+import { IssuedNumberStatus } from '../../graphql';
 
-export default function getTurnColor(status: Colors) {
+export default function getTurnColor(status: IssuedNumberStatus) {
   if (status === 'ATTENDED') {
     return 'success';
   }

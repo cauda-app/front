@@ -41,7 +41,7 @@ model Shop {
   isClosed     Boolean        @default(false)
   lastIssued   Int            @default(0)
   queueSize    Int
-  nextToCall   Int
+  nextToCall   Int?
   issuedNumber IssuedNumber[]
   shopDetails  ShopDetails
   createdAt    DateTime       @default(now())

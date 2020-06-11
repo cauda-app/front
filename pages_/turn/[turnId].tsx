@@ -37,7 +37,7 @@ const QUERY = /* GraphQL */ `
       status
     }
 
-    lastTurns(shopId: $shopId) {
+    lastTurns(shopId: $shopId, priorTo: $turnId) {
       id
       status
       turn
@@ -232,7 +232,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return { props: { statusCode: 404, isLoggedIn: true } };
   }
 
-  const turns = await lastTurns(prisma, issuedNumber.shopId);
+  const turns = await lastTurns(prisma, issuedNumber.shopId, turnId);
 
   await prisma.disconnect();
 

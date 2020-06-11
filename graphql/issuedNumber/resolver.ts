@@ -9,7 +9,7 @@ import {
   MutationCancelTurnArgs,
   QueryTurnArgs,
 } from '../../graphql.d';
-import { decodeId, encodeId } from 'src/utils/hashids';
+import { decodeId } from 'src/utils/hashids';
 import { myTurns, ISSUED_NUMBER_STATUS, myPastTurns } from './helpers';
 import { numberToTurn } from 'graphql/utils/turn';
 import { Context } from 'graphql/context';
@@ -95,16 +95,16 @@ const IssuedNumberResolver = {
       let turns = await getTurns(ctx.tokenInfo.clientId, ctx);
 
       // limit to 1 pending turn per shopId
-      const pendingTurnForShop = turns.find(
-        (a) => a.shopId === shopId && a.status === 0
-      );
-      if (pendingTurnForShop) {
-        return new ApolloError(
-          'There is already a pending turn',
-          'ACTIVE_TURN',
-          { turnId: encodeId(pendingTurnForShop.id) }
-        );
-      }
+      // const pendingTurnForShop = turns.find(
+      //   (a) => a.shopId === shopId && a.status === 0
+      // );
+      // if (pendingTurnForShop) {
+      //   return new ApolloError(
+      //     'There is already a pending turn',
+      //     'ACTIVE_TURN',
+      //     { turnId: encodeId(pendingTurnForShop.id) }
+      //   );
+      // }
 
       // Prevent more than 3 active turns.
       const pendingTurns = turns.filter((a) => a.status === 0);

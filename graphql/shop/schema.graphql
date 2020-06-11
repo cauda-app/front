@@ -7,7 +7,7 @@ type Shop {
   id: ID!
   isClosed: Boolean!
   lastIssued: Int!
-  nextToCall: Int!
+  nextToCall: Int
   nextTurn: String
   lastTurns: [LastTurns!]!
   queueSize: Int!
@@ -63,7 +63,7 @@ type NextTurnResponse {
 }
 
 type Query {
-  lastTurns(shopId: ID!): [LastTurns!]!
+  lastTurns(shopId: ID!, priorTo: ID): [LastTurns!]!
   myShop: Shop!
   nearByShops(lat: Float!, lng: Float!, offset: Int! = 0): [ShopDetails!]!
   shops: [Shop!]!
