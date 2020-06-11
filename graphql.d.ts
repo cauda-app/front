@@ -43,6 +43,7 @@ export type QueryClientTokensArgs = {
 
 export type QueryLastTurnsArgs = {
   shopId: Scalars['ID'];
+  priorTo?: Maybe<Scalars['ID']>;
 };
 
 
@@ -183,7 +184,7 @@ export type Shop = {
   id: Scalars['ID'];
   isClosed: Scalars['Boolean'];
   lastIssued: Scalars['Int'];
-  nextToCall: Scalars['Int'];
+  nextToCall?: Maybe<Scalars['Int']>;
   nextTurn?: Maybe<Scalars['String']>;
   lastTurns: Array<LastTurns>;
   queueSize: Scalars['Int'];
@@ -471,7 +472,7 @@ export type ShopResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   isClosed?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
   lastIssued?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
-  nextToCall?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  nextToCall?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
   nextTurn?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   lastTurns?: Resolver<Array<ResolversTypes['LastTurns']>, ParentType, ContextType>,
   queueSize?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,

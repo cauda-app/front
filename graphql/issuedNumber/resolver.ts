@@ -9,7 +9,7 @@ import {
   MutationCancelTurnArgs,
   QueryTurnArgs,
 } from '../../graphql.d';
-import { decodeId, encodeId } from 'src/utils/hashids';
+import { encodeId, decodeId } from 'src/utils/hashids';
 import { myTurns, ISSUED_NUMBER_STATUS, myPastTurns } from './helpers';
 import { numberToTurn } from 'graphql/utils/turn';
 import { Context } from 'graphql/context';

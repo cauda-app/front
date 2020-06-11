@@ -55,8 +55,10 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
       const res = await graphqlClient.request(REQUEST_TURN, {
         shopId: shop.shopId,
       });
+
       const goToShopThreshold =
         nextConfig?.publicRuntimeConfig?.goToShopThreshold;
+
       if (res.requestTurn.queueSize <= goToShopThreshold) {
         setShowModal(true);
       } else {

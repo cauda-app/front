@@ -9,7 +9,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
-import { faStoreAlt } from '@fortawesome/free-solid-svg-icons';
 import Layout from 'src/components/Layout';
 import GuestLanding from 'src/components/Landing/GuestLanding';
 import EmptyLanding from 'src/components/Landing/EmptyLanding';
@@ -18,9 +17,10 @@ import {
   myTurns as myTurnsFetch,
   myPastTurns as myPastTurnsFetch,
 } from 'graphql/issuedNumber/helpers';
-import getTurnColor, { Colors } from 'src/utils/colors';
+import getTurnColor from 'src/utils/colors';
 import createPrismaClient from 'prisma/client';
 import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
+import { IssuedNumberStatus } from '../graphql';
 
 export const MY_TURNS = /* GraphQL */ `
   query MyTurns {
@@ -46,7 +46,7 @@ type Turn = {
   id: string;
   turn: string;
   shopId?: string;
-  status?: Colors;
+  status?: IssuedNumberStatus;
   shopName: string;
 };
 

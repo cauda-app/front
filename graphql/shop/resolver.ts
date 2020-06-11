@@ -129,7 +129,11 @@ const NextTurnOpToStatus = {
 const shopResolver = {
   Query: {
     lastTurns: (parent, args: QueryLastTurnsArgs, ctx: Context) => {
-      return getLastTurns(ctx.prisma, decodeId(args.shopId) as number);
+      return getLastTurns(
+        ctx.prisma,
+        decodeId(args.shopId) as number,
+        args.priorTo ? (decodeId(args.priorTo) as number) : undefined
+      );
     },
     shops: (parent, args, ctx: Context) => {
       return ctx.prisma.shop.findMany();
@@ -377,6 +381,9 @@ const shopResolver = {
       });
     },
     nextTurn: async (parent: Shop, args, ctx: Context) => {
+      if (!parent.nextToCall) {
+        return null;
+      }
       return numberToTurn(parent.nextToCall);
     },
     lastTurns: async (parent: Shop, args, ctx: Context) => {

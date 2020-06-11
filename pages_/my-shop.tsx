@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Router from 'next/router';
 import useTranslation from 'next-translate/useTranslation';
+import { GetServerSideProps } from 'next';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -9,7 +10,6 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { faPrint } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
-import { GetServerSideProps } from 'next';
 import * as Sentry from '@sentry/browser';
 import useSWR from 'swr';
 
@@ -21,6 +21,7 @@ import graphqlClient from 'src/graphqlClient';
 import LoadingButton from 'src/components/LoadingButton';
 import getTurnColor from 'src/utils/colors';
 import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
+import { Shop } from '../graphql';
 
 const MY_SHOP = /* GraphQL */ `
   query MyShop {
@@ -43,14 +44,14 @@ type Props = {
   shopId?: string;
 };
 
-const fetcher = (query) => graphqlClient.request(query);
+const fetcher = (query): Promise<{ myShop: Shop }> =>
+  graphqlClient.request(query);
 
 const MyShop = ({ isLoggedIn, shopId }: Props) => {
   const { t } = useTranslation();
   useFirebaseMessage();
-
   const [actionLoading, setActionLoading] = useState('');
-  const { data: myShopData, error, mutate } = useSWR(
+  const { data: myShopData, error, mutate } = useSWR<{ myShop: Shop }>(
     !shopId ? null : MY_SHOP,
     fetcher,
     {
@@ -74,8 +75,8 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
     `;
 
     try {
-      const data = await graphqlClient.request(NEXT_TURN, { op });
-      await mutate({ myShop: { ...myShopData.myShop, ...data.nextTurn } });
+      const data: any = await graphqlClient.request(NEXT_TURN, { op });
+      await mutate({ myShop: { ...myShopData!.myShop, ...data.nextTurn } });
       setActionLoading('');
     } catch (error) {
       setActionLoading('');
@@ -117,6 +118,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
   }, [isLoggedIn, shopId]);
 
   if (error) {
+    console.error(error);
     throw error;
   }
 
