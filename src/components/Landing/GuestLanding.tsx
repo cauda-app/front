@@ -148,8 +148,8 @@ const GuestLanding = () => {
             </Link>
 
             <small className="mb-0 text-muted">
-              (*) para altos volúmenes de uso, Cauda se reserva el <br />
-              derecho a requerir una contribución.
+              (*) Aplican limitaciones. Para más información por favor <br />
+              revisá los Términos y Condiciones.
             </small>
           </Col>
         </Row>
