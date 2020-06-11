@@ -6,11 +6,11 @@ enum NextTurnOperation {
 type Shop {
   id: ID!
   isClosed: Boolean!
-  lastNumber: Int!
-  nextNumber: Int!
+  lastIssued: Int!
+  nextToCall: Int!
   nextTurn: String
   lastTurns: [LastTurns!]!
-  pendingTurnsAmount: Int!
+  queueSize: Int!
   createdAt: DateTime!
   updatedAt: DateTime!
   details: ShopDetails!
@@ -56,6 +56,12 @@ type ShopDetails {
   updatedAt: DateTime!
 }
 
+type NextTurnResponse {
+  nextTurn: String
+  queueSize: Int!
+  lastTurns: [LastTurns!]!
+}
+
 type Query {
   lastTurns(shopId: ID!): [LastTurns!]!
   myShop: Shop!
@@ -66,7 +72,7 @@ type Query {
 type Mutation {
   registerShop(shop: ShopInput!): Shop!
   updateShop(shop: ShopInput!): Shop!
-  nextTurn(op: NextTurnOperation!): Shop!
+  nextTurn(op: NextTurnOperation!): NextTurnResponse!
   cancelTurns: Shop!
   sendSms(phone: String!, message: String!, short: Boolean!): Boolean!
 }

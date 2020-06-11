@@ -11,7 +11,7 @@ import { faPrint } from '@fortawesome/free-solid-svg-icons';
 import { faPen } from '@fortawesome/free-solid-svg-icons';
 import { GetServerSideProps } from 'next';
 import * as Sentry from '@sentry/browser';
-import useSWR, { mutate } from 'swr';
+import useSWR from 'swr';
 
 import { encodeId } from 'src/utils/hashids';
 import { getToken } from 'src/utils/next';
@@ -29,11 +29,11 @@ const MY_SHOP = /* GraphQL */ `
         name
       }
       nextTurn
+      queueSize
       lastTurns {
         status
         turn
       }
-      pendingTurnsAmount
     }
   }
 `;
@@ -50,7 +50,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
   useFirebaseMessage();
 
   const [actionLoading, setActionLoading] = useState('');
-  const { data: myShopData, error } = useSWR(
+  const { data: myShopData, error, mutate } = useSWR(
     !shopId ? null : MY_SHOP,
     fetcher,
     {
@@ -64,19 +64,18 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
       mutation NextTurn($op: NextTurnOperation!) {
         nextTurn(op: $op) {
           nextTurn
+          queueSize
           lastTurns {
             status
             turn
           }
-          pendingTurnsAmount
         }
       }
     `;
 
     try {
-      await graphqlClient.request(NEXT_TURN, { op });
-      // TODO: update with the result of previous request.
-      await mutate(MY_SHOP);
+      const data = await graphqlClient.request(NEXT_TURN, { op });
+      await mutate({ myShop: { ...myShopData.myShop, ...data.nextTurn } });
       setActionLoading('');
     } catch (error) {
       setActionLoading('');
@@ -88,13 +87,12 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
   //   setActionLoading(true);
   //   const CANCEL_TURNS = /* GraphQL */ `
   //     mutation CancelTurns {
-  //       cancelTurns {
   //         nextTurn
+  //         queueSize
   //         lastTurns {
   //           status
   //           turn
   //         }
-  //         pendingTurnsAmount
   //       }
   //     }
   //   `;
@@ -151,7 +149,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
         </Card.Header>
 
         <Card.Body className="py-3 px-3 text-center">
-          {myShopData.myShop.nextTurn ? (
+          {myShopData.myShop.queueSize ? (
             <>
               <p className="myturn__number display-5 mb-0 text-uppercase">
                 {t('common:next-turn')}
@@ -197,20 +195,19 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
         </Card.Body>
       </Card>
 
-      {myShopData.myShop.lastTurns.length > 0 ? (
-        <Card className="cauda_card cauda_card--flatborder mb-3 mx-auto">
-          <Card.Body className="p-2 text-center">
-            <div className="d-flex justify-content-center align-items-center">
-              <span className="h6 text-uppercase font-weight-light mr-1 mb-0 text-light">
-                {t('common:pending-turns')}
-              </span>
-              <span className="h2 text-uppercase font-weight-light ml-2 mb-0 text-light">
-                {myShopData.myShop.pendingTurnsAmount}
-              </span>
-            </div>
+      <Card className="cauda_card cauda_card--flatborder mb-3 mx-auto">
+        <Card.Body className="p-2 text-center">
+          <div className="d-flex justify-content-center align-items-center">
+            <span className="h6 text-uppercase font-weight-light mr-1 mb-0 text-light">
+              {t('common:pending-turns')}
+            </span>
+            <span className="h2 text-uppercase font-weight-light ml-2 mb-0 text-light">
+              {myShopData.myShop.queueSize}
+            </span>
+          </div>
 
-            {/* <Button
-            disabled={myShop.pendingTurnsAmount === 0 || actionLoading}
+          {/* <Button
+            disabled={myShop.queueSize === 0 || actionLoading}
             onClick={cancelTurns}
             variant="light"
             className="d-flex justify-content-center align-items-center"
@@ -218,9 +215,8 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
           >
             {t('common:cancel-pending')}
           </Button> */}
-          </Card.Body>
-        </Card>
-      ) : null}
+        </Card.Body>
+      </Card>
 
       {myShopData.myShop.lastTurns.length > 0 ? (
         <Card className="cauda_card cauda_card--flatborder mb-4 mx-auto">

@@ -1,6 +1,7 @@
 import { ApolloError } from 'apollo-server-core';
 import getConfig from 'next/config';
 import * as Sentry from '@sentry/node';
+import { v4 as uuidv4 } from 'uuid';
 
 import { days, serializeTime } from 'src/utils/dates';
 import {
@@ -22,7 +23,12 @@ import {
 } from '../../graphql';
 import { setCookieToken } from '../utils/jwt';
 import { numberToTurn } from '../utils/turn';
-import { isOpen, shopPhone, status, lastTurns } from './helpers';
+import {
+  isOpen,
+  shopPhone,
+  status,
+  lastTurns as getLastTurns,
+} from './helpers';
 import { decodeId, encodeId } from 'src/utils/hashids';
 import sendSms from 'graphql/utils/smsApi';
 import { sendMessage } from 'graphql/utils/fcm';
@@ -46,18 +52,20 @@ const sendFallbackSms = async (phone, message, ctx: Context) => {
   }
 };
 
-const sendFcmNotification = async (client, message, title, link, icon) => {
-  if (client.fcmToken) {
+const sendFcmNotification = async (
+  fcmToken,
+  phone,
+  message,
+  title,
+  link,
+  icon
+) => {
+  if (fcmToken) {
     const notification = { title, body: message };
-    const messageId = await sendMessage(
-      notification,
-      client.fcmToken,
-      link,
-      icon
-    );
+    const messageId = await sendMessage(notification, fcmToken, link, icon);
     if (messageId) {
       console.log(
-        `FCM Message to Client ID ${client.id} sent with token ${client.fcmToken}. Message ID ${messageId}`
+        `FCM Message to phone ${phone} sent with token ${fcmToken}. Message ID ${messageId}`
       );
       return messageId;
     }
@@ -65,16 +73,18 @@ const sendFcmNotification = async (client, message, title, link, icon) => {
 };
 
 const sendNotification = async (
-  client,
+  fcmToken,
+  phone,
   message,
   title = '',
   link,
   icon,
   ctx: Context
 ) => {
-  if (client.fcmToken) {
+  if (fcmToken) {
     const messageId = await sendFcmNotification(
-      client,
+      fcmToken,
+      phone,
       message,
       title,
       link,
@@ -85,7 +95,7 @@ const sendNotification = async (
     }
   }
 
-  sendFallbackSms(client.phone, message, ctx);
+  sendFallbackSms(phone, message, ctx);
 };
 
 const turnLink = (host, turnId) => {
@@ -111,10 +121,15 @@ const mapShop = (shop: ShopInput): ShopInput => {
   return updatedShop;
 };
 
+const NextTurnOpToStatus = {
+  ATTEND: 1,
+  SKIP: 2,
+};
+
 const shopResolver = {
   Query: {
     lastTurns: (parent, args: QueryLastTurnsArgs, ctx: Context) => {
-      return lastTurns(ctx.prisma, decodeId(args.shopId) as number);
+      return getLastTurns(ctx.prisma, decodeId(args.shopId) as number);
     },
     shops: (parent, args, ctx: Context) => {
       return ctx.prisma.shop.findMany();
@@ -239,52 +254,52 @@ const shopResolver = {
         );
       }
 
-      const getShop = () =>
-        ctx.prisma.shop.findOne({
-          where: { id: ctx.tokenInfo!.shopId },
-          include: {
-            shopDetails: true,
-          },
-        });
+      const nextTurnResultId = uuidv4();
+      const rawQuery = `CALL nextTurn('${nextTurnResultId}', ${
+        ctx.tokenInfo.shopId
+      }, ${NextTurnOpToStatus[args.op]}, ${threshold})`;
+      await ctx.prisma.executeRaw(rawQuery);
+      const nextTurnResult = await ctx.prisma.nextTurnResults.findOne({
+        where: { id: nextTurnResultId },
+      });
 
-      // TODO: this won't work for multiple employees attending in parallel
-      const nextTurns = await ctx.prisma.issuedNumber.findMany({
-        where: { shopId: ctx.tokenInfo!.shopId, AND: { status: 0 } },
-        orderBy: { issuedNumber: 'asc' },
-        take: threshold + 1,
-        include: {
-          client: {
+      const lastTurns = await getLastTurns(ctx.prisma, ctx.tokenInfo.shopId);
+
+      if (!nextTurnResult || !nextTurnResult.nextID) {
+        return { nextTurn: null, queueSize: 0, lastTurns: lastTurns };
+      }
+
+      const shop = await ctx.prisma.shop.findOne({
+        where: { id: ctx.tokenInfo.shopId },
+        select: {
+          queueSize: true,
+          shopDetails: {
             select: {
-              id: true,
-              phone: true,
-              fcmToken: true,
+              name: true,
             },
           },
         },
       });
 
-      const shop = await getShop();
-
-      if (!nextTurns.length) {
-        return shop;
-      }
-
       const title = 'Cauda';
       const icon = 'https://' + ctx.req.headers.host + '/cauda_blue.png';
 
-      const nextTurn = nextTurns[0];
       if (args.op === 'ATTEND') {
-        const link = turnLink(ctx.req.headers.host, nextTurn.id);
+        const link = turnLink(ctx.req.headers.host, nextTurnResult.nextID);
         const message = `Es tu turno en ${shop?.shopDetails.name}!`;
-        sendFcmNotification(nextTurn.client, message, title, link, icon);
+        await sendFcmNotification(
+          nextTurnResult.nextFcmToken,
+          nextTurnResult.nextPhone,
+          message,
+          title,
+          link,
+          icon
+        );
       }
 
       // If there is a turn after threshold, send a notification
-      const nextTurnToNotify = nextTurns[threshold];
-      if (nextTurnToNotify && nextTurnToNotify.shouldNotify) {
-        const client = nextTurnToNotify.client;
-
-        if (!client) {
+      if (nextTurnResult.windowShouldNotify) {
+        if (!nextTurnResult.windowClientId) {
           return new ApolloError(
             'Not possible to attend turn, No clientId not found',
             'CLIENT_ID_NOT_FOUND'
@@ -292,16 +307,25 @@ const shopResolver = {
         }
 
         const message = `Tu turno en ${shop?.shopDetails.name} está próximo a ser atendido. Solo hay ${threshold} personas por delante.`;
-        const link = turnLink(ctx.req.headers.host, nextTurnToNotify.id);
-        sendNotification(client, message, title, link, icon, ctx);
+        const link = turnLink(ctx.req.headers.host, nextTurnResult.nextID);
+        await sendNotification(
+          nextTurnResult.windowFcmToken,
+          nextTurnResult.windowPhone,
+          message,
+          title,
+          link,
+          icon,
+          ctx
+        );
       }
 
-      await ctx.prisma.issuedNumber.update({
-        where: { id: nextTurns[0].id },
-        data: { status: args.op === 'ATTEND' ? 1 : 2 },
-      });
-
-      return getShop();
+      return {
+        nextTurn: nextTurnResult.nextNumber
+          ? numberToTurn(nextTurnResult.nextNumber)
+          : null,
+        queueSize: shop?.queueSize,
+        lastTurns: lastTurns,
+      };
     },
     cancelTurns: async (parent, args, ctx: Context) => {
       if (!ctx.tokenInfo?.isValid) {
@@ -353,21 +377,10 @@ const shopResolver = {
       });
     },
     nextTurn: async (parent: Shop, args, ctx: Context) => {
-      const res = await ctx.prisma.issuedNumber.findMany({
-        where: { shopId: Number(parent.id), AND: { status: 0 } },
-        take: 1,
-        orderBy: { issuedNumber: 'asc' },
-        select: { issuedNumber: true },
-      });
-      return res.length > 0 ? numberToTurn(res[0].issuedNumber) : null;
+      return numberToTurn(parent.nextToCall);
     },
     lastTurns: async (parent: Shop, args, ctx: Context) => {
-      return await lastTurns(ctx.prisma, Number(parent.id));
-    },
-    pendingTurnsAmount: (parent: Shop, args, ctx: Context) => {
-      return ctx.prisma.issuedNumber.count({
-        where: { shopId: Number(parent.id), AND: { status: 0 } },
-      });
+      return await getLastTurns(ctx.prisma, Number(parent.id));
     },
   },
   ShopDetails: {
