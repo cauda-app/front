@@ -30,7 +30,7 @@ export default function Terms() {
             (en adelante el “Sitio Web”) y a la aplicación a la que se accede y
             funciona desde el Sitio Web, (en adelante “CAUDA”) de propiedad de
             AWAM TRADE SRL, con domicilio en legal en J. Salguero 647 9B - CABA
-            (en lo sucesivo, el “PROPIETARIO”).
+            (en lo sucesivo, el “Propietario”).
           </p>
           <p>
             Estos Términos y Condiciones y la Política de Privacidad (en
@@ -182,7 +182,7 @@ export default function Terms() {
                 <i>DATOS PERSONALES. </i>
               </strong>
             </span>
-            PROPIETARIO informa a los Usuarios que la recolección y tratamiento
+            El Propietario informa a los Usuarios que la recolección y tratamiento
             de sus Datos Personales se realiza de conformidad con la Ley de
             Protección de Datos Personales Nº 25.326, su Decreto Reglamentario
             1558/2001 y demás normas complementarias (“Normativa de Protección
@@ -287,7 +287,7 @@ export default function Terms() {
           </p>
           <p>
             <span>
-              PROPIETARIO le informa a los Usuarios que de acuerdo con lo
+              El Propietario le informa a los Usuarios que de acuerdo con lo
               establecido en el Artículo 14, inciso 3 de la LPDP, e
             </span>
             l titular de los datos personales tiene la facultad de ejercer el
@@ -371,8 +371,8 @@ export default function Terms() {
           </p>
           <p>
             En consecuencia, el Usuario se obliga a mantener indemne e
-            indemnizar a PROPIETARIO por cualquier reclamo judicial o
-            extrajudicial encausado, iniciado o dirigido contra PROPIETARIO por
+            indemnizar al Propietario por cualquier reclamo judicial o
+            extrajudicial encausado, iniciado o dirigido contra El Propietario por
           </p>
           <p>
             cualquier persona humana o jurídica de cualquier naturaleza que se
@@ -381,7 +381,7 @@ export default function Terms() {
             realizado por el Usuario mediante el uso de CAUDA.
           </p>
           <p>
-            PROPIETARIO podrá bloquear, cancelar o limitar el acceso o uso del
+            El Propietario podrá bloquear, cancelar o limitar el acceso o uso del
             Usuario a CAUDA con motivo del incumplimiento de los Términos y
             Condiciones, a su exclusivo criterio sin necesidad de dar aviso
             previo al Usuario.
@@ -395,8 +395,8 @@ export default function Terms() {
             El Usuario entiende y acepta que CAUDA es una aplicación que se
             limita a poner a disposición de los Usuarios un espacio virtual que
             les permite ponerse en comunicación mediante Internet para gestionar
-            turnos virtuales. El PROPIETARIO de CAUDA no es el propietario ni tiene relación
-            o vinculación de ningún tipo con los Comercios Adheridos, no
+            turnos virtuales. El Propietario de CAUDA no es el propietario ni tiene relación
+            o vinculación de ningún tipo con los Establecimientos Adheridos, no
             interviene en el perfeccionamiento de las operaciones realizadas
             entre los Usuarios ni tiene participación alguna en el sistema de
             gestión de turnos, ni en la posterior relación que tuviese lugar
@@ -412,19 +412,19 @@ export default function Terms() {
             <span>.</span>
           </p>
           <p>
-            PROPIETARIO no garantiza la inexistencia de eventuales dificultades
+            El Propietario no garantiza la inexistencia de eventuales dificultades
             técnicas, errores o fallas en la red de telecomunicaciones o en Internet, como así
             tampoco garantiza la disponibilidad, funcionamiento, el acceso y uso
             continuado o ininterrumpido de su Sitio Web, CAUDA o los Servicios.
             CAUDA puede eventualmente no estar disponible por actividades de
             mantenimiento, debido a dificultades técnicas, de la red de telecomunicaciones o fallas de Internet,
             o por cualquier otra circunstancia ajena a CAUDA, que no generará
-            responsabilidad alguna por parte de PROPIETARIO. En tales casos se
+            responsabilidad alguna por parte del Propietario. En tales casos se
             procurará restablecerlo con la mayor celeridad<span>  </span>
             posible.
           </p>
           <p>
-            Asimismo, PROPIETARIO se reserva el derecho de interrumpir,
+            Asimismo, El Propietario se reserva el derecho de interrumpir,
             suspender, discontinuar o modificar en cualquier momento CAUDA o el
             acceso a los Servicios, ya sea en forma permanente o transitoria,
             lo que será comunicado a los Usuarios con antelación razonable de acuerdo al caso.
@@ -436,7 +436,7 @@ export default function Terms() {
               </strong>
             </span>
             <strong>. </strong>Queda a exclusivo riesgo del Usuario el uso del
-            Sitio Web, de CAUDA y de los Servicios. PROPIETARIO así como tampoco
+            Sitio Web, de CAUDA y de los Servicios. El Propietario así como tampoco
             ninguna persona humana o jurídica vinculada a la creación,
             producción, desarrollo o utilización del Sitio Web, del Servicio o
             de CAUDA serán responsables por daños de especie alguna que puedan
@@ -460,8 +460,8 @@ export default function Terms() {
             a los contenidos de las pantallas como así también los programas,
             bases de datos, redes, archivos, logos, gráficos, ilustraciones,
             fotografías, marcas, diseños, música, videos, texto, código HTML
-            como asimismo todo el diseño en general) cuya propiedad pertenece a
-            PROPIETARIO o a terceros de los cuales PROPIETARIO recibió las
+            como asimismo todo el diseño en general) cuya propiedad pertenece al
+            Propietario o a terceros de los cuales El Propietario recibió las
             correspondientes licencias o autorizaciones. Todo ello se encuentra
             protegido por la legislación nacional e internacional en materia de
             propiedad intelectual e industrial, derecho de autor, marcas,
@@ -474,9 +474,9 @@ export default function Terms() {
           </p>
           <p>
             Todas las marcas y logotipos mostrados en el Sitio Web y en CAUDA
-            son propiedad de PROPIETARIO. Se prohíbe usarlos, bajarlos o
+            son propiedad del Propietario. Se prohíbe usarlos, bajarlos o
             descargarlos permanentemente, copiarlos o distribuirlos por
-            cualquier medio sin el permiso escrito de PROPIETARIO. El acceso y
+            cualquier medio sin el permiso escrito del Propietario. El acceso y
             uso del Sitio Web y CAUDA no podrá interpretarse como el
             otorgamiento de una licencia de uso, expresa o tácita, de dichas
             marcas ni de ningún otro derecho sobre las mismas.
@@ -491,7 +491,7 @@ export default function Terms() {
             revisar, actualizar o cambiar estos Términos y Condiciones, ya sea
             total o parcialmente, en forma periódica. Dichas modificaciones
             serán publicadas con una antelación razonable - a exclusivo criterio
-            de PROPIETARIO - en el Sitio Web y entrarán en vigor dentro de los
+            del Propietario - en el Sitio Web y entrarán en vigor dentro de los
             tres (3) días corridos desde su publicación. el Sitio Web y el uso
             de la Aplicación con posterioridad a la modificación implicará la
             aceptación de los Términos y Condiciones vigentes. Se recomienda a
@@ -512,7 +512,7 @@ export default function Terms() {
           </p>
           <p>
             <strong>
-              Para comunicarse con PROPIETARIO y ante cualquier duda o consulta,
+              Para comunicarse con El Propietario y ante cualquier duda o consulta,
               podrá dirigirse a la casilla de correo{' '}
             </strong>
             <a href="mailto:somos@cauda.app">
