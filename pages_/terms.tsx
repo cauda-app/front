@@ -115,7 +115,7 @@ export default function Terms() {
           <p>
             El Establecimiento Adherido deberá seleccionar la opción “MI COMERCIO” y
             luego deberá completar los campos requeridos con el nombre, número
-            telefónico del comercio, dirección, días y horarios de atención al
+            telefónico del establecimiento, dirección, días y horarios de atención al
             público. Estos datos son importantes para que los Clientes puedan
             gestionar los turnos con el Establecimiento Adherido.
           </p>
