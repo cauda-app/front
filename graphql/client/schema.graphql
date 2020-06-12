@@ -9,12 +9,17 @@ type Client {
 type Query {
   myTurn: Client!
   clientTokens(limit: Int = 50): [String!]!
+  myPastTurns: [TurnResponse!]!
+  myTurns: [TurnResponse!]!
+  turn(turnId: ID!): TurnResponse!
 }
 
 type Mutation {
   saveFCMtoken(token: String!): Boolean!
   removeFCMtoken: Boolean!
   sendNotification(clientId: Int!, data: NotificationInput!): String
+  requestTurn(shopId: ID!): RequestTurnResponse!
+  cancelTurn(turnId: ID!): Boolean!
 }
 
 input NotificationInput {
