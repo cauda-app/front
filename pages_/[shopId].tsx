@@ -16,12 +16,9 @@ import graphqlClient from 'src/graphqlClient';
 import { getErrorCodeFromApollo } from 'src/utils';
 import { decodeId } from 'src/utils/hashids';
 import Notification from 'src/components/Notification';
-import getConfig from 'next/config';
 import { MY_TURNS } from 'pages_';
 import { firebaseCloudMessaging } from 'src/utils/web-push';
 import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
-
-const nextConfig = getConfig();
 
 const REQUEST_TURN = /* GraphQL */ `
   mutation RequestTurn($shopId: ID!) {
@@ -31,7 +28,14 @@ const REQUEST_TURN = /* GraphQL */ `
   }
 `;
 
-const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
+type Props = {
+  isLoggedIn: boolean;
+  goToShopThreshold: number;
+  statusCode?: number;
+  shop?: any;
+};
+
+const RequestTurn = ({ isLoggedIn, statusCode, shop, goToShopThreshold }) => {
   const { t } = useTranslation();
   useFirebaseMessage();
   const [showModal, setShowModal] = useState(false);
@@ -55,9 +59,6 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
       const res = await graphqlClient.request(REQUEST_TURN, {
         shopId: shop.shopId,
       });
-
-      const goToShopThreshold =
-        nextConfig?.publicRuntimeConfig?.goToShopThreshold;
 
       if (res.requestTurn.queueSize <= goToShopThreshold) {
         setShowModal(true);
@@ -120,10 +121,14 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps<Props> = async (
+  context
+) => {
+  const goToShopThreshold = Number(process.env.CAUDA_GO_TO_SHOP_THRESHOLD);
+
   const token = getToken(context);
   if (!token) {
-    return { props: { isLoggedIn: false } };
+    return { props: { isLoggedIn: false, goToShopThreshold } };
   }
 
   const encodedShopId = context.params?.shopId as string | undefined;
@@ -131,7 +136,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   try {
     shopId = decodeId(encodedShopId) as number | null;
   } catch (error) {
-    return { props: { isLoggedIn: true, statusCode: 404 } };
+    return { props: { isLoggedIn: true, statusCode: 404, goToShopThreshold } };
   }
 
   const prisma = createPrismaClient();
@@ -154,12 +159,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         isOpen: isOpen(dbShop),
         status: status(dbShop),
       };
-      return { props: { isLoggedIn: true, shop } };
+      return { props: { isLoggedIn: true, shop, goToShopThreshold } };
     }
   }
 
   context.res.statusCode = 404;
-  return { props: { isLoggedIn: true, statusCode: 404 } };
+  return { props: { isLoggedIn: true, statusCode: 404, goToShopThreshold } };
 };
 
 export default RequestTurn;
