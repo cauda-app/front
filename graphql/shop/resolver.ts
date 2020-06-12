@@ -42,7 +42,7 @@ const sendFallbackSms = async (phone, message, ctx: Context) => {
     return;
   }
 
-  if (process.env.SMS_ENABLED === '1') {
+  if (process.env.CAUDA_SMS_ENABLED === '1') {
     await sendSms(localPhone, message, true, null, ctx);
     console.log(`SMS-(${localPhone}): ${message}`);
   } else {

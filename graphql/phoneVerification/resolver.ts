@@ -14,7 +14,7 @@ import { formatPhone, getNationalNumber } from 'src/utils/phone-utils';
 import validateCaptcha from 'graphql/utils/captcha';
 
 const getCode = (phoneVerification: PhoneVerification | null) => {
-  if (process.env.SMS_ENABLED !== '1') {
+  if (process.env.CAUDA_SMS_ENABLED !== '1') {
     return 1234;
   }
 
@@ -180,11 +180,12 @@ const phoneVerificationResolver = {
         attempts > 1 ? 'intento: ' + attempts : ''
       }`;
 
-      if (process.env.SMS_ENABLED === '1') {
+      if (process.env.CAUDA_SMS_ENABLED === '1') {
         await sendSms(
           localPhone,
           message,
-          attempts > 1,
+          attempts >=
+            Number(process.env.CAUDA_REGISTRATION_SEND_SHORT_SMS_AT_ATTEMPT),
           phoneVerificationRes.id,
           ctx
         );
