@@ -26,18 +26,7 @@ type TurnResponse {
   status: IssuedNumberStatus!
 }
 
-type Query {
-  myPastTurns: [TurnResponse!]!
-  myTurns: [TurnResponse!]!
-  turn(turnId: ID!): TurnResponse!
-}
-
 type RequestTurnResponse {
   #id: ID!
   queueSize: Int!
-}
-
-type Mutation {
-  requestTurn(shopId: ID!): RequestTurnResponse!
-  cancelTurn(turnId: ID!): Boolean!
 }
