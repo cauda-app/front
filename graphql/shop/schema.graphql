@@ -36,6 +36,7 @@ type ShopDetails {
   name: String!
   ownerPhone: String!
   shopPhone: String
+  shop: Shop!
   isOpen: Boolean!
   status: ShopStatus
   mondayTimeEnd: Time

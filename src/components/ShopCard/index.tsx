@@ -116,9 +116,8 @@ export default function ShopCard({
           </ListGroup.Item>
           <ListGroup.Item>
             <FontAwesomeIcon icon={faEllipsisH} fixedWidth />{' '}
-            <span>
-              <strong>XX personas en la fila</strong>
-              No hay nadie en la fila
+            <span className={shop.shop.queueSize > 0 ? 'font-weight-bold' : ''}>
+              {t('common:shop-queue', { count: shop.shop.queueSize })}
             </span>
           </ListGroup.Item>
         </ListGroup>

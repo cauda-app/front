@@ -24,6 +24,9 @@ const SHOPS = /* GraphQL */ `
       lng
       shopPhone
       isOpen
+      shop {
+        queueSize
+      }
       status {
         opens
         closes

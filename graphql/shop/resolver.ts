@@ -394,6 +394,11 @@ const shopResolver = {
     isOpen: (parent: ShopDetails, args, ctx: Context) => {
       return isOpen(parent);
     },
+    shop: (parent: ShopDetails, args, ctx: Context) => {
+      return ctx.prisma.shop.findOne({
+        where: { id: Number(parent.shopId) }, // shopId is still a number from the db, it hasn't be resolved and encoded
+      });
+    },
     shopPhone: (parent: ShopDetails, args, ctx: Context) => {
       return shopPhone(parent);
     },
