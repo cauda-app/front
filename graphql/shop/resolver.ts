@@ -135,9 +135,6 @@ const shopResolver = {
         args.priorTo ? (decodeId(args.priorTo) as number) : undefined
       );
     },
-    shops: (parent, args, ctx: Context) => {
-      return ctx.prisma.shop.findMany();
-    },
     nearByShops: async (parent, args: QueryNearByShopsArgs, ctx: Context) => {
       const MAX_DISTANCE_METERS = 2000;
       return await ctx.prisma.queryRaw(`
