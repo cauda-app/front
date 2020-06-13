@@ -139,6 +139,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (shopId) {
     const dbShop = await prisma.shopDetails.findOne({
       where: { shopId },
+      include: { shop: { select: { queueSize: true } } },
     });
 
     await prisma.disconnect();
@@ -151,6 +152,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         lat: dbShop.lat,
         lng: dbShop.lng,
         shopPhone: shopPhone(dbShop),
+        shop: { queueSize: dbShop.shop.queueSize },
         isOpen: isOpen(dbShop),
         status: status(dbShop),
       };

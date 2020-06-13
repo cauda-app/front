@@ -31,7 +31,6 @@ export type Query = {
   myTurn: Client;
   myTurns: Array<TurnResponse>;
   nearByShops: Array<ShopDetails>;
-  shops: Array<Shop>;
   turn: TurnResponse;
 };
 
@@ -216,6 +215,7 @@ export type ShopDetails = {
   name: Scalars['String'];
   ownerPhone: Scalars['String'];
   shopPhone?: Maybe<Scalars['String']>;
+  shop: Shop;
   isOpen: Scalars['Boolean'];
   status?: Maybe<ShopStatus>;
   mondayTimeEnd?: Maybe<Scalars['Time']>;
@@ -409,7 +409,6 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   myTurn?: Resolver<ResolversTypes['Client'], ParentType, ContextType>,
   myTurns?: Resolver<Array<ResolversTypes['TurnResponse']>, ParentType, ContextType>,
   nearByShops?: Resolver<Array<ResolversTypes['ShopDetails']>, ParentType, ContextType, RequireFields<QueryNearByShopsArgs, 'lat' | 'lng' | 'offset'>>,
-  shops?: Resolver<Array<ResolversTypes['Shop']>, ParentType, ContextType>,
   turn?: Resolver<ResolversTypes['TurnResponse'], ParentType, ContextType, RequireFields<QueryTurnArgs, 'turnId'>>,
 }>;
 
@@ -504,6 +503,7 @@ export type ShopDetailsResolvers<ContextType = any, ParentType extends Resolvers
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   ownerPhone?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   shopPhone?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  shop?: Resolver<ResolversTypes['Shop'], ParentType, ContextType>,
   isOpen?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
   status?: Resolver<Maybe<ResolversTypes['ShopStatus']>, ParentType, ContextType>,
   mondayTimeEnd?: Resolver<Maybe<ResolversTypes['Time']>, ParentType, ContextType>,

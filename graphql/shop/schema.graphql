@@ -36,6 +36,7 @@ type ShopDetails {
   name: String!
   ownerPhone: String!
   shopPhone: String
+  shop: Shop!
   isOpen: Boolean!
   status: ShopStatus
   mondayTimeEnd: Time
@@ -66,7 +67,6 @@ type Query {
   lastTurns(shopId: ID!, priorTo: ID): [LastTurns!]!
   myShop: Shop!
   nearByShops(lat: Float!, lng: Float!, offset: Int! = 0): [ShopDetails!]!
-  shops: [Shop!]!
 }
 
 type Mutation {
