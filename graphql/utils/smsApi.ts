@@ -33,7 +33,8 @@ export default async function sendSms(
     message: message,
     //expires_at: expiresAt,
     ignore_banned: 1,
-    service_id: shortNumber && process.env.SHORT_SMS_ENABLED === '1' ? 130 : 78,
+    service_id:
+      shortNumber && process.env.CAUDA_SHORT_SMS_ENABLED === '1' ? 130 : 78,
   };
 
   try {

@@ -7,8 +7,7 @@ module.exports = withSourceMaps(
   withImages({
     env: result.parsed || {},
     publicRuntimeConfig: {
-      version: packageJson.version,
-      goToShopThreshold: 5,
+      version: packageJson.version      
     },
     experimental: {
       modern: true,

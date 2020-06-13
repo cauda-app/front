@@ -1,6 +1,5 @@
 import { ApolloError } from 'apollo-server-core';
 import * as Sentry from '@sentry/node';
-import getConfig from 'next/config';
 import compareAsc from 'date-fns/compareAsc';
 import startOfDay from 'date-fns/startOfDay';
 
@@ -21,8 +20,6 @@ import {
   MutationSaveFcMtokenArgs,
   MutationSendNotificationArgs,
 } from '../../graphql';
-
-const { publicRuntimeConfig } = getConfig();
 
 const getTurns = (clientId: number, ctx: Context) => {
   return ctx.prisma.issuedNumber.findMany({
@@ -253,7 +250,7 @@ const clientResolver = {
       const rawQuery = `CALL increaseShopCounter(
         ${shopId}, 
         ${ctx.tokenInfo.clientId},
-        ${Number(publicRuntimeConfig.goToShopThreshold)}
+        ${Number(process.env.CAUDA_GO_TO_SHOP_THRESHOLD)}
       );`;
 
       try {

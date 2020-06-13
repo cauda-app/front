@@ -1,5 +1,4 @@
 import { ApolloError } from 'apollo-server-core';
-import getConfig from 'next/config';
 import * as Sentry from '@sentry/node';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -33,8 +32,7 @@ import { decodeId, encodeId } from 'src/utils/hashids';
 import sendSms from 'graphql/utils/smsApi';
 import { sendMessage } from 'graphql/utils/fcm';
 
-const { publicRuntimeConfig } = getConfig();
-const threshold = Number(publicRuntimeConfig.goToShopThreshold);
+const threshold = Number(process.env.CAUDA_GO_TO_SHOP_THRESHOLD);
 
 const sendFallbackSms = async (phone, message, ctx: Context) => {
   const localPhone = getNationalNumber(phone);
@@ -44,7 +42,7 @@ const sendFallbackSms = async (phone, message, ctx: Context) => {
     return;
   }
 
-  if (process.env.SMS_ENABLED === '1') {
+  if (process.env.CAUDA_SMS_ENABLED === '1') {
     await sendSms(localPhone, message, true, null, ctx);
     console.log(`SMS-(${localPhone}): ${message}`);
   } else {
