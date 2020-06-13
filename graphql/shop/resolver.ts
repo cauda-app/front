@@ -378,7 +378,7 @@ const shopResolver = {
       });
     },
     nextTurn: async (parent: Shop, args, ctx: Context) => {
-      if (!parent.nextToCall) {
+      if (parent.nextToCall === null || parent.nextToCall === undefined) {
         return null;
       }
       return numberToTurn(parent.nextToCall);
