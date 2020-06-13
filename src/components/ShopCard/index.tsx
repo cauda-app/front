@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { faPhone } from '@fortawesome/free-solid-svg-icons';
 import { faClock } from '@fortawesome/free-solid-svg-icons';
+import { faEllipsisH } from '@fortawesome/free-solid-svg-icons';
 import { faCalendarCheck } from '@fortawesome/free-solid-svg-icons';
 import Map from '../Map';
 import { formats, parseUTCTime } from 'src/utils/dates';
@@ -112,6 +113,13 @@ export default function ShopCard({
             ) : (
               t('common:close-now')
             )}
+          </ListGroup.Item>
+          <ListGroup.Item>
+            <FontAwesomeIcon icon={faEllipsisH} fixedWidth />{' '}
+            <span>
+              <strong>XX personas en la fila</strong>
+              No hay nadie en la fila
+            </span>
           </ListGroup.Item>
         </ListGroup>
         <Card.Body>
