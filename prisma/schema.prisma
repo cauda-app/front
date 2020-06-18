@@ -39,7 +39,7 @@ model IssuedNumber {
 model Shop {
   id           Int            @default(autoincrement()) @id
   isClosed     Boolean        @default(false)
-  lastIssued   Int            @default(0)
+  lastIssued   Int?
   queueSize    Int
   nextToCall   Int?
   issuedNumber IssuedNumber[]

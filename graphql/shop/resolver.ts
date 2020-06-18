@@ -193,9 +193,7 @@ const shopResolver = {
       const newShop = await ctx.prisma.shop.create({
         data: {
           isClosed: false,
-          lastIssued: 0,
           queueSize: 0,
-          nextToCall: 0,
           shopDetails: {
             create: {
               ...mapShop(args.shop),
