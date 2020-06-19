@@ -45,6 +45,10 @@ export default function ShopCard({
   };
 
   const checkNotificationsEnabled = async () => {
+    if (isLoading) {
+      return;
+    }
+
     try {
       const PermissionStatus = await navigator.permissions.query({
         name: 'notifications',
