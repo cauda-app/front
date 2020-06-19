@@ -35,7 +35,6 @@ export default function ShopCard({
 
   const handleConfirm = async () => {
     try {
-      setIsLoading(true);
       await onRequestTurn!();
     } catch (error) {
       setIsLoading(false);
@@ -48,6 +47,8 @@ export default function ShopCard({
     if (isLoading) {
       return;
     }
+
+    setIsLoading(true);
 
     try {
       const PermissionStatus = await navigator.permissions.query({
