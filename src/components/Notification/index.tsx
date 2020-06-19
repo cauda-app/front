@@ -13,6 +13,7 @@ type Props = {
   subTitle?: String;
   message: String;
   onConfirm: () => void;
+  onCancel?: () => void;
   countDown?: number;
   confirmLabel?: String;
 };
@@ -23,6 +24,7 @@ export default function Notification({
   subTitle,
   message,
   onConfirm,
+  onCancel,
   confirmLabel,
   countDown,
 }: Props) {
@@ -57,9 +59,9 @@ export default function Notification({
   const ModalComponent: React.ElementType = show ? Modal : Modal.Dialog;
 
   return (
-    <ModalComponent show={show} onHide={onConfirm}>
+    <ModalComponent show={show} onHide={onCancel}>
       <Modal.Header>
-        <Modal.Title>{title}</Modal.Title>
+        <Modal.Title className="m0 ">{title}</Modal.Title>
       </Modal.Header>
 
       <Modal.Body className="py-5 px-3 text-center">
@@ -67,13 +69,24 @@ export default function Notification({
           {subTitle && <strong className="d-block mb-3">{subTitle}</strong>}
           <span className="text-muted">{message}</span>
         </p>
+      </Modal.Body>
+      <Modal.Footer>
+        {onCancel && (
+          <Button
+            size={'lg'}
+            variant="link"
+            onClick={onCancel}
+            className="text-dark"
+          >
+            {t('common:close')}
+          </Button>
+        )}
         <Button
           variant="primary"
-          size="lg"
+          size={'lg'}
           className={`d-flex justify-content-${
             continueDisabled ? 'center' : 'between'
           } align-items-center`}
-          block
           onClick={onConfirm}
           disabled={continueDisabled}
         >
@@ -83,11 +96,12 @@ export default function Notification({
             <>
               <div></div>
               {confirmLabel ? confirmLabel : t('common:continue')}
-              <FontAwesomeIcon icon={faArrowRight} />
+              <div></div>
+              {/*   <FontAwesomeIcon icon={faArrowRight} /> */}
             </>
           )}
         </Button>
-      </Modal.Body>
+      </Modal.Footer>
     </ModalComponent>
   );
 }
