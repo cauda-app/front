@@ -11,6 +11,7 @@ import logo from 'public/cauda_favicon_black.svg';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPrint } from '@fortawesome/free-solid-svg-icons';
+import GoBack from 'src/components/GoBack';
 
 type Props = {
   isLoggedIn: boolean;
@@ -67,6 +68,7 @@ const ShopPoster = ({ isLoggedIn, shopId }: Props) => {
       </Head>
 
       <div className="actions mt-3 d-print-none text-center">
+        <GoBack page="/my-shop" label={t('common:my-shop')} />
         <Button
           onClick={() => window.print()}
           size="lg"

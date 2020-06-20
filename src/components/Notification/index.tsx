@@ -73,7 +73,7 @@ export default function Notification({
       <Modal.Footer>
         {onCancel && (
           <Button
-            size={'lg'}
+            size="lg"
             variant="link"
             onClick={onCancel}
             className="text-dark"
@@ -83,7 +83,7 @@ export default function Notification({
         )}
         <Button
           variant="primary"
-          size={'lg'}
+          size="lg"
           className={`d-flex justify-content-${
             continueDisabled ? 'center' : 'between'
           } align-items-center`}
