@@ -238,7 +238,11 @@ export default function AboutUs() {
                 alt="Facundo Stancanelli"
               />
               <Media.Body>
-                <h5>Facundo Stancanelli</h5>
+                <h5>
+                  <Link href={'//www.linkedin.com/in/facundo-diego-stancanelli-8962131b1'}>
+                    <a target="_blank">Facundo Stancanelli</a>
+                  </Link>
+                </h5>
                 <p>{t('common:software-engineer')}</p>
               </Media.Body>
             </Media>
