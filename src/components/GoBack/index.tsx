@@ -5,12 +5,14 @@ import Button from 'react-bootstrap/Button';
 
 type Props = {
   page?: string;
+  label?: string;
 };
 
-const GoBack = ({ page = '/' }: Props) => (
+const GoBack = ({ page = '/', label }: Props) => (
   <Link href={page} passHref>
     <Button variant="link" className="py-0 text-dark">
       <FontAwesomeIcon icon={faChevronLeft} className="mr-2" />
+      {label !== undefined && label}
     </Button>
   </Link>
 );

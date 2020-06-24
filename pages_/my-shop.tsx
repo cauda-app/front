@@ -22,6 +22,9 @@ import LoadingButton from 'src/components/LoadingButton';
 import getTurnColor from 'src/utils/colors';
 import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 import { Shop } from '../graphql';
+import Notification from 'src/components/Notification';
+
+const POSTER_NOTIFICATION = 'POSTER_NOTIFICATION';
 
 const MY_SHOP = /* GraphQL */ `
   query MyShop {
@@ -51,6 +54,7 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
   const { t } = useTranslation();
   useFirebaseMessage();
   const [actionLoading, setActionLoading] = useState('');
+  const [posterNotification, setPosterNotification] = useState(false);
   const { data: myShopData, error, mutate } = useSWR<{ myShop: Shop }>(
     !shopId ? null : MY_SHOP,
     fetcher,
@@ -58,6 +62,16 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
       refreshInterval: 10_000,
     }
   );
+
+  const showPosterNotification = () => {
+    closePosterNotification();
+    Router.push('/shop-poster');
+  };
+
+  const closePosterNotification = () => {
+    window.localStorage.setItem(POSTER_NOTIFICATION, 'true');
+    setPosterNotification(false);
+  };
 
   const nextTurn = async (op: 'ATTEND' | 'SKIP') => {
     setActionLoading(op);
@@ -117,6 +131,16 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
     }
   }, [isLoggedIn, shopId]);
 
+  useEffect(() => {
+    const res = window.localStorage.getItem(POSTER_NOTIFICATION);
+
+    if (res) {
+      return;
+    }
+
+    setPosterNotification(true);
+  }, []);
+
   if (error) {
     console.error(error);
     throw error;
@@ -127,6 +151,19 @@ const MyShop = ({ isLoggedIn, shopId }: Props) => {
       <Layout>
         <Spinner />
       </Layout>
+    );
+  }
+
+  if (posterNotification) {
+    return (
+      <Notification
+        title={t('common:print-poster-title')}
+        subTitle={t('common:print-poster-subtitle')}
+        message={t('common:print-poster-notification')}
+        onConfirm={showPosterNotification}
+        onCancel={closePosterNotification}
+        confirmLabel={t('common:print-poster-confirm')}
+      />
     );
   }
 
