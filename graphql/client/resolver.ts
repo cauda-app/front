@@ -255,10 +255,14 @@ const clientResolver = {
 
       try {
         await ctx.prisma.executeRaw(rawQuery);
+        const shop = await ctx.prisma.shop.findOne({
+          where: { id: shopId },
+          select: { queueSize: true },
+        });
         //const newTurns = await getTurns(ctx.tokenInfo.clientId, ctx);
         return {
           //id: encodeId(newTurns[0].id), // TODO: Wait for Prisma to support returning results from raw queries and get the inserted ID from there
-          queueSize: turns.length + 1,
+          queueSize: shop?.queueSize || 1,
         };
       } catch (error) {
         Sentry.captureException(error);
