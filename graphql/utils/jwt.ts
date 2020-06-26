@@ -12,6 +12,11 @@ export type TokenInfo = {
   error?: any;
 };
 
+export type MobileTokenInfo = {
+  isValid: boolean;
+  isMobile: boolean;
+};
+
 export const setCookieToken = (
   res: any,
   {
@@ -38,7 +43,7 @@ export const setCookieToken = (
   );
 };
 
-export const verifyToken = (token: any): TokenInfo => {
+export const verifyToken = (token: any): TokenInfo | MobileTokenInfo => {
   try {
     var decoded = jwt.verify(token, process.env.JWT_SECRET as string);
     return {
