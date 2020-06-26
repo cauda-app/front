@@ -277,6 +277,21 @@ const GuestLanding = () => {
             </Card>
           </div>
         </div>
+
+        <div className="cauda_sponsor container mb-5">
+          <h3 className="h4 mb-3 text-center">Nos recomiendan</h3>
+
+          <div className="cards">
+            <Card>
+              <Link href="//www.uciadi.org.ar/">
+                <a target="_blank">
+                  <Image src="/sponsor/cauda_uciadi.png" fluid alt="uciadi" />
+                  <span>UCIADI</span>
+                </a>
+              </Link>
+            </Card>
+          </div>
+        </div>
       </div>
 
       <style jsx global>{`
