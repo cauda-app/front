@@ -27,6 +27,6 @@ type TurnResponse {
 }
 
 type RequestTurnResponse {
-  #id: ID!
+  id: ID!
   queueSize: Int!
 }

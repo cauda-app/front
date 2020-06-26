@@ -177,6 +177,7 @@ export type TurnResponse = {
 
 export type RequestTurnResponse = {
    __typename?: 'RequestTurnResponse';
+  id: Scalars['ID'];
   queueSize: Scalars['Int'];
 };
 
@@ -471,6 +472,7 @@ export type TurnResponseResolvers<ContextType = any, ParentType extends Resolver
 }>;
 
 export type RequestTurnResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['RequestTurnResponse'] = ResolversParentTypes['RequestTurnResponse']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   queueSize?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;

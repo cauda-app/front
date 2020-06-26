@@ -13,7 +13,7 @@ import Spinner from 'src/components/Spinner';
 import { isOpen, shopPhone, status } from '../graphql/shop/helpers';
 import { getToken } from 'src/utils/next';
 import graphqlClient from 'src/graphqlClient';
-import { getErrorCodeFromApollo } from 'src/utils';
+import { getErrorCodeFromApollo, getErrorFromApollo } from 'src/utils';
 import { decodeId } from 'src/utils/hashids';
 import Notification from 'src/components/Notification';
 import { MY_TURNS } from 'pages_';
@@ -23,6 +23,7 @@ import useFirebaseMessage from 'src/hooks/useFirebaseMessage';
 const REQUEST_TURN = /* GraphQL */ `
   mutation RequestTurn($shopId: ID!) {
     requestTurn(shopId: $shopId) {
+      id
       queueSize
     }
   }
@@ -39,6 +40,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop, goToShopThreshold }) => {
   const { t } = useTranslation();
   useFirebaseMessage();
   const [showModal, setShowModal] = useState(false);
+  const [newTurnId, setNewTurnId] = useState(false);
   const [error, setError] = useState();
   const router = useRouter();
 
@@ -48,8 +50,8 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop, goToShopThreshold }) => {
     }
   }, [isLoggedIn]);
 
-  const goToHome = () => {
-    Router.push('/');
+  const goToTurnDetail = (id = newTurnId) => {
+    Router.push('/turn/' + id);
   };
 
   const handleRequestTurn = async () => {
@@ -60,11 +62,13 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop, goToShopThreshold }) => {
         shopId: shop.shopId,
       });
 
+      setNewTurnId(res.requestTurn.id);
+
       if (res.requestTurn.queueSize <= goToShopThreshold) {
         setShowModal(true);
       } else {
         await mutate(MY_TURNS); // invalidate cached data
-        goToHome();
+        goToTurnDetail(res.requestTurn.id);
       }
     } catch (error) {
       console.error(error);
@@ -72,7 +76,8 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop, goToShopThreshold }) => {
 
       switch (errorCode) {
         case 'ACTIVE_TURN':
-          goToHome();
+          const turnId = getErrorFromApollo(error).turnId;
+          goToTurnDetail(turnId);
           break;
         case 'PENDING_TURNS_QUOTA_EXCEEDED':
           setError(t('common:pending-turns-quota-exceeded'));
@@ -108,7 +113,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop, goToShopThreshold }) => {
         <Notification
           title="CAUDA"
           message={t('common:empty-shop-queue')}
-          onConfirm={goToHome}
+          onConfirm={goToTurnDetail}
         />
       </Layout>
     );
