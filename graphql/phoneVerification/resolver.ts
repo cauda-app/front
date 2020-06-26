@@ -3,7 +3,11 @@ import addMinutes from 'date-fns/addMinutes';
 import addHours from 'date-fns/addHours';
 import compareAsc from 'date-fns/compareAsc';
 
-import { setCookieToken, verifyToken } from '../../graphql/utils/jwt';
+import {
+  setCookieToken,
+  verifyToken,
+  MobileTokenInfo,
+} from '../../graphql/utils/jwt';
 import { MutationVerifyCodeArgs, MutationVerifyPhoneArgs } from '../../graphql';
 import { PhoneVerification } from '@prisma/client';
 import { Context } from 'graphql/context';
@@ -103,7 +107,7 @@ const phoneVerificationResolver = {
       // Validate token: it can be a recaptcha v3 token if it comes from the web app, or a jwt if it comes from the mobile app
       const isCaptchaValid = await validateCaptcha(args.token);
       if (!isCaptchaValid) {
-        const jwt = verifyToken(args.token);
+        const jwt = verifyToken(args.token) as MobileTokenInfo;
         if (!jwt.isValid || !jwt.isMobile)
           return new ApolloError('Invalid token', 'INVALID_TOKEN');
       }
