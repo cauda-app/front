@@ -10,6 +10,7 @@ export type TokenInfo = {
   shopId?: number;
   phone?: string;
   error?: any;
+  isMobile?: boolean;
 };
 
 export const setCookieToken = (
