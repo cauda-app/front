@@ -1,6 +1,5 @@
 import { ApolloError } from 'apollo-server-core';
 import * as Sentry from '@sentry/node';
-import { v4 as uuidv4 } from 'uuid';
 
 import { days, serializeTime } from 'src/utils/dates';
 import { formatPhone, getNationalNumber } from 'src/utils/phone-utils';
@@ -246,18 +245,14 @@ const shopResolver = {
         );
       }
 
-      const nextTurnResultId = uuidv4();
-      const rawQuery = `CALL nextTurn('${nextTurnResultId}', ${
-        ctx.tokenInfo.shopId
-      }, ${NextTurnOpToStatus[args.op]}, ${threshold})`;
-      await ctx.prisma.executeRaw(rawQuery);
-      const nextTurnResult = await ctx.prisma.nextTurnResults.findOne({
-        where: { id: nextTurnResultId },
-      });
+      const rawQuery = `CALL nextTurn(${ctx.tokenInfo.shopId}, ${
+        NextTurnOpToStatus[args.op]
+      }, ${threshold})`;
+      const [nextTurnResult] = await ctx.prisma.queryRaw(rawQuery);
 
       const lastTurns = await getLastTurns(ctx.prisma, ctx.tokenInfo.shopId);
 
-      if (!nextTurnResult || !nextTurnResult.nextID) {
+      if (!nextTurnResult || !nextTurnResult.calledId) {
         return { nextTurn: null, queueSize: 0, lastTurns: lastTurns };
       }
 
@@ -277,11 +272,11 @@ const shopResolver = {
       const icon = 'https://' + ctx.req.headers.host + '/cauda_blue.png';
 
       if (args.op === 'ATTEND') {
-        const link = turnLink(ctx.req.headers.host, nextTurnResult.nextID);
+        const link = turnLink(ctx.req.headers.host, nextTurnResult.calledId);
         const message = `Es tu turno en ${shop?.shopDetails.name}!`;
         await sendFcmNotification(
-          nextTurnResult.nextFcmToken,
-          nextTurnResult.nextPhone,
+          nextTurnResult.calledFcmToken,
+          nextTurnResult.calledPhone,
           message,
           title,
           link,
@@ -290,8 +285,8 @@ const shopResolver = {
       }
 
       // If there is a turn after threshold, send a notification
-      if (nextTurnResult.windowShouldNotify) {
-        if (!nextTurnResult.windowClientId) {
+      if (nextTurnResult._windowShouldNotify) {
+        if (!nextTurnResult._windowClientId) {
           return new ApolloError(
             'Not possible to attend turn, No clientId not found',
             'CLIENT_ID_NOT_FOUND'
@@ -299,10 +294,10 @@ const shopResolver = {
         }
 
         const message = `Tu turno en ${shop?.shopDetails.name} está próximo a ser atendido. Solo hay ${threshold} personas por delante.`;
-        const link = turnLink(ctx.req.headers.host, nextTurnResult.nextID);
+        const link = turnLink(ctx.req.headers.host, nextTurnResult.calledId);
         await sendNotification(
-          nextTurnResult.windowFcmToken,
-          nextTurnResult.windowPhone,
+          nextTurnResult._windowFcmToken,
+          nextTurnResult._windowPhone,
           message,
           title,
           link,
