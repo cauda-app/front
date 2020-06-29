@@ -50,8 +50,8 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop, goToShopThreshold }) => {
     }
   }, [isLoggedIn]);
 
-  const goToTurnDetail = (id = newTurnId) => {
-    Router.push('/turn/' + id);
+  const goToTurnDetail = async (id) => {
+    await Router.push('/turn/' + id);
   };
 
   const handleRequestTurn = async () => {
@@ -113,7 +113,7 @@ const RequestTurn = ({ isLoggedIn, statusCode, shop, goToShopThreshold }) => {
         <Notification
           title="CAUDA"
           message={t('common:empty-shop-queue')}
-          onConfirm={goToTurnDetail}
+          onConfirm={() => goToTurnDetail(newTurnId)}
         />
       </Layout>
     );
