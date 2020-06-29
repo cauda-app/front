@@ -112,3 +112,6 @@ export const validatePhoneRequest = async (
 
 export const getErrorCodeFromApollo = (error) =>
   error.response?.errors[0]?.extensions?.code;
+
+export const getErrorFromApollo = (error) =>
+  error.response?.errors[0]?.extensions;

@@ -21,12 +21,11 @@ type IssuedNumber {
 type TurnResponse {
   id: ID!
   turn: String!
-  shopId: String!
   shopName: String!
   status: IssuedNumberStatus!
 }
 
 type RequestTurnResponse {
-  #id: ID!
+  id: ID!
   queueSize: Int!
 }
