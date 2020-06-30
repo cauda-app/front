@@ -173,6 +173,7 @@ export type TurnResponse = {
   shopId: Scalars['String'];
   shopName: Scalars['String'];
   status: IssuedNumberStatus;
+  lastTurns: Array<LastTurns>;
 };
 
 export type RequestTurnResponse = {
@@ -468,6 +469,7 @@ export type TurnResponseResolvers<ContextType = any, ParentType extends Resolver
   shopId?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   shopName?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   status?: Resolver<ResolversTypes['IssuedNumberStatus'], ParentType, ContextType>,
+  lastTurns?: Resolver<Array<ResolversTypes['LastTurns']>, ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 

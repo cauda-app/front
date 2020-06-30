@@ -20,6 +20,7 @@ import {
   MutationSaveFcMtokenArgs,
   MutationSendNotificationArgs,
 } from '../../graphql';
+import { lastTurns } from 'graphql/shop/helpers';
 
 const getTurns = (clientId: number, ctx: Context) => {
   return ctx.prisma.issuedNumber.findMany({
@@ -98,6 +99,7 @@ const clientResolver = {
       const issuedNumber = await ctx.prisma.issuedNumber.findOne({
         where: { id: turnId as number },
         select: {
+          id: true,
           issuedNumber: true,
           shopId: true,
           clientId: true,
@@ -115,6 +117,11 @@ const clientResolver = {
         shopId: encodeId(issuedNumber.shopId),
         shopName: issuedNumber.shopDetails.name,
         turn: numberToTurn(issuedNumber.issuedNumber),
+        lastTurns: await lastTurns(
+          ctx.prisma,
+          issuedNumber.shopId,
+          issuedNumber.id
+        ),
         status: issuedNumber.status,
       };
     },

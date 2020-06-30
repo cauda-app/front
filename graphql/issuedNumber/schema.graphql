@@ -24,6 +24,7 @@ type TurnResponse {
   shopId: String!
   shopName: String!
   status: IssuedNumberStatus!
+  lastTurns: [LastTurns!]!
 }
 
 type RequestTurnResponse {
