@@ -170,6 +170,7 @@ export type TurnResponse = {
    __typename?: 'TurnResponse';
   id: Scalars['ID'];
   turn: Scalars['String'];
+  shopId: Scalars['String'];
   shopName: Scalars['String'];
   status: IssuedNumberStatus;
 };
@@ -464,6 +465,7 @@ export type IssuedNumberResolvers<ContextType = any, ParentType extends Resolver
 export type TurnResponseResolvers<ContextType = any, ParentType extends ResolversParentTypes['TurnResponse'] = ResolversParentTypes['TurnResponse']> = ResolversObject<{
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   turn?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  shopId?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   shopName?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   status?: Resolver<ResolversTypes['IssuedNumberStatus'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,

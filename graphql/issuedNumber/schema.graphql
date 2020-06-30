@@ -21,6 +21,7 @@ type IssuedNumber {
 type TurnResponse {
   id: ID!
   turn: String!
+  shopId: String!
   shopName: String!
   status: IssuedNumberStatus!
 }

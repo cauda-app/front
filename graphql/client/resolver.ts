@@ -99,6 +99,7 @@ const clientResolver = {
         where: { id: turnId as number },
         select: {
           issuedNumber: true,
+          shopId: true,
           clientId: true,
           status: true,
           shopDetails: { select: { name: true } },
@@ -111,6 +112,7 @@ const clientResolver = {
 
       return {
         id: args.turnId,
+        shopId: encodeId(issuedNumber.shopId),
         shopName: issuedNumber.shopDetails.name,
         turn: numberToTurn(issuedNumber.issuedNumber),
         status: issuedNumber.status,
