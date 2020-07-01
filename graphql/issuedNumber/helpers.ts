@@ -2,7 +2,6 @@ import { PrismaClient } from '@prisma/client';
 import { encodeId } from 'src/utils/hashids';
 import { numberToTurn } from 'graphql/utils/turn';
 import startOfToday from 'date-fns/startOfToday';
-import { lastTurns } from 'graphql/shop/helpers';
 
 export const myPastTurns = async (clientId, prisma: PrismaClient) => {
   const issuedNumbers = await prisma.issuedNumber.findMany({
@@ -22,16 +21,15 @@ export const myPastTurns = async (clientId, prisma: PrismaClient) => {
     },
   });
 
-  const turns = await Promise.all(
-    issuedNumbers.map(async (issuedNumber) => ({
-      id: encodeId(issuedNumber.id),
-      shopId: encodeId(issuedNumber.shopId),
-      status: TO_ISSUED_NUMBER_STATUS[issuedNumber.status],
-      turn: numberToTurn(issuedNumber.issuedNumber),
-      shopName: issuedNumber.shopDetails.name,
-      lastTurns: await lastTurns(prisma, issuedNumber.shopId, issuedNumber.id),
-    }))
-  );
+  const turns = issuedNumbers.map(async (issuedNumber) => ({
+    id: encodeId(issuedNumber.id),
+    rawId: issuedNumber.id,
+    rawShopId: issuedNumber.shopId,
+    shopId: encodeId(issuedNumber.shopId),
+    status: TO_ISSUED_NUMBER_STATUS[issuedNumber.status],
+    turn: numberToTurn(issuedNumber.issuedNumber),
+    shopName: issuedNumber.shopDetails.name,
+  }));
 
   return turns;
 };
@@ -47,15 +45,15 @@ export const myTurns = async (clientId, prisma: PrismaClient) => {
     },
   });
 
-  const turns = await Promise.all(
-    issuedNumbers.map(async (issuedNumber) => ({
-      id: encodeId(issuedNumber.id),
-      shopId: encodeId(issuedNumber.shopId),
-      turn: numberToTurn(issuedNumber.issuedNumber),
-      shopName: issuedNumber.shopDetails.name,
-      lastTurns: await lastTurns(prisma, issuedNumber.shopId, issuedNumber.id),
-    }))
-  );
+  const turns = issuedNumbers.map((issuedNumber) => ({
+    id: encodeId(issuedNumber.id),
+    rawId: issuedNumber.id,
+    rawShopId: issuedNumber.shopId,
+    shopId: encodeId(issuedNumber.shopId),
+    status: TO_ISSUED_NUMBER_STATUS[ISSUED_NUMBER_STATUS.PENDING],
+    turn: numberToTurn(issuedNumber.issuedNumber),
+    shopName: issuedNumber.shopDetails.name,
+  }));
 
   return turns;
 };
