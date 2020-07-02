@@ -21,7 +21,7 @@ export const myPastTurns = async (clientId, prisma: PrismaClient) => {
     },
   });
 
-  const turns = issuedNumbers.map(async (issuedNumber) => ({
+  const turns = issuedNumbers.map((issuedNumber) => ({
     id: encodeId(issuedNumber.id),
     rawId: issuedNumber.id,
     rawShopId: issuedNumber.shopId,
