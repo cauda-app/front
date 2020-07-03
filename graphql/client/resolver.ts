@@ -258,12 +258,12 @@ const clientResolver = {
       //   ${Number(process.env.CAUDA_GO_TO_SHOP_THRESHOLD)}
       // );`;
 
-      const rawQuery = `select funcRequestTrun()`;
+      const rawQuery = `select funcRequestTurn()`;
 
       try {
         const response = await ctx.prisma.queryRaw(rawQuery);
         //console.log("RESPONSE: ", response)
-        const parsedResponse = response[0]['funcRequestTrun()'].split('-');
+        const parsedResponse = response[0]['funcRequestTurn()'].split('-');
         return {
           // id: encodeId(response[0].issuedNumberId),
           id: encodeId(Number(parsedResponse[0])),
