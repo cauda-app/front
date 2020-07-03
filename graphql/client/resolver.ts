@@ -252,17 +252,23 @@ const clientResolver = {
         );
       }
 
-      const rawQuery = `CALL increaseShopCounter(
-        ${shopId}, 
-        ${ctx.tokenInfo.clientId},
-        ${Number(process.env.CAUDA_GO_TO_SHOP_THRESHOLD)}
-      );`;
+      // const rawQuery = `CALL increaseShopCounterNew(
+      //   ${shopId},
+      //   ${ctx.tokenInfo.clientId},
+      //   ${Number(process.env.CAUDA_GO_TO_SHOP_THRESHOLD)}
+      // );`;
+
+      const rawQuery = `select funcRequestTrun()`;
 
       try {
         const response = await ctx.prisma.queryRaw(rawQuery);
+        //console.log("RESPONSE: ", response)
+        const parsedResponse = response[0]['funcRequestTrun()'].split('-');
         return {
-          id: encodeId(response[0].issuedNumberId),
-          queueSize: response[0].queueSize || 1,
+          // id: encodeId(response[0].issuedNumberId),
+          id: encodeId(Number(parsedResponse[0])),
+          // queueSize: response[0].queueSize || 1,
+          queueSize: Number(parsedResponse[1]),
         };
       } catch (error) {
         Sentry.captureException(error);
