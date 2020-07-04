@@ -110,3 +110,9 @@ model NextTurnResults {
   windowFcmToken     String?
   windowShouldNotify Boolean?
 }
+
+model RequestTurnResults {
+  id           String         @id
+  queueSize    Int
+  issuedNumber Int
+}
