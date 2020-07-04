@@ -2,6 +2,7 @@ import { ApolloError } from 'apollo-server-core';
 import * as Sentry from '@sentry/node';
 import compareAsc from 'date-fns/compareAsc';
 import startOfDay from 'date-fns/startOfDay';
+import { v4 as uuidv4 } from 'uuid';
 
 import { Context } from 'graphql/context';
 import { sendMessage } from 'graphql/utils/fcm';
@@ -252,23 +253,26 @@ const clientResolver = {
         );
       }
 
-      // const rawQuery = `CALL increaseShopCounterNew(
-      //   ${shopId},
-      //   ${ctx.tokenInfo.clientId},
-      //   ${Number(process.env.CAUDA_GO_TO_SHOP_THRESHOLD)}
-      // );`;
-
-      const rawQuery = `select funcRequestTurn()`;
+      const requestTurnResultId = uuidv4();
+      const rawQuery = `call requestTurnWithResults(
+        "${requestTurnResultId}",
+        ${shopId},
+        ${ctx.tokenInfo.clientId},
+        ${Number(process.env.CAUDA_GO_TO_SHOP_THRESHOLD)}        
+      )`;
 
       try {
-        const response = await ctx.prisma.queryRaw(rawQuery);
-        //console.log("RESPONSE: ", response)
-        const parsedResponse = response[0]['funcRequestTurn()'].split('-');
+        await ctx.prisma.executeRaw(rawQuery);
+        const requestTurnResult = await ctx.prisma.requestTurnResults.findOne({
+          where: { id: requestTurnResultId },
+        });
+        if (!requestTurnResult) {
+          throw Error;
+        }
+
         return {
-          // id: encodeId(response[0].issuedNumberId),
-          id: encodeId(Number(parsedResponse[0])),
-          // queueSize: response[0].queueSize || 1,
-          queueSize: Number(parsedResponse[1]),
+          id: encodeId(requestTurnResult.issuedNumber),
+          queueSize: requestTurnResult.queueSize,
         };
       } catch (error) {
         Sentry.captureException(error);
