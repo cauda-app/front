@@ -26,7 +26,7 @@ export const myPastTurns = async (clientId, prisma: PrismaClient) => {
     rawId: issuedNumber.id,
     rawShopId: issuedNumber.shopId,
     shopId: encodeId(issuedNumber.shopId),
-    status: TO_ISSUED_NUMBER_STATUS[issuedNumber.status],
+    status: issuedNumber.status,
     turn: numberToTurn(issuedNumber.issuedNumber),
     shopName: issuedNumber.shopDetails.name,
   }));
@@ -50,7 +50,7 @@ export const myTurns = async (clientId, prisma: PrismaClient) => {
     rawId: issuedNumber.id,
     rawShopId: issuedNumber.shopId,
     shopId: encodeId(issuedNumber.shopId),
-    status: TO_ISSUED_NUMBER_STATUS[ISSUED_NUMBER_STATUS.PENDING],
+    status: ISSUED_NUMBER_STATUS.PENDING,
     turn: numberToTurn(issuedNumber.issuedNumber),
     shopName: issuedNumber.shopDetails.name,
   }));

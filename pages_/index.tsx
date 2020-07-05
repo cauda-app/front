@@ -16,6 +16,7 @@ import { getToken } from 'src/utils/next';
 import {
   myTurns as myTurnsFetch,
   myPastTurns as myPastTurnsFetch,
+  TO_ISSUED_NUMBER_STATUS,
 } from 'graphql/issuedNumber/helpers';
 import getTurnColor from 'src/utils/colors';
 import createPrismaClient from 'prisma/client';
@@ -151,10 +152,14 @@ const MyTurns = ({
                             <br />
                             <strong
                               className={`list-inline-item text-${getTurnColor(
-                                turn.status!
+                                TO_ISSUED_NUMBER_STATUS[turn.status!]
                               )}`}
                             >
-                              {t(`common:turn-status-${turn.status}`)}
+                              {t(
+                                `common:turn-status-${
+                                  TO_ISSUED_NUMBER_STATUS[turn.status!]
+                                }`
+                              )}
                             </strong>
                           </p>
                         </div>
