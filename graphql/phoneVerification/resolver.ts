@@ -37,7 +37,8 @@ const getCode = (phoneVerification: PhoneVerification | null) => {
 const phoneVerificationResolver = {
   Mutation: {
     verifyCode: async (parent, args: MutationVerifyCodeArgs, ctx: Context) => {
-      const phone = formatPhone('AR', args.phone); // TODO: Fixed for Argentina
+      const isUSNumber = args.phone === process.env.US_NUMBER;
+      const phone = isUSNumber ? args.phone : formatPhone('AR', args.phone); // TODO: Fixed for Argentina
       const phoneVerification = await ctx.prisma.phoneVerification.findOne({
         where: { phone },
       });
@@ -112,16 +113,18 @@ const phoneVerificationResolver = {
           return new ApolloError('Invalid token', 'INVALID_TOKEN');
       }
 
+      const isUSNumber = args.phone === process.env.US_NUMBER;
+
       // verify phone
       let phone;
       try {
-        phone = formatPhone('AR', args.phone);
+        phone = isUSNumber ? args.phone : formatPhone('AR', args.phone);
       } catch (error) {
         return new ApolloError('Invalid phone', 'INVALID_PHONE');
       }
 
       const localPhone = getNationalNumber(phone);
-      if (!localPhone) {
+      if (!localPhone && !isUSNumber) {
         return new ApolloError(
           'Invalid national phone',
           'INVALID_NATIONAL_PHONE'
@@ -160,7 +163,7 @@ const phoneVerificationResolver = {
         );
       }
 
-      const verificationCode = getCode(phoneVerification);
+      const verificationCode = isUSNumber ? 1234 : getCode(phoneVerification);
       const expiry = addMinutes(new Date(), PHONE_CODE_EXPIRY).toISOString();
       let attempts = (phoneVerification?.attempts || 0) + 1;
       if (attempts > 3) {
@@ -190,9 +193,9 @@ const phoneVerificationResolver = {
         attempts >=
         Number(process.env.CAUDA_REGISTRATION_SEND_SHORT_SMS_AT_ATTEMPT);
 
-      if (process.env.CAUDA_SMS_ENABLED === '1') {
+      if (process.env.CAUDA_SMS_ENABLED === '1' && !isUSNumber) {
         await sendSms(
-          localPhone,
+          localPhone!,
           message,
           sentAsShortNumber,
           phoneVerificationRes.id,
