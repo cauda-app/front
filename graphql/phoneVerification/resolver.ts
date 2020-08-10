@@ -140,6 +140,7 @@ const phoneVerificationResolver = {
         process.env.NODE_ENV === 'production' &&
         phoneVerification &&
         phoneVerification.attempts >= 3 &&
+        !isUSNumber &&
         compareAsc(new Date(), addHours(phoneVerification.updatedAt, 4)) === -1
       ) {
         return new ApolloError(
