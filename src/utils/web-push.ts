@@ -26,14 +26,13 @@ const init = () => {
     }
 
     firebase.initializeApp({
-      apiKey: 'AIzaSyAnVih3kHw9T99xVpfsOlqwJP2TsZydv3I',
-      authDomain: 'cauda-51729.firebaseapp.com',
-      databaseURL: 'https://cauda-51729.firebaseio.com',
-      projectId: 'cauda-51729',
-      storageBucket: 'cauda-51729.appspot.com',
-      messagingSenderId: '195437660977',
-      appId: '1:195437660977:web:ea98dc48734274e1d77e10',
-      measurementId: 'G-BQQ9NMT9QH',
+      apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+      authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+      databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+      storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+      appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
     });
   } catch (error) {
     if (error.code !== 'messaging/unsupported-browser') {
